@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tu turno + cierre — taller · the new founder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+  /* ── ajustes locales del bloque de cierre ── */
+
+  /* terminal con cromo: barra + traffic lights, encaja con el <pre> del theme */
+  .term { width: 100%; max-width: 760px; margin: 0.2em auto 0; text-align: left; }
+  .term-bar {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--panel-2); border: 1px solid var(--rule); border-bottom: none;
+    border-radius: 10px 10px 0 0; padding: 0.5em 0.9em;
+    font-family: "JetBrains Mono", monospace;
+  }
+  .term-bar i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+  .term-bar i.r { background: #F07178; } .term-bar i.y { background: #FFB454; } .term-bar i.g { background: #9FE870; }
+  .term-bar em { font-style: normal; color: var(--muted); font-size: 0.5em; margin-left: 0.4em; letter-spacing: 0.08em; }
+  .term pre { margin: 0; border-radius: 0 0 10px 10px; }
+  .term pre code { font-size: 0.62em; line-height: 1.6; }
+  .cmd-note { text-align: center; margin: 0.9em auto 0; max-width: 760px; }
+
+  /* ladder de cierre: 01 arriba → 05 abajo (orden de lectura natural) */
+  .reveal .closing-ladder { max-width: 760px; margin-left: auto; margin-right: auto; flex-direction: column; }
+  .reveal .closing-ladder .rung .step-num {
+    background: rgba(159,232,112,0.14); color: var(--green);
+  }
+
+  /* ── slide final: hero de cierre, la última imagen que se llevan ── */
+  .reveal section.closing { padding-top: 0.2em; }
+  .closing h1 {
+    font-size: clamp(2.1em, 3.4vw, 3em); line-height: 0.98; letter-spacing: -0.035em; margin: 0;
+  }
+  .closing h1 em { font-style: normal; color: var(--amber); }
+  .closing .lede {
+    color: var(--muted); font-size: 0.66em; margin: 0.9em auto 0; max-width: 26ch; line-height: 1.5;
+  }
+  .closing .lede b { color: var(--ink); font-weight: 600; }
+  .cta-final {
+    display: inline-flex; align-items: center; gap: 0.6em; margin-top: 1.5em;
+    text-decoration: none; color: var(--bg); background: var(--amber); font-weight: 700;
+    font-family: "JetBrains Mono", monospace; font-size: 0.66em; letter-spacing: -0.01em;
+    padding: 0.75em 1.5em; border-radius: 100px;
+    box-shadow: 0 10px 40px -8px rgba(255,180,84,0.4);
+    transition: transform .14s ease, box-shadow .14s ease;
+  }
+  .cta-final span { transition: transform .14s ease; }
+  .cta-final:hover { transform: translateY(-2px); box-shadow: 0 14px 36px -10px rgba(255,180,84,0.55); }
+  .cta-final:hover span { transform: translateX(3px); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section class="block-header">
+    <span class="path"><b>eyal@taller</b>:~/bloque-08 $ <b style="color:var(--ink)">tu-turno</b></span>
+    <h1>tu turno + cierre</h1>
+    <span class="mins">~5 min · 1:55–2:00</span>
+  </section>
+
+  <section>
+    <span class="mode hands">⚡ hands-on</span>
+    <h2>un solo comando</h2>
+    <div class="term">
+      <div class="term-bar"><i class="r"></i><i class="y"></i><i class="g"></i><em>bash</em></div>
+      <pre><code>git clone [URL-DEL-REPO]
+cd tnf-taller &amp;&amp; cat taller/PROMPTS.md</code></pre>
+    </div>
+    <div class="cmd-note">
+      <div class="check">la lista de prompts del taller en tu terminal</div>
+      <p class="dim" style="margin-top:0.7em">todo lo de hoy vive en ese repo. es tuyo.</p>
+    </div>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2>lo que te llevas</h2>
+    <div class="ladder closing-ladder">
+      <div class="rung">
+        <span class="step-num">01</span>
+        <div class="body"><b>harness</b><span>el AI es probabilístico → por eso existe</span></div>
+      </div>
+      <div class="rung">
+        <span class="step-num">02</span>
+        <div class="body"><b>critique pattern</b><span>nunca aceptes el primer output</span></div>
+      </div>
+      <div class="rung">
+        <span class="step-num">03</span>
+        <div class="body"><b>cuándo y cómo</b><span>más agentes ≠ mejor</span></div>
+      </div>
+      <div class="rung">
+        <span class="step-num">04</span>
+        <div class="body"><b>menos deps</b><span>menos deps = menos dolor</span></div>
+      </div>
+      <div class="rung">
+        <span class="step-num">05</span>
+        <div class="body"><b>curiosidad</b><span>y sobre todo</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <h1>¿y si esto fuera<br><em>tu producto?</em></h1>
+    <p class="lede">el curso: <b>16 sesiones</b>, tu idea, tu app publicada.</p>
+    <a class="cta-final" href="https://thenewfounder.xyz">thenewfounder.xyz <span>►</span></a>
+  </section>
+
+</div>
+</div>
+
+<!-- navegación entre decks -->
+<a class="deck-nav prev" href="07-errores.html">◄ bloque anterior</a>
+<a class="deck-nav hub"  href="index.html">agenda</a>
+<a class="deck-nav next" href="index.html">volver a la agenda ►</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, transition: 'fade', transitionSpeed: 'fast',
+    slideNumber: 'c/t', controls: true, progress: true, center: true,
+    width: 1280, height: 720, margin: 0.045, minScale: 0.2, maxScale: 2.8,
+    plugins: [ RevealMarkdown ]
+  });
+</script>
+<!-- navegación continua entre bloques (cargar DESPUÉS del init) -->
+<script src="../shared/deck-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+/* ══════════════════════════════════════════════════════════════════
+   THE NEW FOUNDER — taller · sistema de diseño compartido
+   Este archivo es la "fuente de verdad" visual de TODOS los decks.
+   No dupliques estilos en los HTML: usa estas clases/componentes.
+   ══════════════════════════════════════════════════════════════════ */
+
+:root {
+  --bg: #0B0E14;
+  --ink: #E8E3D8;
+  --amber: #FFB454;      /* fósforo ámbar: modo escucha / acentos */
+  --cyan: #5CCFE6;       /* modo demo */
+  --green: #9FE870;      /* modo hands-on / "funcionó" */
+  --red: #F07178;        /* errores / anti-patrón */
+  --muted: #6C7380;
+  --panel: #131722;
+  --panel-2: #0F131C;
+  --rule: #1F2635;
+}
+
+.reveal-viewport { background: var(--bg); }
+.reveal { font-family: "Inter", sans-serif; color: var(--ink); font-size: 34px; }
+.reveal h1, .reveal h2, .reveal h3 {
+  font-family: "Space Grotesk", sans-serif;
+  color: var(--ink);
+  text-transform: none;
+  letter-spacing: -0.02em;
+}
+.reveal h1 { font-size: 2.2em; font-weight: 700; }
+.reveal h2 { font-size: 1.5em; font-weight: 700; }
+.reveal h3 { font-size: 1.1em; font-weight: 500; color: var(--amber); }
+.reveal p, .reveal li { line-height: 1.5; }
+.reveal ul { list-style: none; margin-left: 0; }
+.reveal ul li { padding-left: 1.1em; position: relative; margin-bottom: 0.35em; }
+.reveal ul li::before { content: "→"; position: absolute; left: 0; color: var(--amber); font-family: "JetBrains Mono", monospace; }
+.reveal strong { color: var(--amber); font-weight: 600; }
+.reveal code {
+  font-family: "JetBrains Mono", monospace;
+  background: var(--panel);
+  padding: 0.08em 0.35em;
+  border-radius: 4px;
+  font-size: 0.85em;
+  color: var(--cyan);
+}
+.reveal pre {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  width: 100%;
+  box-shadow: none;
+}
+.reveal pre code { background: transparent; color: var(--ink); padding: 0.8em; }
+.reveal table { font-size: 0.75em; }
+.reveal table th { color: var(--amber); border-bottom: 2px solid var(--rule); font-family: "Space Grotesk", sans-serif; }
+.reveal table td { border-bottom: 1px solid var(--rule); }
+.reveal blockquote {
+  border-left: 3px solid var(--amber);
+  background: var(--panel);
+  padding: 0.5em 1em;
+  font-style: normal;
+  width: 90%;
+}
+
+/* ── firma del deck: header de bloque estilo prompt de terminal ── */
+.block-header { font-family: "JetBrains Mono", monospace; text-align: left; }
+.block-header .path { color: var(--muted); font-size: 0.45em; display: block; margin-bottom: 1.2em; }
+.block-header .path b { color: var(--green); font-weight: 600; }
+.block-header h1 { font-size: 1.6em; }
+.block-header .mins { color: var(--muted); font-size: 0.4em; display: block; margin-top: 1.5em; }
+
+/* ── badges de modo ── */
+.mode {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.42em;
+  padding: 0.35em 0.9em;
+  border-radius: 100px;
+  display: inline-block;
+  margin-bottom: 1.2em;
+  letter-spacing: 0.05em;
+}
+.mode.escucha { color: var(--amber); border: 1px solid var(--amber); }
+.mode.demo    { color: var(--cyan);  border: 1px solid var(--cyan); }
+.mode.hands   { color: var(--green); border: 1px solid var(--green); background: rgba(159,232,112,0.08); }
+
+.check {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.55em;
+  color: var(--green);
+  border: 1px dashed var(--green);
+  border-radius: 8px;
+  padding: 0.6em 1em;
+  margin-top: 1em;
+  text-align: left;
+}
+.check::before { content: "✓ si ves esto, vas bien: "; color: var(--muted); }
+
+.dim { color: var(--muted); font-size: 0.7em; }
+.reveal .progress { color: var(--amber); }
+.reveal .controls { color: var(--amber); }
+
+.cols { display: flex; gap: 1.5em; text-align: left; }
+.cols > div { flex: 1; }
+
+/* ══════════════════════════════════════════════════════════════════
+   COMPONENTES VISUALES REUTILIZABLES
+   (vocabulario compartido — úsalos en vez de inventar markup nuevo)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── pila de capas de una app (stack) ── */
+.stack-wrap { display: flex; gap: 1em; align-items: stretch; margin-top: 0.3em; }
+.stack-rail {
+  display: flex; flex-direction: column; align-items: center; gap: 0.5em;
+  font-family: "JetBrains Mono", monospace; font-size: 0.4em;
+  color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase;
+}
+.stack-rail span { writing-mode: vertical-rl; transform: rotate(180deg); }
+.stack-rail .bar { flex: 1; width: 5px; border-radius: 5px; background: linear-gradient(to bottom, var(--green), var(--cyan) 50%, var(--amber)); }
+.stack { display: flex; flex-direction: column; gap: 0.4em; flex: 1; text-align: left; }
+.layer {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1em;
+  background: var(--panel); border: 1px solid var(--rule);
+  border-left: 5px solid var(--amber); border-radius: 8px;
+  padding: 0.5em 0.9em; font-family: "JetBrains Mono", monospace;
+}
+.layer .name { color: var(--ink); font-weight: 600; font-size: 0.78em; white-space: nowrap; }
+.layer .desc { color: var(--muted); font-size: 0.62em; text-align: right; }
+.layer.c-cyan  { border-left-color: var(--cyan); }
+.layer.c-green { border-left-color: var(--green); }
+.layer.c-amber { border-left-color: var(--amber); }
+.layer.c-red   { border-left-color: var(--red); }
+
+/* ── grid de tarjetas (cards) ── */
+.cards { display: grid; grid-template-columns: repeat(var(--n, 3), 1fr); gap: 0.7em; text-align: left; margin-top: 0.3em; }
+.card {
+  background: var(--panel); border: 1px solid var(--rule);
+  border-top: 3px solid var(--amber); border-radius: 10px;
+  padding: 0.7em 0.85em;
+}
+.card .icon { font-size: 1.4em; line-height: 1; display: block; margin-bottom: 0.25em; }
+.card .t { font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: 0.8em; color: var(--ink); }
+.card .d { color: var(--muted); font-size: 0.62em; line-height: 1.35; margin-top: 0.2em; }
+.card.c-cyan  { border-top-color: var(--cyan); }
+.card.c-green { border-top-color: var(--green); }
+.card.c-red   { border-top-color: var(--red); }
+
+/* ── pasos / escalera horizontal (flow) ── */
+.flow { display: flex; align-items: stretch; gap: 0; margin-top: 0.4em; font-family: "JetBrains Mono", monospace; }
+.flow .step {
+  flex: 1; background: var(--panel); border: 1px solid var(--rule);
+  border-radius: 8px; padding: 0.6em 0.7em; text-align: center; position: relative;
+}
+.flow .step .n { font-size: 0.55em; color: var(--muted); display: block; }
+.flow .step .l { font-size: 0.8em; color: var(--ink); font-weight: 600; margin-top: 0.15em; }
+.flow .arrow { align-self: center; color: var(--amber); padding: 0 0.4em; font-size: 0.9em; }
+
+/* ── escalera vertical (ladder) — jerarquía / escalación ── */
+.ladder { display: flex; flex-direction: column-reverse; gap: 0.35em; text-align: left; margin-top: 0.3em; }
+.rung {
+  display: flex; align-items: center; gap: 0.7em;
+  background: var(--panel); border: 1px solid var(--rule); border-radius: 8px;
+  padding: 0.5em 0.8em; font-family: "JetBrains Mono", monospace;
+}
+.rung .step-num {
+  width: 1.6em; height: 1.6em; flex: 0 0 auto; border-radius: 6px;
+  display: grid; place-items: center; font-weight: 600; font-size: 0.7em;
+  background: rgba(255,180,84,0.12); color: var(--amber);
+}
+.rung .body { flex: 1; }
+.rung .body b { color: var(--ink); font-size: 0.82em; font-family: "Space Grotesk", sans-serif; }
+.rung .body span { display: block; color: var(--muted); font-size: 0.6em; }
+
+/* ── loop / ciclo (build→measure→learn, critique) ── */
+.loop { display: flex; align-items: center; justify-content: center; gap: 0.5em; margin-top: 0.4em; font-family: "JetBrains Mono", monospace; }
+.loop .node {
+  background: var(--panel); border: 1px solid var(--rule); border-radius: 100px;
+  padding: 0.5em 1em; font-size: 0.8em; color: var(--ink); font-weight: 600;
+}
+.loop .node.c-cyan { border-color: var(--cyan); color: var(--cyan); }
+.loop .node.c-green { border-color: var(--green); color: var(--green); }
+.loop .node.c-amber { border-color: var(--amber); color: var(--amber); }
+.loop .cyc { color: var(--amber); font-size: 1.1em; }
+
+/* ── métrica grande (dato de impacto) ── */
+.metric { text-align: center; }
+.metric .big { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 3em; color: var(--amber); line-height: 1; }
+.metric .lbl { color: var(--muted); font-size: 0.6em; margin-top: 0.3em; }
+
+/* ── comparación sí/no, bueno/malo ── */
+.versus { display: flex; gap: 1em; text-align: left; margin-top: 0.3em; }
+.versus > div { flex: 1; background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 0.7em 0.9em; }
+.versus .good { border-top: 3px solid var(--green); }
+.versus .bad  { border-top: 3px solid var(--red); }
+.versus h4 { font-family: "Space Grotesk", sans-serif; margin: 0 0 0.3em; font-size: 0.85em; }
+.versus .good h4 { color: var(--green); }
+.versus .bad h4  { color: var(--red); }
+
+/* ── navegación entre decks (esquinas fijas) ── */
+.deck-nav {
+  position: fixed; bottom: 14px; z-index: 40;
+  font-family: "JetBrains Mono", monospace; font-size: 13px;
+  text-decoration: none; color: var(--muted);
+  background: rgba(19,23,34,0.85); border: 1px solid var(--rule);
+  padding: 6px 12px; border-radius: 100px; backdrop-filter: blur(4px);
+  transition: color .15s, border-color .15s;
+}
+.deck-nav:hover { color: var(--amber); border-color: var(--amber); }
+.deck-nav.prev { left: 14px; }
+.deck-nav.hub  { left: 50%; transform: translateX(-50%); }
+.deck-nav.next { right: 14px; }
+
+/* ── "siguiente bloque" grande en el último slide ── */
+.next-block {
+  display: inline-flex; align-items: center; gap: 0.5em;
+  font-family: "JetBrains Mono", monospace; font-size: 0.6em;
+  text-decoration: none; color: var(--bg); background: var(--amber);
+  padding: 0.6em 1.4em; border-radius: 100px; margin-top: 1em; font-weight: 600;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RESPONSIVE & PULIDO
+   El canvas de reveal (1280×720) escala uniforme a celular, laptop,
+   display y TV. Estas reglas garantizan CERO overflow a cualquier
+   escala y añaden micro-interacciones coherentes con la agenda.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* nada de scroll horizontal dentro de un slide; el vertical se acota */
+.reveal .slides > section { max-width: 100%; box-sizing: border-box; }
+.reveal pre { max-height: 62vh; overflow: auto; }
+.reveal pre code { font-size: clamp(13px, 1em, 20px); line-height: 1.45; }
+.reveal img, .reveal svg { max-width: 100%; height: auto; }
+
+/* componentes que degradan bien a escalas extremas */
+.cards { max-width: 100%; }
+.card .d { overflow-wrap: anywhere; }
+.flow { flex-wrap: wrap; gap: 0.45em; }
+.flow .arrow { padding: 0 0.2em; }
+.versus { flex-wrap: wrap; }
+.versus > div { min-width: 220px; flex: 1 1 220px; }
+.cols { flex-wrap: wrap; }
+.cols > div { min-width: 220px; }
+.ladder, .stack, .flow, .cards, .versus, .loop { width: 100%; box-sizing: border-box; }
+
+/* pulido moderno: sombras/hover coherentes con la agenda */
+.card { transition: transform .12s ease, border-color .12s ease, background .12s ease; }
+.card:hover { transform: translateY(-2px); background: #161B27; }
+.rung { transition: transform .12s ease, border-color .12s ease; }
+.rung:hover { transform: translateX(3px); border-color: var(--accent, var(--amber)); }
+.layer { transition: border-color .12s ease, background .12s ease; }
+.loop .node { transition: transform .12s ease; }
+
+/* portrait / celular vertical: apila las columnas dentro del canvas */
+@media (max-aspect-ratio: 3/4) {
+  .cols, .versus, .flow { flex-direction: column; }
+  .stack-wrap { gap: 0.6em; }
+}

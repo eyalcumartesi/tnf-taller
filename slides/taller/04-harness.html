@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>el harness — taller · the new founder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/theme.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section class="block-header">
+    <span class="path"><b>eyal@taller</b>:~/bloque-04 $ <b style="color:var(--ink)">harness</b></span>
+    <h1>el concepto central: el harness</h1>
+    <span class="mins">~20 min · slides compartidos con el curso</span>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <div class="metric">
+      <div class="big" style="font-size:4.5em">🐎</div>
+    </div>
+    <h2 style="margin-top:0.2em">el caballo ya tiene la fuerza.</h2>
+    <blockquote style="margin:0.6em auto 0">sin arnés y sin riendas, esa fuerza se desperdicia.</blockquote>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2 style="margin:0 0 0.35em">harness = arnés + riendas del LLM</h2>
+    <div class="cards" style="--n:2">
+      <div class="card">
+        <span class="icon">📜</span>
+        <div class="t">instrucciones</div>
+        <div class="d">reglas del proyecto, system prompt</div>
+      </div>
+      <div class="card c-cyan">
+        <span class="icon">🧠</span>
+        <div class="t">contexto</div>
+        <div class="d">qué sabe del proyecto y qué no</div>
+      </div>
+      <div class="card c-green">
+        <span class="icon">🛠️</span>
+        <div class="t">herramientas</div>
+        <div class="d">MCP, skills, tests, Playwright</div>
+      </div>
+      <div class="card c-red">
+        <span class="icon">✅</span>
+        <div class="t">verificación</div>
+        <div class="d">cómo se comprueba que lo que hizo sirve</div>
+      </div>
+    </div>
+    <div class="loop" style="margin-top:0.55em">
+      <span class="node c-amber">harness</span>
+      <span class="cyc">━━►</span>
+      <span class="node c-green">output confiable</span>
+    </div>
+    <p class="dim" style="text-align:center;margin:0.5em 0 0">mientras mejor el harness, más confiable el output.</p>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2>global vs. por proyecto</h2>
+    <div class="versus">
+      <div class="good" style="border-top-color:var(--amber)">
+        <h4 style="color:var(--amber)">global</h4>
+        <ul>
+          <li>tu forma de trabajar</li>
+          <li>se configura una vez</li>
+          <li>yo se los entrego listo</li>
+        </ul>
+      </div>
+      <div class="good" style="border-top-color:var(--cyan)">
+        <h4 style="color:var(--cyan)">por proyecto</h4>
+        <ul>
+          <li>las reglas de ESTE código</li>
+          <li>vive en el repo</li>
+          <li>lo armamos juntos</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2>spec-driven: las riendas escritas</h2>
+    <p class="dim">el trabajo duro se mueve ANTES de programar:</p>
+    <div class="flow">
+      <div class="step">
+        <span class="n">1</span>
+        <span class="l">spec clara</span>
+        <span class="n">qué se construye y cómo se sabe que está "done"</span>
+      </div>
+      <span class="arrow">►</span>
+      <div class="step">
+        <span class="n">2</span>
+        <span class="l">tareas atómicas</span>
+        <span class="n">cada una verificable</span>
+      </div>
+      <span class="arrow">►</span>
+      <div class="step">
+        <span class="n">3</span>
+        <span class="l">el agente ejecuta</span>
+        <span class="n">contra la spec, no contra tu memoria</span>
+      </div>
+    </div>
+    <div class="versus" style="margin-top:0.7em">
+      <div class="bad">
+        <h4>sin spec</h4>
+        <p>el agente divaga.</p>
+      </div>
+      <div class="good">
+        <h4>con spec</h4>
+        <p>cada iteración cierra una tarea.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2 style="margin:0 0 0.3em">los ojos del agente: Playwright MCP</h2>
+    <blockquote style="margin:0 auto 0.4em">sin browser, el agente programa a ciegas.</blockquote>
+    <p class="dim" style="margin:0">con Playwright + e2e tests:</p>
+    <div class="flow">
+      <div class="step">
+        <span class="n">01</span>
+        <span class="l">construye el feature</span>
+      </div>
+      <span class="arrow">►</span>
+      <div class="step">
+        <span class="n">02</span>
+        <span class="l">lo prueba él mismo en el browser</span>
+      </div>
+      <span class="arrow">►</span>
+      <div class="step">
+        <span class="n">03</span>
+        <span class="l">te deja hasta un video comprobando que funciona</span>
+      </div>
+    </div>
+    <div class="versus" style="margin-top:0.5em">
+      <div class="bad">
+        <h4>antes</h4>
+        <p>"confía en mí"</p>
+      </div>
+      <div class="good">
+        <h4>después</h4>
+        <p>"aquí está la prueba"</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2>commands, plugins, skills, memory…</h2>
+    <ul>
+      <li>hay <strong>mucho</strong> buzz sobre esto</li>
+      <li>la verdad: <strong>déjalo lean</strong></li>
+      <li>sobrecargar contexto = agente que pierde perspectiva</li>
+      <li>empaquetar de más = caja negra que no entiendes</li>
+    </ul>
+    <blockquote>cada cosa que agregas al harness debe ganarse su lugar.</blockquote>
+  </section>
+
+  <section class="block-header">
+    <span class="path"><b>eyal@taller</b>:~ $ <b style="color:var(--ink)">pausa</b></span>
+    <h1>☕ pausa</h1>
+    <span class="mins">~5 min · 1:05–1:10</span>
+  </section>
+
+</div>
+</div>
+
+<!-- navegación entre decks -->
+<a class="deck-nav prev" href="03-el-mapa.html">◄ bloque anterior</a>
+<a class="deck-nav hub"  href="index.html">agenda</a>
+<a class="deck-nav next" href="05-agentes.html">bloque siguiente ►</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, transition: 'fade', transitionSpeed: 'fast',
+    slideNumber: 'c/t', controls: true, progress: true, center: true,
+    width: 1280, height: 720, margin: 0.045, minScale: 0.2, maxScale: 2.8,
+    plugins: [ RevealMarkdown ]
+  });
+</script>
+<!-- navegación continua entre bloques (bordes → salta de deck). Cargar DESPUÉS del init. -->
+<script src="../shared/deck-nav.js"></script>
+</body>
+</html>

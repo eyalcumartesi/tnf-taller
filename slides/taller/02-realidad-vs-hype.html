@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>realidad vs. hype — taller · the new founder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/theme.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section class="block-header">
+    <span class="path"><b>eyal@taller</b>:~/bloque-02 $ <b style="color:var(--ink)">realidad-vs-hype</b></span>
+    <h1>realidad vs. hype</h1>
+    <span class="mins">~20 min · 5 slides</span>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2>el mito</h2>
+    <blockquote>"orquesto mil agentes mientras duermo y no reviso nada"</blockquote>
+    <p>spoiler: <strong>no</strong>. y quien te lo venda, no lo hace en producción.</p>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2>lo que NO es mito: la randomness</h2>
+    <div class="cols" style="align-items:center; gap:1.8em;">
+      <div style="flex:0 0 44%;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:0.62em; color:var(--muted); margin-bottom:0.7em;">
+          "el gato subió al&nbsp;<span style="color:var(--amber);">___</span>"
+        </div>
+        <!-- distribución del próximo token -->
+        <div style="display:flex; flex-direction:column; gap:0.4em; font-family:'JetBrains Mono',monospace; font-size:0.6em;">
+          <div style="display:flex; align-items:center; gap:0.6em;">
+            <span style="flex:0 0 4.2em; color:var(--ink);">tejado</span>
+            <span style="flex:1; height:0.85em; background:var(--panel); border-radius:100px; overflow:hidden;"><span style="display:block; height:100%; width:62%; background:var(--amber); border-radius:100px;"></span></span>
+            <span style="flex:0 0 2.4em; text-align:right; color:var(--amber);">62%</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.6em;">
+            <span style="flex:0 0 4.2em; color:var(--ink);">árbol</span>
+            <span style="flex:1; height:0.85em; background:var(--panel); border-radius:100px; overflow:hidden;"><span style="display:block; height:100%; width:18%; background:var(--muted); border-radius:100px;"></span></span>
+            <span style="flex:0 0 2.4em; text-align:right; color:var(--muted);">18%</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.6em;">
+            <span style="flex:0 0 4.2em; color:var(--ink);">sofá</span>
+            <span style="flex:1; height:0.85em; background:var(--panel); border-radius:100px; overflow:hidden;"><span style="display:block; height:100%; width:11%; background:var(--muted); border-radius:100px;"></span></span>
+            <span style="flex:0 0 2.4em; text-align:right; color:var(--muted);">11%</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.6em;">
+            <span style="flex:0 0 4.2em; color:var(--ink);">coche</span>
+            <span style="flex:1; height:0.85em; background:var(--panel); border-radius:100px; overflow:hidden;"><span style="display:block; height:100%; width:6%; background:var(--muted); border-radius:100px;"></span></span>
+            <span style="flex:0 0 2.4em; text-align:right; color:var(--muted);">6%</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:0.6em;">
+            <span style="flex:0 0 4.2em; color:var(--muted);">…</span>
+            <span style="flex:1; height:0.85em; background:var(--panel); border-radius:100px; overflow:hidden;"><span style="display:block; height:100%; width:3%; background:var(--muted); border-radius:100px;"></span></span>
+            <span style="flex:0 0 2.4em; text-align:right; color:var(--muted);">3%</span>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;">
+        <ul>
+          <li>un LLM <strong>predice el próximo token</strong></li>
+          <li>cada predicción es una <strong>probabilidad</strong></li>
+          <li>siempre habrá randomness — no es un bug, es la naturaleza de la herramienta</li>
+        </ul>
+      </div>
+    </div>
+    <p class="dim">por eso todo lo que viene hoy existe: estructura alrededor de algo probabilístico.</p>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2 style="margin-bottom:0.15em;">mi propia montaña rusa</h2>
+    <!-- timeline / sparkline de la curva -->
+    <svg viewBox="0 0 1000 210" style="width:100%; max-width:74%; height:auto; margin:0.1em auto 0.25em; display:block;" font-family="JetBrains Mono, monospace">
+      <line x1="30" y1="175" x2="970" y2="175" stroke="var(--rule)" stroke-width="1"/>
+      <!-- tramo bajo: nov–ene -->
+      <path d="M 40 90 C 130 130, 200 165, 320 165 L 430 165" fill="none" stroke="var(--red)" stroke-width="4" stroke-linecap="round"/>
+      <!-- tramo de subida: últimos 2 meses -->
+      <path d="M 430 165 C 560 165, 640 70, 760 45" fill="none" stroke="var(--green)" stroke-width="4" stroke-linecap="round"/>
+      <!-- ahora: sigue en subida -->
+      <path d="M 760 45 L 940 20" fill="none" stroke="var(--green)" stroke-width="4" stroke-linecap="round"/>
+      <!-- puntos clave -->
+      <circle cx="380" cy="165" r="6" fill="var(--red)"/>
+      <circle cx="760" cy="45" r="6" fill="var(--green)"/>
+      <circle cx="940" cy="20" r="7" fill="var(--green)"/>
+      <!-- etiquetas de eje -->
+      <text x="330" y="200" fill="var(--red)" font-size="20" text-anchor="middle">nov–ene</text>
+      <text x="600" y="200" fill="var(--green)" font-size="20" text-anchor="middle">últimos 2 meses</text>
+      <text x="920" y="200" fill="var(--green)" font-size="20" text-anchor="middle">ahora ↗</text>
+      <!-- anotaciones -->
+      <text x="380" y="150" fill="var(--muted)" font-size="17" text-anchor="middle">dejé Claude Code</text>
+    </svg>
+    <ul style="font-size:0.74em; line-height:1.32; text-align:left; max-width:26em; margin:0.3em auto 0;">
+      <li style="margin-bottom:0.2em;"><strong>nov–ene</strong>: dejé de usar Claude Code. los resultados eran pésimos.</li>
+      <li style="margin-bottom:0.2em;">este mundo tiene altos y bajos — quien diga que todo siempre funcionó, miente</li>
+      <li style="margin-bottom:0.2em;">los últimos 2 meses cambiaron <strong>muy</strong> rápido</li>
+      <li style="margin-bottom:0;">ahora parece que solo vamos en subida</li>
+    </ul>
+    <p class="dim" style="margin-top:0.5em;">la única constante: mantenerse curioso.</p>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2>antes de construir: lean startup</h2>
+    <div class="loop">
+      <span class="node c-cyan">build</span>
+      <span class="cyc">→</span>
+      <span class="node c-green">measure</span>
+      <span class="cyc">→</span>
+      <span class="node c-amber">learn</span>
+      <span class="cyc">↺</span>
+    </div>
+    <ul style="margin:0.7em auto 0; max-width:19em; text-align:left;">
+      <li>no construyas 6 meses a ciegas</li>
+      <li>el MVP no es tu app fea — es tu <strong>pregunta más barata</strong></li>
+    </ul>
+    <p class="dim">en el curso: cada quien valida su idea antes de escribir una línea.</p>
+  </section>
+
+  <section>
+    <span class="mode escucha">~ escucha</span>
+    <h2>la clave si quieres ser exitoso con AI</h2>
+    <h1 style="color:var(--amber)">ser curioso</h1>
+    <p class="dim">si no entiendes qué hace, no puedes guiarlo.</p>
+  </section>
+
+</div>
+</div>
+
+<!-- navegación entre decks -->
+<a class="deck-nav prev" href="01-quien-soy.html">◄ bloque anterior</a>
+<a class="deck-nav hub"  href="index.html">agenda</a>
+<a class="deck-nav next" href="03-el-mapa.html">bloque siguiente ►</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, transition: 'fade', transitionSpeed: 'fast',
+    slideNumber: 'c/t', controls: true, progress: true, center: true,
+    width: 1280, height: 720, margin: 0.045, minScale: 0.2, maxScale: 2.8,
+    plugins: [ RevealMarkdown ]
+  });
+</script>
+<!-- navegación continua entre bloques (bordes → salta de deck). Cargar DESPUÉS del init. -->
+<script src="../shared/deck-nav.js"></script>
+</body>
+</html>

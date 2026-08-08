@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>herramientas — taller · the new founder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+  /* ajuste puntual: acento violeta para MCP (fuera de la paleta base) */
+  :root { --violet: #B69CFF; }
+
+  /* rejilla 2x2 centrada, tarjetas del mismo ancho */
+  .tgrid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.7em; text-align: left; margin-top: 0.5em; width: 100%;
+  }
+
+  .tgrid .card { padding: 0.7em 0.9em; }
+  .tgrid .card .icon { font-size: 1.5em; margin-bottom: 0.15em; }
+  .tgrid .card .t { font-size: 0.9em; }
+  /* nombres de herramienta: mono, en el color del acento de la tarjeta */
+  .tgrid .card .tools {
+    display: block; font-family: "JetBrains Mono", monospace;
+    font-size: 0.6em; font-weight: 600; margin-top: 0.25em; color: var(--amber);
+  }
+  .tgrid .card.c-cyan   .tools { color: var(--cyan); }
+  .tgrid .card.c-green  .tools { color: var(--green); }
+  .tgrid .card.c-red    .tools { color: var(--red); }
+  .tgrid .card.c-violet .tools { color: var(--violet); }
+  .tgrid .card.c-violet { border-top-color: var(--violet); }
+  .tgrid .card .d { margin-top: 0.25em; }
+
+  /* portrait: la rejilla se apila en una columna sin desbordar */
+  @media (max-aspect-ratio: 3/4) {
+    .tgrid { grid-template-columns: 1fr; }
+    .tgrid .card { grid-column: 1 / -1 !important; }
+  }
+
+  /* slide de cierre: principio como statement */
+  .principle blockquote {
+    width: 100%; font-family: "Space Grotesk", sans-serif;
+    font-size: 1.15em; line-height: 1.4; padding: 0.7em 1.1em;
+  }
+  .principle blockquote b { color: var(--green); }
+  .principle .dim { margin-top: 0.9em; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section class="block-header">
+    <span class="path"><b>eyal@taller</b>:~ $ <b style="color:var(--ink)">stack-del-producto</b></span>
+    <h1>el stack del producto</h1>
+    <span class="mins">~10 min</span>
+  </section>
+
+  <section>
+    <h2>el stack sobre el que corre tu app</h2>
+    <p class="dim" style="margin:0 0 0.2em;">esto es <strong>dónde vive el producto</strong> — distinto del tooling del harness (MCP, skills) que ya vimos.</p>
+    <div class="tgrid">
+      <div class="card c-cyan">
+        <span class="icon">🚀</span>
+        <span class="t">deploy</span>
+        <span class="tools">Vercel · Cloudflare · Netlify</span>
+        <span class="d">dónde vive tu app</span>
+      </div>
+      <div class="card">
+        <span class="icon">🎨</span>
+        <span class="t">UI</span>
+        <span class="tools">shadcn/ui</span>
+        <span class="d">+ librerías de componentes</span>
+      </div>
+      <div class="card c-green">
+        <span class="icon">🗄️</span>
+        <span class="t">backend gestionado</span>
+        <span class="tools">Supabase</span>
+        <span class="d">base de datos + auth + APIs en uno</span>
+      </div>
+      <div class="card c-red">
+        <span class="icon">📈</span>
+        <span class="t">monitoreo</span>
+        <span class="tools">Sentry · PostHog</span>
+        <span class="d">errores · analítica · a/b</span>
+      </div>
+    </div>
+  </section>
+
+
+</div>
+</div>
+
+<!-- navegación entre decks -->
+<a class="deck-nav prev" href="06-orquestar.html">◄ bloque anterior</a>
+<a class="deck-nav hub"  href="index.html">agenda</a>
+<a class="deck-nav next" href="08-negocio.html">bloque siguiente ►</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, transition: 'fade', transitionSpeed: 'fast',
+    slideNumber: 'c/t', controls: true, progress: true, center: true,
+    width: 1280, height: 720, margin: 0.045, minScale: 0.2, maxScale: 2.8,
+    plugins: [ RevealMarkdown ]
+  });
+</script>
+<!-- navegación continua entre bloques (bordes → salta de deck). Cargar DESPUÉS del init. -->
+<script src="../shared/deck-nav.js"></script>
+</body>
+</html>

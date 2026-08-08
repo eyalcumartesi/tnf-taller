@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>setup — taller · the new founder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+  /* ── setup local: tarjetas de "el stack" + pasos con botón copiar ── */
+  .toolgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:0.6em; text-align:left; margin-top:0.3em; }
+  .tool { background:var(--panel); border:1px solid var(--rule); border-top:3px solid var(--green); border-radius:10px; padding:0.6em 0.7em; }
+  .tool .n { font-family:"JetBrains Mono", monospace; color:var(--green); font-weight:600; font-size:0.6em; }
+  .tool .d { color:var(--muted); font-size:0.5em; line-height:1.35; margin-top:0.25em; }
+
+  /* pasos de instalación — cada uno con su bloque copy-paste */
+  .steps { display:grid; grid-template-columns:1fr 1fr; gap:0.55em; text-align:left; margin-top:0.2em; }
+  .step { background:var(--panel-2); border:1px solid var(--rule); border-radius:10px; padding:0.55em 0.7em 0.65em; position:relative; }
+  .step .h { display:flex; align-items:center; gap:0.5em; margin-bottom:0.4em; }
+  .step .num { font-family:"JetBrains Mono", monospace; font-size:0.5em; font-weight:600; color:var(--bg); background:var(--green); border-radius:100px; width:1.8em; height:1.8em; display:flex; align-items:center; justify-content:center; flex:0 0 auto; }
+  .step .lbl { font-family:"Space Grotesk", sans-serif; font-weight:600; font-size:0.6em; color:var(--ink); }
+  .step pre { margin:0; padding:0; border:none; background:transparent; }
+  .step pre code { display:block; padding:0.55em 0.7em; font-size:0.44em; line-height:1.5; background:var(--panel); border:1px solid var(--rule); border-radius:7px; color:var(--ink); white-space:pre-wrap; word-break:break-word; }
+  .step .cp {
+    position:absolute; top:0.5em; right:0.55em; cursor:pointer;
+    font-family:"JetBrains Mono", monospace; font-size:0.4em; color:var(--muted);
+    background:var(--panel); border:1px solid var(--rule); border-radius:6px; padding:0.35em 0.6em;
+    transition:color .12s ease, border-color .12s ease;
+  }
+  .step .cp:hover { color:var(--green); border-color:var(--green); }
+  .step .cp.ok { color:var(--green); border-color:var(--green); }
+  .depmap td:first-child { color:var(--green); font-family:"JetBrains Mono", monospace; font-size:0.9em; white-space:nowrap; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <!-- ── portada del bloque ── -->
+  <section class="block-header">
+    <span class="path"><b>eyal@taller</b>:~ $ <b style="color:var(--ink)">./setup.sh</b></span>
+    <h1>setup</h1>
+    <span class="mins">~15 min · antes de empezar</span>
+  </section>
+
+  <!-- ── el stack: qué instalamos y por qué ── -->
+  <section>
+    <span class="mode hands">hands-on</span>
+    <h2 style="margin-bottom:0.1em;">todo se instala una vez</h2>
+    <p class="dim" style="margin-top:0;">estas son las piezas. lo dejamos listo ahora para no frenar después.</p>
+    <div class="toolgrid">
+      <div class="tool"><span class="n">Homebrew</span><span class="d">el gestor: todo sale de aquí</span></div>
+      <div class="tool"><span class="n">Warp</span><span class="d">la terminal donde vive el agente</span></div>
+      <div class="tool"><span class="n">Cursor</span><span class="d">el IDE (alt: VS Code)</span></div>
+      <div class="tool"><span class="n">oh-my-zsh</span><span class="d">shell cómodo</span></div>
+      <div class="tool"><span class="n">git · gh</span><span class="d">versionado + GitHub</span></div>
+      <div class="tool"><span class="n">nvm · node</span><span class="d">runtime de JS</span></div>
+      <div class="tool"><span class="n">pnpm</span><span class="d">instalar dependencias, rápido</span></div>
+      <div class="tool"><span class="n">Claude Code</span><span class="d">el agente</span></div>
+    </div>
+  </section>
+
+  <!-- ── por qué va primero: mapa de dependencias por bloque ── -->
+  <section>
+    <span class="mode hands">hands-on</span>
+    <h2 style="margin-bottom:0.15em;">qué necesita cada bloque</h2>
+    <div class="cols" style="align-items:center; gap:1.6em;">
+      <table class="depmap" style="flex:1 1 58%; font-size:0.82em;">
+        <tr><td>01 · 02</td><td>nada — solo mirar</td></tr>
+        <tr><td>03 agente</td><td><code>claude</code></td></tr>
+        <tr><td>04 git</td><td><code>git</code> · <code>gh</code></td></tr>
+        <tr><td>05 harness</td><td><code>claude</code> · <code>node</code> · <code>pnpm</code></td></tr>
+        <tr><td>06 orquestar</td><td><code>claude</code> · <code>git worktree</code></td></tr>
+        <tr><td>07 herramientas</td><td><code>node</code> · <code>pnpm</code></td></tr>
+        <tr><td>08 negocio</td><td>nada</td></tr>
+      </table>
+      <div style="flex:1 1 40%;">
+        <p style="font-size:0.82em; line-height:1.45;">casi todo aparece <strong>una sola vez</strong> y temprano.</p>
+        <p class="dim" style="font-size:0.72em; line-height:1.5;">por eso lo instalamos ahora, de corrido, y el resto del taller no se frena en un <code>command not found</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── instala todo: copy-paste, en orden ── -->
+  <section>
+    <span class="mode hands">hands-on · Apple Silicon</span>
+    <h2 style="margin-bottom:0.1em;">instala todo — copy · paste</h2>
+    <p class="dim" style="margin-top:0;">pégalo en orden en Warp. cada bloque tiene su botón <b>copiar</b>.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="h"><span class="num">1</span><span class="lbl">Homebrew</span></div>
+        <button class="cp">copiar</button>
+        <pre><code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"</code></pre>
+      </div>
+      <div class="step">
+        <div class="h"><span class="num">2</span><span class="lbl">oh-my-zsh</span></div>
+        <button class="cp">copiar</button>
+        <pre><code>RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"</code></pre>
+      </div>
+      <div class="step">
+        <div class="h"><span class="num">3</span><span class="lbl">herramientas (una línea)</span></div>
+        <button class="cp">copiar</button>
+        <pre><code>brew install git gh nvm pnpm ripgrep jq
+brew install --cask warp cursor</code></pre>
+      </div>
+      <div class="step">
+        <div class="h"><span class="num">4</span><span class="lbl">node LTS (via nvm)</span></div>
+        <button class="cp">copiar</button>
+        <pre><code>echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
+echo '[ -s /opt/homebrew/opt/nvm/nvm.sh ] && . /opt/homebrew/opt/nvm/nvm.sh' >> ~/.zshrc
+source ~/.zshrc && nvm install --lts</code></pre>
+      </div>
+      <div class="step" style="grid-column:1 / -1;">
+        <div class="h"><span class="num">5</span><span class="lbl">Claude Code</span></div>
+        <button class="cp">copiar</button>
+        <pre><code>npm install -g @anthropic-ai/claude-code</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── verifica + login ── -->
+  <section>
+    <span class="mode hands">hands-on</span>
+    <h2 style="margin-bottom:0.1em;">verifica e identifícate</h2>
+    <div class="steps" style="grid-template-columns:1fr 1fr;">
+      <div class="step">
+        <div class="h"><span class="num">✓</span><span class="lbl">que todo responde</span></div>
+        <button class="cp">copiar</button>
+        <pre><code>node -v && pnpm -v && git --version
+gh --version && claude --version</code></pre>
+      </div>
+      <div class="step">
+        <div class="h"><span class="num">→</span><span class="lbl">login del agente</span></div>
+        <button class="cp">copiar</button>
+        <pre><code>claude    # primera vez: abre el login</code></pre>
+      </div>
+      <div class="step" style="grid-column:1 / -1;">
+        <div class="h"><span class="num">→</span><span class="lbl">identifícate en git / github</span></div>
+        <button class="cp">copiar</button>
+        <pre><code>gh auth login
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu@email.com"</code></pre>
+      </div>
+    </div>
+    <div class="check">cada comando imprime una versión y <code>claude</code> abre sesión sin error. listo para el bloque 01.</div>
+  </section>
+
+</div>
+</div>
+
+<!-- navegación entre decks (primer bloque: sin prev) -->
+<a class="deck-nav hub"  href="index.html">agenda</a>
+<a class="deck-nav next" href="01-introduccion.html">bloque siguiente ►</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, transition: 'fade', transitionSpeed: 'fast',
+    slideNumber: 'c/t', controls: true, progress: true, center: true,
+    width: 1280, height: 720, margin: 0.045, minScale: 0.2, maxScale: 2.8,
+    plugins: [ RevealMarkdown ]
+  });
+</script>
+<!-- botón copiar: self-contained, sin librerías -->
+<script>
+  document.querySelectorAll(".step").forEach(function (s) {
+    var btn = s.querySelector(".cp"), code = s.querySelector("pre code");
+    if (!btn || !code) return;
+    btn.addEventListener("click", function () {
+      navigator.clipboard.writeText(code.innerText.trim()).then(function () {
+        btn.textContent = "copiado ✓"; btn.classList.add("ok");
+        setTimeout(function () { btn.textContent = "copiar"; btn.classList.remove("ok"); }, 1400);
+      });
+    });
+  });
+</script>
+<!-- navegación continua entre bloques (bordes → salta de deck). Cargar DESPUÉS del init. -->
+<script src="../shared/deck-nav.js"></script>
+</body>
+</html>

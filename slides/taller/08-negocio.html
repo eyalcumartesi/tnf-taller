@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>tu turno + cierre — taller · the new founder</title>
+<title>negocio + cierre — taller · the new founder</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -53,6 +53,28 @@
   .cta-final span { transition: transform .14s ease; }
   .cta-final:hover { transform: translateY(-2px); box-shadow: 0 14px 36px -10px rgba(255,180,84,0.55); }
   .cta-final:hover span { transform: translateX(3px); }
+
+  /* ── fase de negocio: build→measure→learn como visual central ── */
+  .reveal section.biz h2 { margin-bottom: 0.1em; }
+  .reveal .biz .biz-loop { margin: 0.75em auto 0; gap: 0.7em; }
+  .reveal .biz .biz-loop .node { font-size: 1.05em; padding: 0.62em 1.35em; letter-spacing: -0.01em; }
+  .reveal .biz .biz-loop .cyc { font-size: 1.25em; }
+  .reveal .biz .biz-loop .loop-back { font-size: 1.65em; color: var(--green); line-height: 1; }
+  .biz .mvp-line { font-size: 0.82em; margin: 1.05em auto 0; max-width: 30ch; line-height: 1.35; }
+  .biz .mvp-line b { color: var(--cyan); font-weight: 600; }
+  .biz .mvp-line em { font-style: normal; color: var(--amber); font-weight: 600; }
+  .biz .biz-dim { font-size: 0.58em; max-width: 46ch; margin: 1.15em auto 0; line-height: 1.55; }
+  .biz .biz-dim b { color: var(--ink); font-weight: 600; }
+
+  /* ── cierre motivacional: curiosidad ── */
+  .curio .curio-pre { color: var(--muted); font-size: 0.62em; margin: 0 auto; line-height: 1.5; }
+  .curio .curio-pre b { color: var(--ink); font-weight: 600; }
+  .curio .curio-h1 {
+    font-size: clamp(1.7em, 2.6vw, 2.35em); line-height: 1.04; letter-spacing: -0.03em; margin: 0.42em 0 0;
+  }
+  .curio .curio-h1 em { font-style: normal; color: var(--amber); }
+  .curio .curio-sub { color: var(--muted); font-size: 0.6em; margin: 0.8em auto 0; max-width: 36ch; line-height: 1.5; }
+  .curio .curio-sub b { color: var(--ink); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -60,9 +82,23 @@
 <div class="slides">
 
   <section class="block-header">
-    <span class="path"><b>eyal@taller</b>:~/bloque-08 $ <b style="color:var(--ink)">tu-turno</b></span>
-    <h1>tu turno + cierre</h1>
-    <span class="mins">~5 min · 1:55–2:00</span>
+    <span class="path"><b>eyal@taller</b>:~ $ <b style="color:var(--ink)">negocio-y-cierre</b></span>
+    <h1>negocio + cierre</h1>
+    <span class="mins">~10 min</span>
+  </section>
+
+  <section class="biz">
+    <h2>no construyas 6 meses a ciegas</h2>
+    <div class="loop biz-loop">
+      <span class="node c-cyan">build</span>
+      <span class="cyc">→</span>
+      <span class="node c-amber">measure</span>
+      <span class="cyc">→</span>
+      <span class="node c-green">learn</span>
+      <span class="cyc loop-back">↺</span>
+    </div>
+    <p class="mvp-line">el <b>MVP</b> no es tu app fea — es tu <em>pregunta más barata</em></p>
+    <p class="dim biz-dim">en el curso profundizamos esta fase de negocio: <b>tracción, a/b testing y más</b> — cada quien valida su idea antes de escribir una línea.</p>
   </section>
 
   <section>
@@ -70,7 +106,7 @@
     <h2>un solo comando</h2>
     <div class="term">
       <div class="term-bar"><i class="r"></i><i class="y"></i><i class="g"></i><em>bash</em></div>
-      <pre><code>git clone [URL-DEL-REPO]
+      <pre><code>git clone https://github.com/eyalcumartesi/tnf-taller
 cd tnf-taller &amp;&amp; cat taller/PROMPTS.md</code></pre>
     </div>
     <div class="cmd-note">
@@ -80,7 +116,6 @@ cd tnf-taller &amp;&amp; cat taller/PROMPTS.md</code></pre>
   </section>
 
   <section>
-    <span class="mode escucha">~ escucha</span>
     <h2>lo que te llevas</h2>
     <div class="ladder closing-ladder">
       <div class="rung">
@@ -95,15 +130,13 @@ cd tnf-taller &amp;&amp; cat taller/PROMPTS.md</code></pre>
         <span class="step-num">03</span>
         <div class="body"><b>cuándo y cómo</b><span>más agentes ≠ mejor</span></div>
       </div>
-      <div class="rung">
-        <span class="step-num">04</span>
-        <div class="body"><b>menos deps</b><span>menos deps = menos dolor</span></div>
-      </div>
-      <div class="rung">
-        <span class="step-num">05</span>
-        <div class="body"><b>curiosidad</b><span>y sobre todo</span></div>
-      </div>
     </div>
+  </section>
+
+  <section class="curio">
+    <p class="curio-pre">si algo te sale mal o no conoces algo,<br><b>es parte del camino.</b></p>
+    <h1 class="curio-h1">la <em>curiosidad</em><br>lo hace todo más fácil</h1>
+    <p class="curio-sub">no te frustres por no saber. <b>pregunta, prueba, rómpelo</b> — así se aprende.</p>
   </section>
 
   <section class="closing">
@@ -116,7 +149,7 @@ cd tnf-taller &amp;&amp; cat taller/PROMPTS.md</code></pre>
 </div>
 
 <!-- navegación entre decks -->
-<a class="deck-nav prev" href="07-errores.html">◄ bloque anterior</a>
+<a class="deck-nav prev" href="07-herramientas.html">◄ bloque anterior</a>
 <a class="deck-nav hub"  href="index.html">agenda</a>
 <a class="deck-nav next" href="index.html">volver a la agenda ►</a>
 

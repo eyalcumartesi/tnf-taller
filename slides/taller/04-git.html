@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>git — taller · the new founder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+  /* ajuste local: lista compacta de comandos tipo terminal (filas escaneables) */
+  .cmdgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.45em 1.1em; text-align:left; margin-top:0.4em; font-family:"JetBrains Mono", monospace; }
+  .cmd { display:flex; align-items:baseline; gap:0.5em; background:var(--panel); border:1px solid var(--rule); border-left:3px solid var(--cyan); border-radius:7px; padding:0.42em 0.75em; transition:border-color .12s ease, background .12s ease; }
+  .cmd:hover { background:#161B27; }
+  .cmd .k { color:var(--cyan); font-weight:600; font-size:0.62em; white-space:nowrap; flex:0 0 auto; }
+  .cmd .a { color:var(--amber); font-size:0.6em; }
+  .cmd .d { color:var(--muted); font-size:0.58em; line-height:1.25; }
+  .cmd.c-green { border-left-color:var(--green); }
+  .cmd.c-green .k { color:var(--green); }
+  .cmd.c-amber { border-left-color:var(--amber); }
+  .cmd.c-amber .k { color:var(--amber); }
+  .cmdlist { display:flex; flex-direction:column; gap:0.45em; }
+  .cmdlist .cmd { justify-content:flex-start; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section class="block-header">
+    <span class="path"><b>eyal@taller</b>:~ $ <b style="color:var(--ink)">git</b></span>
+    <h1>git</h1>
+    <span class="mins">~15 min</span>
+  </section>
+
+  <section>
+    <h2 style="margin-bottom:0.1em;">git: lo que usas a diario</h2>
+    <p class="dim" style="margin-top:0;">no lo memorices — reconócelo. cada flecha te dice qué hace.</p>
+    <div class="cmdgrid">
+      <div class="cmd"><span class="k">clone</span><span class="a">→</span><span class="d">traer el repo</span></div>
+      <div class="cmd c-green"><span class="k">branch</span><span class="a">→</span><span class="d">trabajar sin romper lo que sirve</span></div>
+      <div class="cmd"><span class="k">status</span><span class="a">→</span><span class="d">ver qué cambió</span></div>
+      <div class="cmd c-green"><span class="k">switch / checkout</span><span class="a">→</span><span class="d">cambiar de branch</span></div>
+      <div class="cmd"><span class="k">add</span><span class="a">→</span><span class="d">marcar cambios</span></div>
+      <div class="cmd c-amber"><span class="k">push</span><span class="a">→</span><span class="d">subirlo a GitHub</span></div>
+      <div class="cmd"><span class="k">commit</span><span class="a">→</span><span class="d">guardar un cambio con nombre</span></div>
+      <div class="cmd c-amber"><span class="k">pull</span><span class="a">→</span><span class="d">traer lo nuevo</span></div>
+      <div class="cmd c-green"><span class="k">merge</span><span class="a">→</span><span class="d">unir branches</span></div>
+      <div class="cmd c-amber"><span class="k">amend</span><span class="a">→</span><span class="d">corregir el último commit</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 style="margin-bottom:0.15em;">git como grafo (+ avanzado)</h2>
+    <div class="cols" style="align-items:center; gap:1.4em;">
+      <div style="flex:1 1 52%; min-width:300px;">
+        <svg viewBox="0 0 440 250" style="width:100%; max-height:340px; height:auto; display:block;" font-family="JetBrains Mono, monospace">
+          <!-- remote / GitHub -->
+          <rect x="332" y="8" width="94" height="30" rx="6" fill="var(--panel)" stroke="var(--amber)" stroke-width="1.5"/>
+          <text x="379" y="28" fill="var(--amber)" font-size="14" text-anchor="middle">GitHub</text>
+
+          <!-- main branch -->
+          <line x1="28" y1="98" x2="412" y2="98" stroke="var(--rule)" stroke-width="2"/>
+          <!-- feature branch: fork down + merge up -->
+          <path d="M118 98 C 150 98, 155 158, 190 158" fill="none" stroke="var(--rule)" stroke-width="2"/>
+          <line x1="190" y1="158" x2="300" y2="158" stroke="var(--rule)" stroke-width="2"/>
+          <path d="M300 158 C 335 158, 305 98, 336 98" fill="none" stroke="var(--rule)" stroke-width="2"/>
+
+          <!-- push arrow to remote -->
+          <path d="M388 90 L 388 40" fill="none" stroke="var(--amber)" stroke-width="1.6" marker-end="url(#ah)"/>
+          <defs>
+            <marker id="ah" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="var(--amber)"/></marker>
+          </defs>
+
+          <!-- main commits -->
+          <circle cx="58" cy="98" r="8" fill="var(--panel)" stroke="var(--amber)" stroke-width="2.5"/>
+          <circle cx="118" cy="98" r="8" fill="var(--panel)" stroke="var(--amber)" stroke-width="2.5"/>
+          <circle cx="336" cy="98" r="8" fill="var(--panel)" stroke="var(--green)" stroke-width="2.5"/>
+          <circle cx="388" cy="98" r="8" fill="var(--panel)" stroke="var(--amber)" stroke-width="2.5"/>
+          <!-- feature commits -->
+          <circle cx="222" cy="158" r="8" fill="var(--panel)" stroke="var(--cyan)" stroke-width="2.5"/>
+          <circle cx="272" cy="158" r="8" fill="var(--panel)" stroke="var(--cyan)" stroke-width="2.5"/>
+
+          <!-- labels -->
+          <text x="58" y="76" fill="var(--amber)" font-size="13" text-anchor="middle">commit</text>
+          <text x="150" y="130" fill="var(--cyan)" font-size="13" text-anchor="middle">branch</text>
+          <text x="247" y="196" fill="var(--cyan)" font-size="13" text-anchor="middle">PR · review</text>
+          <text x="336" y="130" fill="var(--green)" font-size="13" text-anchor="middle">merge</text>
+          <text x="408" y="60" fill="var(--amber)" font-size="13" text-anchor="middle">push</text>
+        </svg>
+      </div>
+      <div style="flex:1 1 40%; min-width:230px;">
+        <div class="cmdlist">
+          <div class="cmd c-amber"><span class="k">PR</span><span class="a">→</span><span class="d">proponer y revisar cambios</span></div>
+          <div class="cmd"><span class="k">worktree</span><span class="a">→</span><span class="d">dos branches abiertos a la vez</span></div>
+          <div class="cmd c-green"><span class="k">stack</span><span class="a">→</span><span class="d">PRs pequeños encadenados (gh stack, nuevo)</span></div>
+        </div>
+        <p class="dim" style="margin-top:0.7em; font-size:0.62em; line-height:1.4;">gh stack nació justo porque los agentes generan código más rápido de lo que los humanos revisan.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE WORKTREES — movido desde bloque temporal. -->
+  <section>
+    <h2 style="margin-bottom:0.2em;">worktrees: agentes en paralelo sin pisarse</h2>
+    <div class="cols" style="align-items:center; gap:1.4em;">
+      <div style="flex:0 0 38%; max-width:300px;">
+        <!-- diagrama compacto: repo → 3 worktrees → merge -->
+        <svg viewBox="0 0 360 205" style="width:100%; max-height:220px; height:auto; display:block; margin:auto;" font-family="JetBrains Mono, monospace">
+          <rect x="130" y="6" width="100" height="34" rx="8" fill="var(--panel)" stroke="var(--amber)" stroke-width="1.5"/>
+          <text x="180" y="28" fill="var(--ink)" font-size="16" text-anchor="middle">repo</text>
+          <path d="M180 40 C 80 66, 60 74, 60 90" fill="none" stroke="var(--rule)" stroke-width="1.5"/>
+          <path d="M180 40 L 180 90" fill="none" stroke="var(--rule)" stroke-width="1.5"/>
+          <path d="M180 40 C 280 66, 300 74, 300 90" fill="none" stroke="var(--rule)" stroke-width="1.5"/>
+          <rect x="18" y="90" width="84" height="36" rx="8" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.5"/>
+          <text x="60" y="113" fill="var(--cyan)" font-size="14" text-anchor="middle">wt · A</text>
+          <rect x="138" y="90" width="84" height="36" rx="8" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.5"/>
+          <text x="180" y="113" fill="var(--cyan)" font-size="14" text-anchor="middle">wt · B</text>
+          <rect x="258" y="90" width="84" height="36" rx="8" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.5"/>
+          <text x="300" y="113" fill="var(--cyan)" font-size="14" text-anchor="middle">wt · C</text>
+          <path d="M60 126 C 60 156, 160 165, 180 170" fill="none" stroke="var(--green)" stroke-width="1.5"/>
+          <path d="M180 126 L 180 170" fill="none" stroke="var(--green)" stroke-width="1.5"/>
+          <path d="M300 126 C 300 156, 200 165, 180 170" fill="none" stroke="var(--green)" stroke-width="1.5"/>
+          <rect x="126" y="170" width="108" height="34" rx="8" fill="var(--panel)" stroke="var(--green)" stroke-width="1.5"/>
+          <text x="180" y="192" fill="var(--green)" font-size="16" text-anchor="middle">merge</text>
+        </svg>
+      </div>
+      <div style="flex:1;">
+        <ul style="font-size:0.9em; line-height:1.4;">
+          <li>mismo repo, <strong>directorios separados</strong>, branches separados</li>
+          <li>cada agente en su sandbox — cero conflictos, cero contaminación de contexto</li>
+          <li>yo los uso <strong>todos los días</strong>. va en tu global config (se los entrego)</li>
+          <li>techo real 2026: 4–8 agentes por dev. por encima de eso, el cuello de botella es TU review</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+
+</div>
+</div>
+
+<!-- navegación entre decks -->
+<a class="deck-nav prev" href="03-agente.html">◄ bloque anterior</a>
+<a class="deck-nav hub"  href="index.html">agenda</a>
+<a class="deck-nav next" href="05-harness.html">bloque siguiente ►</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, transition: 'fade', transitionSpeed: 'fast',
+    slideNumber: 'c/t', controls: true, progress: true, center: true,
+    width: 1280, height: 720, margin: 0.045, minScale: 0.2, maxScale: 2.8,
+    plugins: [ RevealMarkdown ]
+  });
+</script>
+<!-- navegación continua entre bloques (bordes → salta de deck). Cargar DESPUÉS del init. -->
+<script src="../shared/deck-nav.js"></script>
+</body>
+</html>

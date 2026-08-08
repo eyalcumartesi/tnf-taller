@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>qué es un agente — taller · the new founder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+  /* ── ajustes puntuales locales (todo cabe en 720px) ── */
+  .reveal h2 { margin: 0 0 0.5em; }
+  .reveal .mode { margin-bottom: 0.7em; }
+
+  /* enunciado grande de la definición */
+  .define {
+    background: var(--panel); border: 1px solid var(--rule);
+    border-left: 5px solid var(--amber); border-radius: 12px;
+    padding: 0.7em 1em; text-align: left; font-size: 0.92em; line-height: 1.4;
+    margin-bottom: 0.6em;
+  }
+  .define b { color: var(--amber); }
+  .define .lead { color: var(--cyan); font-weight: 600; }
+
+  /* comparación chatbot vs agente (semántica propia, sin rojo) */
+  .duo { display: flex; gap: 1em; align-items: stretch; text-align: left; }
+  .duo .side {
+    flex: 1; background: var(--panel); border: 1px solid var(--rule);
+    border-radius: 12px; padding: 0.85em 1em;
+  }
+  .duo .side.chat { border-top: 3px solid var(--cyan); }
+  .duo .side.ag   { border-top: 3px solid var(--green); background: rgba(159,232,112,0.05); }
+  .duo h4 { font-family: "Space Grotesk", sans-serif; margin: 0 0 0.35em; font-size: 0.9em; }
+  .duo .chat h4 { color: var(--cyan); }
+  .duo .ag h4   { color: var(--green); }
+  .duo .side p { font-size: 0.66em; color: var(--muted); margin: 0.15em 0 0; line-height: 1.4; }
+  .duo .side .tag {
+    font-family: "JetBrains Mono", monospace; font-size: 0.55em; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--muted); display: block; margin-top: 0.5em;
+  }
+  .duo .vs {
+    align-self: center; font-family: "JetBrains Mono", monospace;
+    color: var(--muted); font-size: 0.7em; flex: 0 0 auto;
+  }
+
+  /* ── loop circular (SVG) ── */
+  .loopwrap { display: flex; justify-content: center; margin-top: 0.2em; }
+  .loopwrap svg { width: 100%; max-width: 860px; height: auto; }
+  .loopwrap .n-txt { font-family: "JetBrains Mono", monospace; font-size: 17px; fill: var(--ink); font-weight: 600; }
+  .loopwrap .chip-txt { font-family: "JetBrains Mono", monospace; font-size: 16px; font-weight: 600; }
+
+  /* remate del stack de piezas */
+  .cards + .dim { margin-top: 0.7em; display: block; text-align: center; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section class="block-header">
+    <span class="path"><b>eyal@taller</b>:~ $ <b style="color:var(--ink)">que-es-un-agente</b></span>
+    <h1>qué es un agente y cómo funciona</h1>
+    <span class="mins">~15 min</span>
+  </section>
+
+  <section>
+    <h2>qué es un agente</h2>
+    <div class="define">
+      un agente es <span class="lead">un LLM en un loop</span>, con herramientas, que
+      <b>razona</b> y <b>actúa</b> hasta cumplir un objetivo.
+    </div>
+    <div class="duo">
+      <div class="side chat">
+        <h4>chatbot</h4>
+        <p>le preguntas, te <b style="color:var(--cyan)">responde</b>. Una vuelta: texto entra, texto sale. Tú ejecutas.</p>
+        <span class="tag">responde</span>
+      </div>
+      <div class="vs">vs</div>
+      <div class="side ag">
+        <h4>agente</h4>
+        <p>le das un objetivo y <b style="color:var(--green)">actúa</b>: usa herramientas, corre comandos, itera solo.</p>
+        <span class="tag">ejecuta en loop</span>
+      </div>
+    </div>
+    <p class="dim" style="margin-top:0.6em; text-align:center;">la clave: no solo responde — <b style="color:var(--green)">ejecuta</b>.</p>
+  </section>
+
+  <section>
+    <h2>el loop del agente</h2>
+    <div class="loopwrap">
+      <svg viewBox="0 0 1000 430" role="img" aria-label="ciclo del agente: objetivo, piensa, actúa, observa, ¿done?, repite o listo">
+        <defs>
+          <marker id="ah-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#FFB454"/>
+          </marker>
+          <marker id="ah-cyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#5CCFE6"/>
+          </marker>
+          <marker id="ah-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#9FE870"/>
+          </marker>
+        </defs>
+
+        <!-- ring segments (clockwise): piensa(left)->actúa(top)->observa(right)->¿done?(bottom) -->
+        <path d="M375 190 A125 125 0 0 1 500 65"  fill="none" stroke="#5CCFE6" stroke-width="2.5" marker-end="url(#ah-cyan)"/>
+        <path d="M500 65  A125 125 0 0 1 625 190" fill="none" stroke="#FFB454" stroke-width="2.5" marker-end="url(#ah-amber)"/>
+        <path d="M625 190 A125 125 0 0 1 500 315" fill="none" stroke="#9FE870" stroke-width="2.5" marker-end="url(#ah-green)"/>
+        <!-- repite: ¿done?(bottom) -> piensa(left) -->
+        <path d="M500 315 A125 125 0 0 1 375 190" fill="none" stroke="#6C7380" stroke-width="2.5" stroke-dasharray="6 6" marker-end="url(#ah-green)"/>
+        <text x="333" y="292" text-anchor="middle" fill="#6C7380" font-family="JetBrains Mono, monospace" font-size="14">no → repite</text>
+
+        <!-- entrada: objetivo -> piensa -->
+        <line x1="150" y1="190" x2="272" y2="190" stroke="#FFB454" stroke-width="2.5" marker-end="url(#ah-amber)"/>
+        <!-- salida: ¿done? -> listo -->
+        <line x1="500" y1="343" x2="500" y2="392" stroke="#9FE870" stroke-width="2.5" marker-end="url(#ah-green)"/>
+        <text x="516" y="375" fill="#9FE870" font-family="JetBrains Mono, monospace" font-size="14">sí</text>
+
+        <!-- chip objetivo -->
+        <g>
+          <rect x="35" y="163" width="115" height="54" rx="10" fill="#131722" stroke="#FFB454"/>
+          <text class="chip-txt" x="92" y="195" text-anchor="middle" fill="#FFB454">objetivo</text>
+        </g>
+        <!-- chip listo -->
+        <g>
+          <rect x="418" y="392" width="164" height="38" rx="19" fill="rgba(159,232,112,0.10)" stroke="#9FE870"/>
+          <text class="chip-txt" x="500" y="417" text-anchor="middle" fill="#9FE870">✓ done · listo</text>
+        </g>
+
+        <!-- nodo piensa (left) -->
+        <g>
+          <rect x="272" y="163" width="206" height="54" rx="27" fill="#131722" stroke="#5CCFE6"/>
+          <text class="n-txt" x="375" y="196" text-anchor="middle">piensa / decide</text>
+        </g>
+        <!-- nodo actúa (top) -->
+        <g>
+          <rect x="382" y="38" width="236" height="54" rx="27" fill="#131722" stroke="#FFB454"/>
+          <text class="n-txt" x="500" y="71" text-anchor="middle">actúa · herramienta</text>
+        </g>
+        <!-- nodo observa (right) -->
+        <g>
+          <rect x="522" y="163" width="228" height="54" rx="27" fill="#131722" stroke="#9FE870"/>
+          <text class="n-txt" x="636" y="196" text-anchor="middle">observa resultado</text>
+        </g>
+        <!-- nodo ¿done? (bottom) -->
+        <g>
+          <rect x="388" y="288" width="224" height="54" rx="27" fill="#131722" stroke="#6C7380"/>
+          <text class="n-txt" x="500" y="321" text-anchor="middle">¿cumple el done?</text>
+        </g>
+      </svg>
+    </div>
+    <p class="dim" style="margin-top:0.4em; text-align:center;">repite el ciclo hasta que se cumple el <b style="color:var(--green)">criterio de done</b>.</p>
+  </section>
+
+  <section>
+    <h2>las piezas de un agente</h2>
+    <div class="cards" style="--n:4;">
+      <div class="card c-cyan">
+        <span class="icon">🧠</span>
+        <div class="t">modelo</div>
+        <div class="d">el cerebro que razona y decide el siguiente paso.</div>
+      </div>
+      <div class="card c-amber">
+        <span class="icon">🔧</span>
+        <div class="t">herramientas</div>
+        <div class="d">sus manos: MCP, tests, browser, comandos.</div>
+      </div>
+      <div class="card">
+        <span class="icon">📓</span>
+        <div class="t">memoria / contexto</div>
+        <div class="d">qué recuerda mientras trabaja: historial y estado.</div>
+      </div>
+      <div class="card c-green">
+        <span class="icon">🎯</span>
+        <div class="t">objetivo + done</div>
+        <div class="d">a dónde va y el criterio para saber cuándo parar.</div>
+      </div>
+    </div>
+    <span class="dim">el <b style="color:var(--ink)">harness</b> es lo que envuelve y gobierna todo esto.</span>
+  </section>
+
+</div>
+</div>
+
+<!-- navegación entre decks -->
+<a class="deck-nav prev" href="02-componentes.html">◄ bloque anterior</a>
+<a class="deck-nav hub"  href="index.html">agenda</a>
+<a class="deck-nav next" href="04-git.html">bloque siguiente ►</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, transition: 'fade', transitionSpeed: 'fast',
+    slideNumber: 'c/t', controls: true, progress: true, center: true,
+    width: 1280, height: 720, margin: 0.045, minScale: 0.2, maxScale: 2.8,
+    plugins: [ RevealMarkdown ]
+  });
+</script>
+<!-- navegación continua entre bloques (bordes → salta de deck). Cargar DESPUÉS del init. -->
+<script src="../shared/deck-nav.js"></script>
+</body>
+</html>

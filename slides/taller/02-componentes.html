@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>componentes de una app real — taller · the new founder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+  /* ── tabla moderna "flujo usuario→metal": punto ciego + quién lo paga ── */
+  .ft-slide h2 { margin: 0 0 0.08em; font-size: 1.15em; }
+  .ft-slide .mode { margin-bottom: 0.4em; }
+  .ft-slide .sub {
+    color: var(--muted); font-size: 0.4em; margin: 0 0 0.5em;
+    font-family: "JetBrains Mono", monospace;
+  }
+  .ft-slide .sub b { color: var(--ink); }
+
+  .ft-wrap { display: flex; gap: 0.6em; align-items: stretch; }
+  .ft-wrap .stack-rail { font-size: 0.34em; }
+  .ft { flex: 1; display: flex; flex-direction: column; gap: 0.22em; min-width: 0; }
+
+  .ft-head, .ft-row { display: grid; grid-template-columns: 1.05fr 1.7fr 1.5fr; gap: 0.4em; }
+  .ft-head > span {
+    font-family: "JetBrains Mono", monospace; font-size: 0.38em; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--muted); padding: 0 0.6em; text-align: left;
+  }
+  .ft-head .h-no  { color: var(--red); }
+  .ft-head .h-fix { color: var(--amber); }
+
+  .ft-row > div {
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 8px;
+    padding: 0.42em 0.7em; min-width: 0; transition: background .12s ease; text-align: left;
+  }
+  .ft-row .capa b, .ft-row .capa .hint { display: block; }
+  .ft-row:hover > div { background: #161B27; }
+  .ft-row .capa { border-left: 4px solid var(--accent, var(--amber)); }
+  .ft-row .capa b { font-family: "Space Grotesk", sans-serif; color: var(--ink); font-size: 0.55em; line-height: 1.1; }
+  .ft-row .capa .hint { color: var(--muted); font-family: "JetBrains Mono", monospace; font-size: 0.4em; margin-top: 0.06em; }
+  .ft-row .no, .ft-row .fix { font-size: 0.46em; line-height: 1.26; overflow-wrap: anywhere; }
+  .ft-row .no  { color: var(--ink); }
+  .ft-row .fix { color: var(--ink); }
+  .ft-row .no::before  { content: "✗ "; color: var(--red);   font-weight: 700; }
+  .ft-row .fix::before { content: "→ "; color: var(--amber); font-weight: 700; }
+  .ft-row .fix b { color: var(--amber); font-weight: 600; }
+  .ft-row.c-green .capa { --accent: var(--green); }
+  .ft-row.c-cyan  .capa { --accent: var(--cyan); }
+  .ft-row.c-amber .capa { --accent: var(--amber); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section class="block-header">
+    <span class="path"><b>eyal@taller</b>:~ $ <b style="color:var(--ink)">componentes-app</b></span>
+    <h1>componentes de una app real</h1>
+    <span class="mins">~10 min</span>
+  </section>
+
+  <section class="ft-slide">
+    <h2>en cada capa hay algo que no estás viendo</h2>
+    <div class="ft-wrap">
+      <div class="stack-rail"><span>usuario</span><div class="bar"></div><span>metal</span></div>
+      <div class="ft">
+        <div class="ft-head">
+          <span>capa</span>
+          <span class="h-no">lo que no se considera</span>
+          <span class="h-fix">quién lo soluciona · vendors</span>
+        </div>
+
+        <div class="ft-row c-green">
+          <div class="capa"><b>mantenimiento</b><span class="hint">observabilidad</span></div>
+          <div class="no">no sabes si algo se rompió en prod ni qué usan</div>
+          <div class="fix">Sentry · PostHog · Datadog · Grafana</div>
+        </div>
+
+        <div class="ft-row c-green">
+          <div class="capa"><b>infraestructura</b><span class="hint">hosting · deploy</span></div>
+          <div class="no">env por entorno (dev/prod) · secretos fuera del repo · dominio/DNS · autoescala</div>
+          <div class="fix">Vercel · Railway · AWS · Cloudflare · Doppler</div>
+        </div>
+
+        <div class="ft-row c-cyan">
+          <div class="capa"><b>frontend + UI</b><span class="hint">lo que ve el user</span></div>
+          <div class="no">estados: loading / error / vacío — solo el happy path</div>
+          <div class="fix">shadcn/ui · Radix · TanStack Query</div>
+        </div>
+
+        <div class="ft-row c-cyan">
+          <div class="capa"><b>HTTP</b><span class="hint">cliente ↔ servidor</span></div>
+          <div class="no">reverse proxy · load balancing · API gateway · TLS/HTTPS</div>
+          <div class="fix">Nginx · Cloudflare · Kong · Traefik</div>
+        </div>
+
+        <div class="ft-row c-cyan">
+          <div class="capa"><b>backend / API</b><span class="hint">la lógica</span></div>
+          <div class="no">validar en el server · authz · manejo de errores</div>
+          <div class="fix">tRPC · Zod · Clerk · Sentry</div>
+        </div>
+
+        <div class="ft-row c-cyan">
+          <div class="capa"><b>bases de datos</b><span class="hint">los datos</span></div>
+          <div class="no">schema · índices · migraciones · backups</div>
+          <div class="fix">Prisma · Drizzle · Supabase · Neon</div>
+        </div>
+
+        <div class="ft-row c-amber">
+          <div class="capa"><b>hardware</b><span class="hint">cómputo</span></div>
+          <div class="no">límites de memoria y cómputo</div>
+          <div class="fix">serverless (Vercel/Lambda) · Fly.io · Modal · Replicate</div>
+        </div>
+      </div>
+    </div>
+    <p class="dim" style="margin-top:0.4em; text-align:center; font-size:0.6em;">no lo dominas — lo <b style="color:var(--ink)">nombras</b> y se lo <b style="color:var(--ink)">delegas al agente a propósito</b>. el que no sabe que existe, no lo pide.</p>
+  </section>
+
+  <section>
+    <span class="mode hands">⚡ pregunta al grupo</span>
+    <h1 style="color:var(--amber)">¿cuántos han deployado<br>algo que alguien más usó?</h1>
+  </section>
+
+</div>
+</div>
+
+<!-- navegación entre decks -->
+<a class="deck-nav prev" href="01-introduccion.html">◄ bloque anterior</a>
+<a class="deck-nav hub"  href="index.html">agenda</a>
+<a class="deck-nav next" href="03-agente.html">bloque siguiente ►</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, transition: 'fade', transitionSpeed: 'fast',
+    slideNumber: 'c/t', controls: true, progress: true, center: true,
+    width: 1280, height: 720, margin: 0.045, minScale: 0.2, maxScale: 2.8,
+    plugins: [ RevealMarkdown ]
+  });
+</script>
+<!-- navegación continua entre bloques (bordes → salta de deck). Cargar DESPUÉS del init. -->
+<script src="../shared/deck-nav.js"></script>
+</body>
+</html>

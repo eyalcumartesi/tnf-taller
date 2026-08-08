@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>el harness — taller · the new founder</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/theme.css">
+<style>
+  /* ── diagrama de arquitectura del harness: cajas anidadas que se solapan y conectan ── */
+  .arch { max-width: 1140px; margin: 0.3em auto 0; text-align: left; }
+  .abox { position: relative; border: 1.6px solid var(--bc); border-radius: 16px; background: var(--bg); }
+  .abox > .atag {
+    position: absolute; top: 0; left: 1.05em; transform: translateY(-52%);
+    background: var(--bg); padding: 0 0.5em; color: var(--bc);
+    font-family: "JetBrains Mono", monospace; font-size: 0.46em; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
+  }
+  .abox > .ahint {
+    position: absolute; top: 0; right: 1.05em; transform: translateY(-52%);
+    background: var(--bg); padding: 0 0.5em; color: var(--muted);
+    font-family: "JetBrains Mono", monospace; font-size: 0.4em; white-space: nowrap;
+  }
+  .arch .harness { --bc: var(--amber); padding: 1.7em 1.3em 1.4em; }
+  .arch .inner { display: flex; align-items: center; gap: 0; }
+  .arch .tooling { --bc: var(--cyan); flex: 0 0 30%; padding: 1.7em 1em 1.3em; margin-right: -20px; z-index: 1; }
+  .arch .agent   { --bc: var(--green); flex: 1; padding: 1.7em 1.25em 1.3em; margin-left: -20px; z-index: 1; }
+  .arch .usa {
+    position: relative; z-index: 5; flex: 0 0 auto;
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 100px;
+    padding: 0.3em 0.7em; margin: 0 -8px; text-align: center;
+    font-family: "JetBrains Mono", monospace; font-size: 0.42em; color: var(--amber);
+    letter-spacing: 0.06em; box-shadow: 0 0 0 5px var(--bg);
+  }
+  .arch .tool-list { font-family: "JetBrains Mono", monospace; font-size: 0.62em; line-height: 2.1; color: var(--ink); }
+  .arch .tool-list b { color: var(--cyan); font-weight: 600; }
+  /* loop de memoria dentro del agente */
+  .memloop { position: relative; border: 1.5px dashed var(--rule); border-radius: 12px; padding: 1.7em 1.1em 1.3em; }
+  .memloop > .mtag {
+    position: absolute; top: 0; left: 1.05em; transform: translateY(-52%); background: var(--bg);
+    padding: 0 0.5em; color: var(--muted); font-family: "JetBrains Mono", monospace;
+    font-size: 0.42em; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .memcycle { display: flex; align-items: center; justify-content: center; gap: 0.5em; }
+  .mpill {
+    display: inline-flex; align-items: center; gap: 0.4em;
+    background: var(--panel); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 0.45em 0.9em; font-family: "JetBrains Mono", monospace; font-size: 0.66em; color: var(--ink);
+  }
+  .mpill .e { font-size: 1.15em; }
+  .mpill.mem { border-color: var(--green); }
+  .mpill.ops { border-color: var(--amber); }
+  .mpill.ops b { color: var(--amber); font-weight: 600; }
+  .cyc-ico { display: inline-flex; }
+
+  /* ── marcador de capa: "recorremos el mapa, capa N/4" ── */
+  .capmark {
+    font-family: "JetBrains Mono", monospace; font-size: 0.42em; letter-spacing: 0.08em;
+    color: var(--muted); display: inline-block; border: 1px solid var(--rule);
+    border-radius: 100px; padding: 0.3em 0.95em; margin-bottom: 0.7em;
+  }
+  .capmark b { color: var(--amber); font-weight: 600; }
+  .capmark.t2 b { color: var(--cyan); }
+  .capmark.t3 b { color: var(--green); }
+
+  /* hilo del demo: "en vivo" al pie de cada capa */
+  .live {
+    display: flex; align-items: center; gap: 0.5em; margin-top: 0.55em;
+    font-family: "JetBrains Mono", monospace; font-size: 0.52em; text-align: left;
+    background: rgba(159,232,112,0.07); border: 1px solid var(--rule);
+    border-left: 3px solid var(--green); border-radius: 8px; padding: 0.5em 0.8em; color: var(--ink);
+  }
+  .live b { color: var(--green); font-weight: 600; }
+  .live code { font-size: 0.92em; }
+
+  /* tabla de decisión: skill / command / subagente / MCP */
+  .dtable { width: 100%; border-collapse: collapse; margin-top: 0.35em; text-align: left; }
+  .dtable th {
+    font-family: "JetBrains Mono", monospace; font-size: 0.46em; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--muted); font-weight: 600; padding: 0.25em 0.7em 0.4em;
+    border-bottom: 1px solid var(--rule);
+  }
+  .dtable th.yes { color: var(--green); } .dtable th.no { color: var(--red); }
+  .dtable td { font-size: 0.55em; color: var(--ink); padding: 0.5em 0.7em; border-bottom: 1px solid var(--rule); vertical-align: top; line-height: 1.32; }
+  .dtable td.p { font-family: "JetBrains Mono", monospace; font-weight: 600; color: var(--ac); white-space: nowrap; border-left: 3px solid var(--ac); }
+  .dtable td.p .s { display: block; font-family: "Inter", sans-serif; font-weight: 400; color: var(--muted); font-size: 0.82em; margin-top: 0.15em; white-space: normal; }
+  .dtable td strong { color: var(--ink); font-weight: 600; }
+  .dtable tr.skill { --ac: var(--green); } .dtable tr.cmd { --ac: var(--cyan); }
+  .dtable tr.sub { --ac: var(--amber); }  .dtable tr.mcp { --ac: var(--red); }
+
+  /* bloque de código compacto tipo terminal */
+  .term {
+    font-family: "JetBrains Mono", monospace; font-size: 0.56em; text-align: left;
+    background: var(--panel-2); border: 1px solid var(--rule); border-radius: 8px;
+    padding: 0.6em 0.9em; color: var(--ink); line-height: 1.7;
+  }
+  .term .p { color: var(--muted); }
+  .term .c { color: var(--cyan); }
+  .term .g { color: var(--green); }
+
+  /* checklist del harness completo */
+  .hlist { text-align: left; margin-top: 0.4em; display: flex; flex-direction: column; gap: 0.4em; }
+  .hrow {
+    display: flex; align-items: baseline; gap: 0.7em; font-family: "JetBrains Mono", monospace;
+    background: var(--panel); border: 1px solid var(--rule); border-left: 3px solid var(--ac);
+    border-radius: 8px; padding: 0.45em 0.8em;
+  }
+  .hrow .hn { color: var(--ac); font-weight: 600; font-size: 0.6em; flex: 0 0 auto; }
+  .hrow .hd { color: var(--ink); font-size: 0.6em; }
+  .hrow .hd b { color: var(--ac); font-weight: 600; }
+  .hrow .hx { margin-left: auto; color: var(--muted); font-size: 0.52em; white-space: nowrap; }
+  .hrow.l1 { --ac: var(--amber); } .hrow.l2 { --ac: var(--cyan); }
+  .hrow.l3 { --ac: var(--red); }   .hrow.l4 { --ac: var(--green); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+  <section class="block-header">
+    <span class="path"><b>eyal@taller</b>:~ $ <b style="color:var(--ink)">harness</b></span>
+    <h1>el harness</h1>
+    <span class="mins">~20 min · slides compartidos con el curso</span>
+  </section>
+
+  <section>
+    <div class="metric">
+      <div class="big" style="font-size:4.5em">🐎</div>
+    </div>
+    <h2 style="margin-top:0.2em">el caballo ya tiene la fuerza.</h2>
+    <blockquote style="margin:0.6em auto 0">sin arnés y sin riendas, esa fuerza se desperdicia.</blockquote>
+  </section>
+
+  <!-- ══ diagrama de arquitectura: el mapa que vamos a recorrer ══ -->
+  <section>
+    <h2 style="margin:0 0 0.2em">el harness, por dentro</h2>
+    <div class="arch">
+      <div class="abox harness">
+        <span class="atag">ai harness</span>
+        <span class="ahint">envuelve y gobierna todo</span>
+        <div class="inner">
+
+          <!-- tooling: lo que el agente usa -->
+          <div class="abox tooling">
+            <span class="atag">tooling</span>
+            <div class="tool-list"><b>MCP</b> · tests<br><b>browser</b> · skills</div>
+          </div>
+
+          <!-- conexión: el agente usa el tooling (cajas que se solapan) -->
+          <div class="usa">◄ usa ►</div>
+
+          <!-- agente: usa el tooling, tiene su loop de memoria -->
+          <div class="abox agent">
+            <span class="atag">agente</span>
+            <span class="ahint">razona y actúa</span>
+            <div class="memloop">
+              <span class="mtag">loop de memoria</span>
+              <div class="memcycle">
+                <span class="mpill mem"><span class="e">🧠</span> memoria</span>
+                <span class="cyc-ico" aria-hidden="true">
+                  <svg viewBox="0 0 64 38" width="60" height="36" fill="none">
+                    <!-- arco superior: memoria → LLMOps -->
+                    <path d="M12 14 A 18 11 0 0 1 52 14" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/>
+                    <polygon points="52,14 43,9 46,17" fill="var(--amber)"/>
+                    <!-- arco inferior: LLMOps → memoria -->
+                    <path d="M52 24 A 18 11 0 0 1 12 24" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/>
+                    <polygon points="12,24 21,29 18,21" fill="var(--amber)"/>
+                  </svg>
+                </span>
+                <span class="mpill ops"><span class="e">⚙️</span> <b>LLMOps</b></span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <p class="dim" style="text-align:center;margin:0.55em 0 0">este es el mapa. ahora lo <strong>seteamos capa por capa</strong>, de afuera hacia adentro → <span style="color:var(--amber)">gobierno</span> · <span style="color:var(--cyan)">tooling</span> · <span style="color:var(--green)">el loop</span>.</p>
+  </section>
+
+  <!-- ══ el demo: lo armamos juntos, capa por capa ══ -->
+  <section>
+    <span class="mode hands">🖐 demo · follow-along</span>
+    <h2 style="margin:0 0 0.2em">armamos un harness completo, juntos</h2>
+    <p class="dim" style="margin:0 0 0.5em">no teoría suelta — cada capa la seteamos en vivo, en tu repo, hasta cerrar el <strong>critique pattern</strong>.</p>
+    <div class="flow" style="margin-top:0.3em">
+      <div class="step"><span class="n">capa 1</span><span class="l">config</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="n">capa 2</span><span class="l">tooling</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="n">e2e</span><span class="l">Playwright</span></div>
+      <div class="arrow">→</div>
+      <div class="step"><span class="n">capa 3·4</span><span class="l">critique</span></div>
+    </div>
+    <div class="live" style="margin-top:0.6em">📋 <span><b>copy-paste:</b> todo vive en <code>taller/CHEATSHEET.md</code> — ábrelo y sigue paso a paso, nada de tipear desde la pantalla.</span></div>
+    <p class="dim" style="text-align:center;margin:0.5em 0 0;font-size:0.6em">base en la doc oficial de ago 2026 · <span style="color:var(--ink)">regla madre: déjalo lean, cada pieza se gana su lugar.</span></p>
+  </section>
+
+  <!-- ══ CAPA 1 · GOBIERNO: la config ══ -->
+  <section>
+    <span class="capmark"><b>capa 1/4</b> · gobierno — el borde ámbar del diagrama</span>
+    <h2 style="margin:0 0 0.15em">config: las reglas del harness</h2>
+    <p class="dim" style="margin:0 0 0.4em">no son comandos ni tools — es <strong>cómo se comporta</strong> el agente antes de tocar nada.</p>
+    <div class="cards" style="--n:2; margin-top:0.3em;">
+      <div class="card">
+        <span class="icon">🌐</span>
+        <div class="t">config global</div>
+        <div class="d">tu forma de trabajar — aplica a <strong>todos</strong> tus repos. estilo, idioma, lo que nunca quieres.</div>
+      </div>
+      <div class="card c-cyan">
+        <span class="icon">📁</span>
+        <div class="t">CLAUDE.md del proyecto</div>
+        <div class="d"><strong>&lt; 500 líneas.</strong> solo lo que Claude fallaría sin saber: cómo se corre, se testea, convenciones.</div>
+      </div>
+    </div>
+    <div class="live">🖐 <span><b>en vivo:</b> <code>/init</code> genera el <code>CLAUDE.md</code>; lo podamos a lo esencial: cómo se corre, se testea, convenciones.</span></div>
+  </section>
+
+  <!-- ══ CAPA 2 · TOOLING: skill vs command vs subagente vs MCP ══ -->
+  <section>
+    <span class="capmark t2"><b>capa 2/4</b> · tooling — la caja cian del diagrama</span>
+    <h2 style="margin:0 0 0.1em">skill · command · subagente · MCP: ¿cuál?</h2>
+    <p class="dim" style="margin:0 0 0.1em">la regla es por <strong>forma, no por tamaño</strong>:</p>
+    <table class="dtable">
+      <thead>
+        <tr><th>primitivo</th><th class="yes">✓ úsalo para</th><th class="no">✗ no para</th></tr>
+      </thead>
+      <tbody>
+        <tr class="cmd">
+          <td class="p">/command<span class="s">un prompt que repites</span></td>
+          <td>una sola instrucción: correr tests, formatear</td>
+          <td>si necesita pasos o archivos → es un skill</td>
+        </tr>
+        <tr class="skill">
+          <td class="p">skill<span class="s">workflow multi-paso, auto-carga</span></td>
+          <td><strong>armar un PR</strong> · convenciones del repo · "cómo se corre esto"</td>
+          <td>algo que Claude ya hace bien · docs que cambian seguido</td>
+        </tr>
+        <tr class="sub">
+          <td class="p">subagente<span class="s">contexto fresco, en paralelo</span></td>
+          <td>explorar codebase · research · <strong>criticar el diff</strong></td>
+          <td>si no necesita contexto fresco, pagas aislamiento de más</td>
+        </tr>
+        <tr class="mcp">
+          <td class="p">MCP<span class="s">sistema externo, vivo</span></td>
+          <td>GitHub · base de datos · <strong>Playwright</strong></td>
+          <td>solo leer/mostrar → usa web search</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="live">🖐 <span><b>en vivo:</b> un skill <code>crear-pr</code> — stage, commit, push y abre el PR. lo que hacías a mano, una vez.</span></div>
+  </section>
+
+  <!-- ══ CAPA 2 · e2e con Playwright ══ -->
+  <section>
+    <span class="capmark t2"><b>capa 2/4</b> · tooling — el e2e que faltaba</span>
+    <h2 style="margin:0 0 0.15em">e2e en el harness: Playwright</h2>
+    <p class="dim" style="margin:0 0 0.4em">un <strong>MCP</strong> que le da un browser real al agente — deja de adivinar la UI y la <strong>verifica</strong>.</p>
+    <div class="term"><span class="p">$</span> claude mcp add playwright <span class="p">--</span> npx <span class="p">-y</span> <span class="c">@playwright/mcp@latest</span></div>
+    <ul style="margin-top:0.45em;">
+      <li>lee el <strong>accessibility tree</strong>, no screenshots pixel a pixel → selectores estables</li>
+      <li>abre la página, navega, verifica el comportamiento real y saca captura</li>
+      <li>se <strong>auto-verifica</strong>: si no coincide con lo esperado, itera solo</li>
+    </ul>
+    <div class="live">🖐 <span><b>en vivo:</b> "escribe un e2e del login y córrelo" — el agente lo escribe contra la página real y pasa a la primera.</span></div>
+  </section>
+
+  <!-- ══ CAPA 3 + 4 · agente y su loop: critique pattern (el cierre del demo) ══ -->
+  <section>
+    <span class="capmark t3"><b>capa 3 → 4</b> · el agente (ya lo viste) y su loop LLMOps</span>
+    <h2 style="margin:0 0 0.12em">el cierre: critique pattern</h2>
+    <p class="dim" style="margin:0 0 0.35em">nunca aceptes el primer output · un <strong>subagente fresco</strong> critica sin el sesgo de quien lo escribió.</p>
+    <div class="ladder">
+      <div class="rung" style="--accent:var(--amber)">
+        <span class="step-num">4</span>
+        <div class="body"><b>solo ahí revisas tú</b><span>llegas a algo ya pulido</span></div>
+      </div>
+      <div class="rung" style="--accent:var(--green)">
+        <span class="step-num" style="background:rgba(159,232,112,0.14);color:var(--green)">3</span>
+        <div class="body"><b>se corrige con la crítica</b><span>el output se rehace con el feedback</span></div>
+      </div>
+      <div class="rung" style="--accent:var(--cyan)">
+        <span class="step-num" style="background:rgba(92,207,230,0.14);color:var(--cyan)">2</span>
+        <div class="body"><b>un subagente critica</b><span>ve solo el diff y los criterios · nativo: <code>/code-review</code></span></div>
+      </div>
+      <div class="rung">
+        <span class="step-num">1</span>
+        <div class="body"><b>el agente construye</b><span>produce el primer intento</span></div>
+      </div>
+    </div>
+    <div class="live">🖐 <span><b>en vivo:</b> <code>/code-review</code> sobre el diff del PR — el subagente encuentra lo que el primero no vio. eso es el loop.</span></div>
+  </section>
+
+  <!-- ══ el harness completo: lo que armamos + la regla lean ══ -->
+  <section>
+    <span class="mode hands">🖐 lo que armamos</span>
+    <h2 style="margin:0 0 0.2em">tu harness completo</h2>
+    <div class="hlist">
+      <div class="hrow l1"><span class="hn">capa 1</span><span class="hd"><b>config</b> · CLAUDE.md &lt; 500 líneas</span><span class="hx">las reglas</span></div>
+      <div class="hrow l2"><span class="hn">capa 2</span><span class="hd"><b>tooling</b> · 1 skill <code>crear-pr</code> + Playwright MCP</span><span class="hx">lo que usa</span></div>
+      <div class="hrow l3"><span class="hn">e2e</span><span class="hd"><b>Playwright</b> · verifica la UI, no la adivina</span><span class="hx">browser real</span></div>
+      <div class="hrow l4"><span class="hn">loop</span><span class="hd"><b>critique</b> · subagente que critica el diff</span><span class="hx">mejor retorno</span></div>
+    </div>
+    <blockquote style="margin:0.5em auto 0">3-5 skills · 2-4 MCP · 1-2 subagentes. cada dep es una promesa de mantenimiento — déjalo lean.</blockquote>
+    <p class="dim" style="text-align:center;margin:0.5em 0 0;font-size:0.6em">critique con <strong>1 agente</strong>. en el próximo bloque lo <strong>escalamos a varios</strong>.</p>
+  </section>
+
+</div>
+</div>
+
+<!-- navegación entre decks -->
+<a class="deck-nav prev" href="04-git.html">◄ bloque anterior</a>
+<a class="deck-nav hub"  href="index.html">agenda</a>
+<a class="deck-nav next" href="06-orquestar.html">bloque siguiente ►</a>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, transition: 'fade', transitionSpeed: 'fast',
+    slideNumber: 'c/t', controls: true, progress: true, center: true,
+    width: 1280, height: 720, margin: 0.045, minScale: 0.2, maxScale: 2.8,
+    plugins: [ RevealMarkdown ]
+  });
+</script>
+<!-- navegación continua entre bloques (bordes → salta de deck). Cargar DESPUÉS del init. -->
+<script src="../shared/deck-nav.js"></script>
+</body>
+</html>

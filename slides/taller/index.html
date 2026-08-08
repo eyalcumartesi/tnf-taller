@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>de la idea al producto con AI — taller · the new founder</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #0B0E14;
+    --ink: #E8E3D8;
+    --amber: #FFB454;      /* fósforo ámbar: modo escucha / acentos */
+    --cyan: #5CCFE6;       /* modo demo */
+    --green: #9FE870;      /* modo hands-on / "funcionó" */
+    --muted: #6C7380;
+    --panel: #131722;
+    --rule: #1F2635;
+  }
+
+  .reveal-viewport { background: var(--bg); }
+  .reveal { font-family: "Inter", sans-serif; color: var(--ink); font-size: 34px; }
+  .reveal h1, .reveal h2, .reveal h3 {
+    font-family: "Space Grotesk", sans-serif;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: -0.02em;
+  }
+  .reveal h1 { font-size: 2.2em; font-weight: 700; }
+  .reveal h2 { font-size: 1.5em; font-weight: 700; }
+  .reveal h3 { font-size: 1.1em; font-weight: 500; color: var(--amber); }
+  .reveal p, .reveal li { line-height: 1.5; }
+  .reveal ul { list-style: none; margin-left: 0; }
+  .reveal ul li { padding-left: 1.1em; position: relative; margin-bottom: 0.35em; }
+  .reveal ul li::before { content: "→"; position: absolute; left: 0; color: var(--amber); font-family: "JetBrains Mono", monospace; }
+  .reveal strong { color: var(--amber); font-weight: 600; }
+  .reveal code {
+    font-family: "JetBrains Mono", monospace;
+    background: var(--panel);
+    padding: 0.08em 0.35em;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: var(--cyan);
+  }
+  .reveal pre {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    width: 100%;
+    box-shadow: none;
+  }
+  .reveal pre code { background: transparent; color: var(--ink); padding: 0.8em; }
+  .reveal table { font-size: 0.75em; }
+  .reveal table th { color: var(--amber); border-bottom: 2px solid var(--rule); font-family: "Space Grotesk", sans-serif; }
+  .reveal table td { border-bottom: 1px solid var(--rule); }
+  .reveal blockquote {
+    border-left: 3px solid var(--amber);
+    background: var(--panel);
+    padding: 0.5em 1em;
+    font-style: normal;
+    width: 90%;
+  }
+
+  /* ── firma del deck: header de bloque estilo prompt de terminal ── */
+  .block-header {
+    font-family: "JetBrains Mono", monospace;
+    text-align: left;
+  }
+  .block-header .path {
+    color: var(--muted);
+    font-size: 0.45em;
+    display: block;
+    margin-bottom: 1.2em;
+  }
+  .block-header .path b { color: var(--green); font-weight: 600; }
+  .block-header h1 { font-size: 1.6em; }
+  .block-header .mins {
+    color: var(--muted);
+    font-size: 0.4em;
+    display: block;
+    margin-top: 1.5em;
+  }
+
+  /* ── badges de modo ── */
+  .mode {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.42em;
+    padding: 0.35em 0.9em;
+    border-radius: 100px;
+    display: inline-block;
+    margin-bottom: 1.2em;
+    letter-spacing: 0.05em;
+  }
+  .mode.escucha { color: var(--amber); border: 1px solid var(--amber); }
+  .mode.demo    { color: var(--cyan);  border: 1px solid var(--cyan); }
+  .mode.hands   { color: var(--green); border: 1px solid var(--green); background: rgba(159,232,112,0.08); }
+
+  .check {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.55em;
+    color: var(--green);
+    border: 1px dashed var(--green);
+    border-radius: 8px;
+    padding: 0.6em 1em;
+    margin-top: 1em;
+    text-align: left;
+  }
+  .check::before { content: "✓ si ves esto, vas bien: "; color: var(--muted); }
+
+  .dim { color: var(--muted); font-size: 0.7em; }
+  .reveal .progress { color: var(--amber); }
+  .reveal .controls { color: var(--amber); }
+
+  .cols { display: flex; gap: 1.5em; text-align: left; }
+  .cols > div { flex: 1; }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ══════════════ PORTADA ══════════════ -->
+<section>
+  <p style="font-family:'JetBrains Mono',monospace; color:var(--muted); font-size:0.5em;">the new founder — taller</p>
+  <h1>de la idea al<br>producto con AI</h1>
+  <p class="dim">2 horas. cero fluff. producción real.</p>
+</section>
+
+<!-- ══════════════ BLOQUE 1: QUIÉN SOY ══════════════ -->
+<section class="block-header">
+  <span class="path"><b>eyal@taller</b>:~/bloque-01 $ <b style="color:var(--ink)">quien-soy</b></span>
+  <h1>quién soy y por qué escucharme</h1>
+  <span class="mins">~10 min · 2 slides</span>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>eyal cumartesi</h2>
+  <ul>
+    <li>CTO y cofundador de <strong>Spexs AI</strong> — business intelligence para empresas</li>
+    <li>autodidacta: de cero a liderar arquitectura en producción</li>
+    <li>multi-tenant, ETL, reportes financieros, agentes de AI — todos los días</li>
+    <li>economía + ciencia de datos: el lado del negocio también</li>
+  </ul>
+  <p class="dim">no vengo a enseñar teoría. vengo a mostrarles mi flujo de trabajo real.</p>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>hoy y después</h2>
+  <div class="cols">
+    <div>
+      <h3>este taller</h3>
+      <p>el mapa completo: qué existe, qué es hype, y el flujo real de construir con AI en 2026.</p>
+    </div>
+    <div>
+      <h3>el curso</h3>
+      <p>16 sesiones: de tu idea a tu app publicada, funcionando, con usuarios de verdad.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ BLOQUE 2: REALIDAD VS HYPE ══════════════ -->
+<section class="block-header">
+  <span class="path"><b>eyal@taller</b>:~/bloque-02 $ <b style="color:var(--ink)">realidad-vs-hype</b></span>
+  <h1>realidad vs. hype</h1>
+  <span class="mins">~20 min · 5 slides</span>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>el mito</h2>
+  <blockquote>"orquesto mil agentes mientras duermo y no reviso nada"</blockquote>
+  <p>spoiler: <strong>no</strong>. y quien te lo venda, no lo hace en producción.</p>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>lo que NO es mito: la randomness</h2>
+  <ul>
+    <li>un LLM <strong>predice el próximo token</strong></li>
+    <li>cada predicción es una <strong>probabilidad</strong></li>
+    <li>siempre habrá randomness — no es un bug, es la naturaleza de la herramienta</li>
+  </ul>
+  <p class="dim">por eso todo lo que viene hoy existe: estructura alrededor de algo probabilístico.</p>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>mi propia montaña rusa</h2>
+  <ul>
+    <li><strong>nov–ene</strong>: dejé de usar Claude Code. los resultados eran pésimos.</li>
+    <li>este mundo tiene altos y bajos — quien diga que todo siempre funcionó, miente</li>
+    <li>los últimos 2 meses cambiaron <strong>muy</strong> rápido</li>
+    <li>ahora parece que solo vamos en subida</li>
+  </ul>
+  <p class="dim">la única constante: mantenerse curioso.</p>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>antes de construir: lean startup</h2>
+  <ul>
+    <li>no construyas 6 meses a ciegas</li>
+    <li><strong>build → measure → learn</strong></li>
+    <li>el MVP no es tu app fea — es tu <strong>pregunta más barata</strong></li>
+  </ul>
+  <p class="dim">en el curso: cada quien valida su idea antes de escribir una línea.</p>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>la clave si quieres ser exitoso con AI</h2>
+  <h1 style="color:var(--amber)">ser curioso</h1>
+  <p class="dim">si no entiendes qué hace, no puedes guiarlo.</p>
+</section>
+
+<!-- ══════════════ BLOQUE 3: EL MAPA ══════════════ -->
+<section class="block-header">
+  <span class="path"><b>eyal@taller</b>:~/bloque-03 $ <b style="color:var(--ink)">el-mapa</b></span>
+  <h1>el mapa mental que necesitas</h1>
+  <span class="mins">~20 min · 3 slides</span>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>las capas de una app real</h2>
+  <pre><code>mantenimiento     → sentry, posthog, a/b testing
+infraestructura   → dónde vive tu app
+frontend + UI     → react, next.js, shadcn/ui
+backend / API     → la lógica del negocio
+bases de datos    → SQL vs NoSQL
+HTTP              → cómo viajan los datos (encriptados)
+hardware          → CPU, RAM, disco, GPU (los limitantes)</code></pre>
+  <p class="dim">no necesitas dominar cada capa. necesitas saber que existen y qué decide cada una.</p>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>herramientas que te evitan ver código</h2>
+  <ul>
+    <li><strong>deploy</strong>: Vercel / Cloudflare / Netlify</li>
+    <li><strong>UI</strong>: shadcn/ui + librerías de componentes</li>
+    <li><strong>backend gestionado</strong>: Supabase</li>
+    <li><strong>MCP</strong>: úsalo sobre todo para docs — el resto, casos puntuales (git, e2e)</li>
+  </ul>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>principio transversal</h2>
+  <blockquote>menos dependencias que necesiten mantenimiento = mejor</blockquote>
+  <p class="dim">cada dep es una promesa de mantenimiento futuro. elige nativo cuando puedas.</p>
+</section>
+
+<!-- ══════════════ BLOQUE 4: HARNESS (shared) ══════════════ -->
+<section class="block-header">
+  <span class="path"><b>eyal@taller</b>:~/bloque-04 $ <b style="color:var(--ink)">harness</b></span>
+  <h1>el concepto central: el harness</h1>
+  <span class="mins">~20 min · slides compartidos con el curso</span>
+</section>
+
+<section data-markdown="../shared/harness.md"
+         data-separator="^---$"
+         data-charset="utf-8">
+</section>
+
+<!-- ══════════════ BLOQUE 5: PATTERNS + LOOPS (shared) ══════════════ -->
+<section class="block-header">
+  <span class="path"><b>eyal@taller</b>:~/bloque-05 $ <b style="color:var(--ink)">agentes</b></span>
+  <h1>orquestar agentes: la escalera</h1>
+  <span class="mins">~20 min</span>
+</section>
+
+<section data-markdown="../shared/patterns.md"
+         data-separator="^---$"
+         data-charset="utf-8">
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>worktrees: agentes en paralelo sin pisarse</h2>
+  <ul>
+    <li>mismo repo, <strong>directorios separados</strong>, branches separados</li>
+    <li>cada agente en su sandbox — cero conflictos, cero contaminación de contexto</li>
+    <li>yo los uso <strong>todos los días</strong>. va en tu global config (se los entrego)</li>
+    <li>techo real 2026: 4–8 agentes por dev. arriba de eso, el cuello es TU review</li>
+  </ul>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>el ralph loop: código mientras duermes</h2>
+  <pre><code>while :; do
+  cat PROMPT.md | claude -p
+done</code></pre>
+  <ul>
+    <li>el agente corre en loop hasta cumplir un criterio de "done" (tests, tags)</li>
+    <li>el progreso vive en <strong>archivos y git</strong>, no en el contexto</li>
+    <li>resultados reales: Huntley, 3 meses de loop → un lenguaje de programación completo. hackathon de YC → 6+ repos overnight por $297</li>
+  </ul>
+  <p class="dim">no arranques overnight: primero iteraciones manuales, algo low-stakes, y vigila el costo.</p>
+</section>
+
+<!-- ══════════════ BLOQUE 6: GIT ══════════════ -->
+<section class="block-header">
+  <span class="path"><b>eyal@taller</b>:~/bloque-06 $ <b style="color:var(--ink)">git</b></span>
+  <h1>git en un slide</h1>
+  <span class="mins">~8 min</span>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>lo que vas a usar de git</h2>
+  <pre><code>commit    → guardar un cambio con nombre
+branch    → trabajar sin romper lo que sirve
+push      → subirlo a GitHub
+amend     → corregir el último commit
+PR        → proponer y revisar cambios
+worktree  → dos branches abiertos a la vez
+stack     → PRs pequeños encadenados (gh stack, nuevo)</code></pre>
+  <p class="dim">gh stack nació justo porque los agentes generan código más rápido de lo que los humanos revisan.</p>
+</section>
+
+<!-- ══════════════ BLOQUE 7: SETUP + CLAUDE ══════════════ -->
+<section class="block-header">
+  <span class="path"><b>eyal@taller</b>:~/bloque-07 $ <b style="color:var(--ink)">setup</b></span>
+  <h1>el setup real, en vivo</h1>
+  <span class="mins">~20 min</span>
+</section>
+
+<section>
+  <span class="mode demo">$ demo</span>
+  <h2>dev environment en minutos</h2>
+  <ul>
+    <li><code>brew</code> → instala todo lo demás</li>
+    <li><code>nvm</code> → versiones de Node sin dolor</li>
+    <li><code>pnpm</code> → paquetes, rápido</li>
+    <li><code>docker</code> → tu app en una caja</li>
+  </ul>
+  <p class="dim">no memorices. les doy el config listo — pero investiguen: si lo ven muchas veces, hará sentido.</p>
+</section>
+
+<section>
+  <span class="mode demo">$ demo</span>
+  <h2>claude: configs y comandos</h2>
+  <div class="cols">
+    <div>
+      <h3>configs</h3>
+      <ul>
+        <li>global — tu forma de trabajar</li>
+        <li>por proyecto — las reglas de este código</li>
+      </ul>
+    </div>
+    <div>
+      <h3>comandos clave</h3>
+      <ul>
+        <li><code>/loop</code> — ralph nativo</li>
+        <li><code>/workflow</code> — flujos multi-paso</li>
+        <li>+ la lista completa en el repo</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>commands, plugins, skills, memory…</h2>
+  <ul>
+    <li>hay <strong>mucho</strong> buzz sobre esto</li>
+    <li>la verdad: <strong>déjalo lean</strong></li>
+    <li>sobrecargar contexto = agente que pierde perspectiva</li>
+    <li>empaquetar de más = caja negra que no entiendes</li>
+  </ul>
+  <blockquote>cada cosa que agregas al harness debe ganarse su lugar.</blockquote>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>claude code: cloud vs. local</h2>
+  <div class="cols">
+    <div>
+      <h3>local</h3>
+      <p>control total, tu máquina, tus tools. mi default.</p>
+    </div>
+    <div>
+      <h3>cloud</h3>
+      <p>sin terminal, corre en VMs de Anthropic. ideal para tareas en background.</p>
+    </div>
+  </div>
+  <p class="dim">cada uno con sus limitaciones — las vemos en detalle en el curso.</p>
+</section>
+
+<!-- ══════════════ BLOQUE 8: HANDS-ON + CIERRE ══════════════ -->
+<section class="block-header">
+  <span class="path"><b>eyal@taller</b>:~/bloque-08 $ <b style="color:var(--ink)">tu-turno</b></span>
+  <h1>tu turno + cierre</h1>
+  <span class="mins">~15 min</span>
+</section>
+
+<section>
+  <span class="mode hands">⚡ hands-on</span>
+  <h2>un solo comando</h2>
+  <pre><code>git clone [URL-DEL-REPO]
+cd thenewfounder && cat taller/PROMPTS.md</code></pre>
+  <div class="check">la lista de prompts del taller en tu terminal</div>
+  <p class="dim">todo lo de hoy vive en ese repo. es tuyo.</p>
+</section>
+
+<section>
+  <span class="mode escucha">~ escucha</span>
+  <h2>lo que te llevas</h2>
+  <ul>
+    <li>el AI es probabilístico → por eso existe el <strong>harness</strong></li>
+    <li>nunca aceptes el primer output → <strong>critique pattern</strong></li>
+    <li>más agentes ≠ mejor → saber <strong>cuándo y cómo</strong></li>
+    <li>menos deps = menos dolor</li>
+    <li>y sobre todo: <strong>curiosidad</strong></li>
+  </ul>
+</section>
+
+<section>
+  <h1>¿y si esto fuera<br>tu producto?</h1>
+  <p>el curso: 16 sesiones, tu idea, tu app publicada.</p>
+  <p class="dim">thenewfounder.xyz</p>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    transition: 'fade',
+    transitionSpeed: 'fast',
+    slideNumber: 'c/t',
+    controls: true,
+    progress: true,
+    center: true,
+    width: 1280,
+    height: 720,
+    plugins: [ RevealMarkdown ]
+  });
+</script>
+</body>
+</html>

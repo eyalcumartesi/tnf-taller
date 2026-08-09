@@ -1,14 +1,49 @@
-# Follow-along: armamos el harness
+# Demo: armamos el harness
 
-Lo construimos sobre un proyecto real: una **waitlist**. Cada paso arma una capa del harness, de afuera hacia adentro, hasta cerrar el critique pattern.
+Montamos el harness sobre un proyecto real: una **waitlist**. No vamos a deployar nada; el objetivo es que entiendas cada capa del harness armándola en vivo.
 
-> Tu `CLAUDE.md` global (stack: Next.js, shadcn, Supabase, pnpm, Drizzle) ya lo instalaste en el setup. Aquí solo va lo del proyecto.
+> Antes de esto ya dejaste el entorno listo (Homebrew, node, pnpm, el agente): ver `SETUP.md`.
 
 Regla madre: dejalo lean. 3-5 skills, 2-4 MCP, 1-2 subagentes. Cada dep es una promesa de mantenimiento futuro.
 
 ---
 
-## El proyecto: una waitlist
+## Paso 0 · tu entorno global (antes del proyecto)
+
+Abre el agente y pídele que tome el ejemplo como base de tu config global:
+
+```
+Lee taller/CLAUDE_EXAMPLE.md y usalo como base para mi ~/.claude/CLAUDE.md global.
+```
+
+Eso fija tu stack (Next.js, shadcn, Supabase, pnpm, Drizzle) y tus principios en **todos** tus proyectos. No lo repites nunca más: es la capa exterior que gobierna todo el harness.
+
+---
+
+## Paso 1 · config del proyecto
+
+El repo ya trae su `CLAUDE.md`. Si arrancas de cero, crea uno en la raíz con esto:
+
+```markdown
+# waitlist
+
+## qué es
+landing con formulario de email + panel con login que lista los inscriptos.
+
+## cómo se corre
+- dev: pnpm dev
+- tests: pnpm test
+- base de datos: pnpm db:push
+
+## este repo
+- una tabla: signups (email, fecha). Defínela en Drizzle (schema.ts), no en el panel de Supabase
+- el panel vive detras de login (Supabase auth)
+- rama por feature, nunca push directo a main
+```
+
+---
+
+## Paso 2 · arranca la waitlist
 
 Prompt de arranque. Pégalo en el agente:
 
@@ -30,30 +65,7 @@ Por qué así: le das el **qué** (formulario, tabla, panel, login) sin dictarle
 
 ---
 
-## Paso 1 · config (las reglas)
-
-El repo ya trae su `CLAUDE.md`. Si arrancas de cero, crea uno en la raíz con esto:
-
-```markdown
-# waitlist
-
-## qué es
-landing con formulario de email + panel con login que lista los inscriptos.
-
-## cómo se corre
-- dev: pnpm dev
-- tests: pnpm test
-- base de datos: pnpm db:push
-
-## este repo
-- una tabla: signups (email, fecha). Definila en Drizzle (schema.ts), no en el panel de Supabase
-- el panel vive detras de login (Supabase auth)
-- rama por feature, nunca push directo a main
-```
-
----
-
-## Paso 2 · tooling (un skill)
+## Paso 3 · tooling (un skill)
 
 Empaqueta "armar un PR" una vez. Se auto-carga cuando pidas un PR.
 
@@ -66,7 +78,7 @@ Crea `.claude/skills/crear-pr/SKILL.md`:
 ```markdown
 ---
 name: crear-pr
-description: Empaqueta cambios en un PR. Usalo cuando el usuario pida abrir o armar un PR.
+description: Empaqueta cambios en un PR. Úsalo cuando el usuario pida abrir o armar un PR.
 ---
 
 Cuando el usuario pida un PR:
@@ -82,7 +94,7 @@ Verifica que aparezca: escribe `/crear-pr`.
 
 ---
 
-## Paso 3 · e2e (Playwright)
+## Paso 4 · e2e (Playwright)
 
 Un MCP que le da un browser real al agente. Conéctalo:
 
@@ -95,12 +107,12 @@ Confirma con `/mcp`. Luego pídele el test. Pégalo en el agente:
 ```
 Escribe un test e2e del alta en la waitlist con Playwright: abre la home,
 ingresa un email, envia y verifica el mensaje de confirmacion. Despues
-loguea y verifica que el email aparece en /panel. Correlo hasta que pase.
+loguea y verifica que el email aparece en /panel. Córrelo hasta que pase.
 ```
 
 ---
 
-## Paso 4 · el loop (critique pattern)
+## Paso 5 · el loop (critique pattern)
 
 Nunca aceptes el primer output. Un subagente fresco critica el diff sin el sesgo de quien lo escribió.
 
@@ -130,9 +142,10 @@ Corrige el output aplicando cada punto de la critica. Despues lo reviso yo.
 
 | capa | qué | comando clave |
 |------|-----|---------------|
+| 0 · global  | CLAUDE.md global desde el ejemplo | ver Paso 0 |
 | 1 · config  | CLAUDE.md del proyecto | ya en el repo |
 | 2 · tooling | skill crear-pr | `.claude/skills/crear-pr/SKILL.md` |
 | 3 · e2e     | Playwright MCP | `claude mcp add playwright` |
 | 4 · loop    | critique del diff | `/code-review` |
 
-El critique con 1 agente. En el bloque siguiente lo escalamos a varios.
+No deployamos hoy: el objetivo era montar y entender el harness, no shippear. El critique con 1 agente; en el bloque siguiente lo escalamos a varios.

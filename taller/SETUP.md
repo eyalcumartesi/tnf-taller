@@ -80,39 +80,7 @@ git config --global user.name "Tu Nombre"
 git config --global user.email "tu@email.com"
 ```
 
-## Tu CLAUDE.md global (una vez)
-
-Esto le dice al agente tu stack y tus principios **en todos los proyectos**, para que no tengas que repetirlo cada vez. Pégalo tal cual:
-
-```bash
-mkdir -p ~/.claude
-cat > ~/.claude/CLAUDE.md <<'EOF'
-# cómo trabajo
-
-## stack por defecto (úsalo salvo que el proyecto diga otra cosa)
-- app: Next.js con App Router y TypeScript
-- UI: shadcn/ui
-- backend: Supabase para auth, base de datos y storage
-- ORM: Drizzle. No escribas SQL raw; si de verdad hace falta, avísame por qué
-- paquetes: pnpm. Nunca npm ni yarn
-- deploy: Vercel
-
-## archivos e imágenes
-- toda imagen o archivo va a Supabase Storage
-- nunca lo guardes en el repo ni en /public
-
-## principios de código
-- DRY: si algo aparece dos veces, extráelo
-- tipos estrictos, nada de any
-- destructura los tipos dentro de la función, no en la firma, para que se propaguen solos
-
-## cómo me hablas
-- explícame solo lo que no es obvio, no me narres cada paso
-- antes de algo riesgoso o irreversible, pregúntame
-EOF
-```
-
-> Si ya tenías un `~/.claude/CLAUDE.md`, esto lo reemplaza. Abrilo antes si quieres conservar lo que tenías.
+> Tu `CLAUDE.md` global (el stack por defecto) lo armas al inicio del demo del harness, en el **paso 0** de `DEMO.md`. Ahí el agente lo genera por ti desde `CLAUDE_EXAMPLE.md`.
 
 ---
 

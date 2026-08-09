@@ -254,7 +254,7 @@
     <div class="prims">
       <div class="prim h">
         <div class="ph"><span class="pico">⚡</span><b>Hook</b><span class="pk">se dispara solo</span></div>
-        <div class="pv yes">ej: al terminar → corre la review</div>
+        <div class="pv yes">ej: al guardar → corre el linter</div>
       </div>
 
       <div class="prim a">
@@ -278,13 +278,12 @@
   <section>
     <span class="mode hands">🖐 ahora sí: el demo</span>
     <h2 style="margin:0 0 0.1em">vamos a hacer la <em style="font-style:normal;color:var(--amber)">waitlist</em>, de cero a producción</h2>
-    <p class="dim" style="margin:0 0 0.4em">landing con form de email + panel con login. <strong>tú no tocas la terminal</strong> (solo tecleas <code>claude</code>): el agente corre todo. no separamos cada paso en un slide, <strong>el copy-paste está en la guía</strong>. el arco:</p>
+    <p class="dim" style="margin:0 0 0.4em">landing con form de email + panel con login. <strong>tú no tocas la terminal</strong> (solo tecleas <code>claude</code>) y <strong>no nombras ni una tecnología</strong>: describes la app, el agente hace el resto. el copy-paste vive en la guía. el arco:</p>
     <div class="hlist">
-      <div class="hrow l4"><span class="hn">1 · arranca</span><span class="hd">el agente crea tu carpeta y tu repo · <b>Next.js</b> limpio</span></div>
-      <div class="hrow l1"><span class="hn">2 · config</span><span class="hd"><b>CLAUDE.md</b> global (el stack) + el del proyecto</span></div>
-      <div class="hrow l3"><span class="hn">3 · datos</span><span class="hd"><b>Supabase</b> (db + auth) → <b>Drizzle</b> + la waitlist</span></div>
-      <div class="hrow l2"><span class="hn">4 · harness</span><span class="hd">skill <b>crear-pr</b> · <b>Playwright</b> e2e · <b>/code-review</b></span></div>
-      <div class="hrow l4"><span class="hn">5 · deploy</span><span class="hd"><b>Vercel</b> + CI/CD: cada push a main re-deploya solo</span></div>
+      <div class="hrow l1"><span class="hn">0 · global</span><span class="hd">una vez: el agente arma tu <b>CLAUDE.md</b> · ahí vive toda la tecnología</span></div>
+      <div class="hrow l4"><span class="hn">1 · specs</span><span class="hd">describes la app en lenguaje natural → el agente la <b>construye y deploya</b></span></div>
+      <div class="hrow l3"><span class="hn">2 · e2e</span><span class="hd"><b>Playwright</b> verifica los flujos · no le crees el "listo"</span></div>
+      <div class="hrow l2"><span class="hn">3 · review</span><span class="hd"><b>critico</b> · un agente con ojos frescos revisa el código</span></div>
     </div>
     <a class="mdlink" href="https://github.com/eyalcumartesi/tnf-taller/blob/main/taller/DEMO.md" target="_blank" rel="noopener">
       📄 <b>taller/DEMO.md</b> <span class="arw">→</span> ahí les doy todo, paso a paso y copy-paste
@@ -296,13 +295,12 @@
     <span class="mode hands">🖐 lo que armamos</span>
     <h2 style="margin:0 0 0.2em">tu harness completo</h2>
     <div class="hlist">
-      <div class="hrow l1"><span class="hn">capa 1</span><span class="hd"><b>config</b> · CLAUDE.md &lt; 500 líneas</span><span class="hx">las reglas</span></div>
-      <div class="hrow l2"><span class="hn">capa 2</span><span class="hd"><b>tooling</b> · 1 skill <code>crear-pr</code> + Playwright MCP</span><span class="hx">lo que usa</span></div>
-      <div class="hrow l3"><span class="hn">e2e</span><span class="hd"><b>Playwright</b> · verifica la UI, no la adivina</span><span class="hx">browser real</span></div>
-      <div class="hrow l4"><span class="hn">loop</span><span class="hd"><b>critico</b> · Stop hook dispara un agente crítico</span><span class="hx">mejor retorno</span></div>
-      <div class="hrow l3"><span class="hn">deploy</span><span class="hd"><b>Vercel</b> + Supabase · CI/CD en cada push</span><span class="hx">en producción</span></div>
+      <div class="hrow l1"><span class="hn">capa 1</span><span class="hd"><b>config</b> · CLAUDE.md global &lt; 500 líneas · toda la tecnología</span><span class="hx">las reglas</span></div>
+      <div class="hrow l2"><span class="hn">capa 2</span><span class="hd"><b>tooling</b> · Playwright MCP (browser real)</span><span class="hx">lo que usa</span></div>
+      <div class="hrow l3"><span class="hn">review</span><span class="hd"><b>critico</b> · subagente con ojos frescos + <code>/code-review</code></span><span class="hx">mejor retorno</span></div>
+      <div class="hrow l4"><span class="hn">deploy</span><span class="hd"><b>Vercel</b> + Supabase · CI/CD en cada push</span><span class="hx">en producción</span></div>
     </div>
-    <blockquote style="margin:0.5em auto 0">3-5 skills · 2-4 MCP · 1-2 subagentes. cada dep es una promesa de mantenimiento — déjalo lean.</blockquote>
+    <blockquote style="margin:0.5em auto 0">pocas piezas: 1 MCP + 1 subagente. cada dep es una promesa de mantenimiento — déjalo lean.</blockquote>
   </section>
 
 </div>

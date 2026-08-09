@@ -26,6 +26,27 @@ Estas son las cosas del stack que es fácil olvidar. Respétalas por defecto, si
 - **Conexión a Supabase: usa el Session pooler (puerto 5432, IPv4)**, con la forma `postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres`. Sirve para las migraciones locales y para Vercel. El Transaction pooler (6543) rompe las migraciones.
 - **En Vercel, carga las variables de entorno ANTES del primer deploy.** Si deployas sin ellas, el build falla.
 
+## cómo levanto un proyecto nuevo (hazlo tú de punta a punta, yo no toco la terminal)
+Cuando te dé los specs de una app nueva, tú haces TODO: no me pidas comandos, ejecútalos. Solo pregúntame si algo es de verdad ambiguo o irreversible. El orden:
+
+1. **Proyecto + repo.** En mi home (`~`), scaffold Next limpio y súbelo a un repo privado:
+   - `pnpm create next-app@latest <nombre> --ts --tailwind --app --eslint --no-src-dir --import-alias "@/*" --use-pnpm --yes` (ya inicia git y hace el primer commit)
+   - entra a la carpeta y `gh repo create <nombre> --private --source=. --push`
+2. **Supabase (base + auth), por CLI.** Ya estoy logueado (`supabase login`).
+   - `supabase orgs list` → crea el proyecto con `supabase projects create <nombre> --org-id <mío> --db-password <genera una fuerte y guárdamela> --region <la más cercana>`; espera a que provisione (~2 min)
+   - saca las claves con `supabase projects api-keys --project-ref <ref>`
+   - escribe `.env.local` con `DATABASE_URL` (Session pooler), `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (Publishable key)
+   - deja el login por email activo, **apaga la confirmación de email**, y crea mi usuario admin con el email/clave que te di en los specs, ya confirmado
+3. **Construye la app** según mis specs, con el stack de arriba (Drizzle para las tablas, shadcn para la UI, auth de Supabase para lo privado). Corre `pnpm db:push` y `pnpm dev`, y verifica tú mismo los flujos antes de decir "listo".
+4. **Deploy a Vercel, por CLI.** Ya estoy logueado (`vercel login`).
+   - `pnpm dlx vercel link --yes`
+   - carga las 3 env vars a production **antes** de deployar (leyéndolas de `.env.local`)
+   - `pnpm dlx vercel git connect` (cada push a main re-deploya) y `pnpm dlx vercel deploy --prod`
+   - agrega la URL de producción en Supabase → Authentication → URL Configuration
+   - dame la URL final
+
+> Si un CLI se traba en vivo, dímelo y seguimos por el dashboard; no te quedes trabado en silencio.
+
 ## cómo se ve (que quede moderno)
 - todo con componentes de shadcn/ui, nada de HTML pelado
 - limpio y con aire: buen espaciado, tipografía clara, jerarquía visual

@@ -299,9 +299,14 @@ Cada hallazgo: `archivo:línea` + qué viola + el fix en una línea. Si dudas, l
 descartas: el silencio gana al ruido. Si no hay nada, dilo y listo.
 ```
 
-**3 · El hook que lo dispara solo.** Para que no dependa de que te acuerdes, un `Stop` hook lo lanza cuando el agente termina. Agrega esto a `.claude/settings.json`:
+Con eso ya lo corres **on-demand**, que es el default recomendado: le pides `usa el subagente critico para revisar el diff` cuando el cambio lo amerita. Tú eliges el momento: control total, sin costo por turno.
 
-```json
+**3 · El hook que lo dispara solo (opcional).** Si prefieres que no dependa de que te acuerdes, un `Stop` hook lo lanza cuando el agente termina. Tiene un **trade-off**: se dispara en *cada* fin de turno (no solo en un PR), así que suma una review de LLM —latencia y tokens— aun cuando el cambio es trivial y no la necesita. Vale la pena solo si el costo de *olvidarte* de revisar pesa más que ese impuesto por turno. Si lo quieres, pídeselo al agente:
+
+```
+Agrega un Stop hook a .claude/settings.json (crea el archivo si no existe, y si ya
+existe conserva lo que tenga, solo suma la clave "Stop"). Contenido exacto del hook:
+
 {
   "hooks": {
     "Stop": [
@@ -319,6 +324,10 @@ descartas: el silencio gana al ruido. Si no hay nada, dilo y listo.
 ```
 
 > El `grep ... stop_hook_active` es el **freno anti-loop**: cuando el critico ya corrió y el agente vuelve a terminar, el hook lo deja parar en vez de re-dispararse para siempre. Si algo se traba, Ctrl-C y borra el bloque `Stop`.
+
+> Este hook lean **no tiene gate**: corre en cada turno, sin filtrar. Si te molesta el costo pero igual quieres automatizarlo, el paso siguiente es un gate (como en Spexs: saltar diffs chicos y no-riesgosos) para que solo dispare cuando de verdad aporta.
+
+**On-demand vs automático, en una línea:** on-demand (Paso 2) = control total, corre cuando tú decides; hook (Paso 3) = nunca te olvidas, pero pagas una review por turno. Empieza on-demand; suma el hook solo si te descubres saltando la revisión.
 
 En Spexs esto es un sistema más grande (reviewer externo, rúbrica aparte, varias lentes por blast-radius). Para este proyecto **déjalo lean**: un agente + un hook alcanza. El salto a varios agentes es el próximo bloque (orquestación).
 

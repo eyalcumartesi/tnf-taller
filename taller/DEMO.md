@@ -41,16 +41,20 @@ Eso fija tu stack (Next.js, shadcn, Supabase, pnpm, Drizzle, Vercel) y tus princ
 Tu proyecto va en **tu propia carpeta y tu propio repo**, no dentro de `tnf-taller`. Abre la terminal (Warp) y pega:
 
 ```bash
-# 1. crea la carpeta y entra
+# 1. sal de tnf-taller antes de crear tu carpeta (en el Paso 0 quedaste dentro de
+#    tnf-taller). Así waitlist queda al lado, no como un repo git dentro de otro.
+cd ~
+
+# 2. crea la carpeta y entra
 mkdir waitlist && cd waitlist
 
-# 2. arranca un Next.js limpio (App Router + TypeScript + Tailwind)
+# 3. arranca un Next.js limpio (App Router + TypeScript + Tailwind)
 #    --yes acepta los valores por defecto de lo que no pasamos (React Compiler, AGENTS.md),
 #    así el comando corre de una sin frenar a preguntarte nada.
 #    create-next-app ya te deja el repo git iniciado y el primer commit hecho (rama main).
 pnpm create next-app@latest . --ts --tailwind --app --eslint --no-src-dir --import-alias "@/*" --use-pnpm --yes
 
-# 3. sube a GitHub ese primer commit (crea el repo privado en el mismo comando)
+# 4. sube a GitHub ese primer commit (crea el repo privado en el mismo comando)
 gh repo create waitlist --private --source=. --push
 ```
 

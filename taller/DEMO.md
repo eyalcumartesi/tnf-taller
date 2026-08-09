@@ -1,30 +1,74 @@
-# Demo: armamos el harness
+# Demo: la waitlist, de cero a producción
 
-Montamos el harness sobre un proyecto real: una **waitlist**. No vamos a deployar nada; el objetivo es que entiendas cada capa del harness armándola en vivo.
+Vamos a construir una **waitlist** real y **deployarla a Vercel**. Esta guía es todo el copy-paste del demo: la sigues de arriba hacia abajo y no te falta nada. El agente escribe el código; tú pegas comandos y aprietas los botones de las cuentas (Supabase, Vercel).
 
-> Antes de esto ya dejaste el entorno listo (Homebrew, node, pnpm, el agente): ver `SETUP.md`.
+Qué armamos: una landing pública con un formulario de email y un panel con login que lista los inscriptos. En vivo, sobre tu propia carpeta y tu propio repo.
 
-Regla madre: dejalo lean. 3-5 skills, 2-4 MCP, 1-2 subagentes. Cada dep es una promesa de mantenimiento futuro.
+> **Antes de esto** ya dejaste el entorno listo (Homebrew, node, pnpm, `gh`, el agente): ver `SETUP.md`.
+
+**Regla madre: déjalo lean.** 3-5 skills, 2-4 MCP, 1-2 subagentes. Cada dependencia es una promesa de mantenimiento futuro.
+
+Mapa del demo (cada paso está abajo, en orden):
+
+| # | paso | dónde |
+|---|------|-------|
+| 0 | tu config global (el stack por defecto) | agente |
+| 1 | abres tu carpeta y arrancas el proyecto | terminal |
+| 2 | config del proyecto (`CLAUDE.md`) | agente |
+| 3 | Supabase: base de datos + auth | supabase.com + `.env.local` |
+| 4 | construyes la waitlist (Drizzle, form, panel, login) | agente |
+| 5 | tooling: el skill `crear-pr` | agente |
+| 6 | e2e con Playwright | agente |
+| 7 | el loop: `/code-review` | agente |
+| 8 | deploy a Vercel | vercel.com |
 
 ---
 
-## Paso 0 · tu entorno global (antes del proyecto)
+## Paso 0 · tu config global (una vez, antes de todo)
 
-Abre el agente y pídele que tome el ejemplo como base de tu config global:
+Abre el agente en cualquier carpeta y pídele que arme tu config global desde el ejemplo del taller:
 
 ```
-Lee taller/CLAUDE_EXAMPLE.md y usalo como base para mi ~/.claude/CLAUDE.md global.
+Lee taller/CLAUDE_EXAMPLE.md de este repo y usalo como base para mi ~/.claude/CLAUDE.md global.
 ```
 
-Eso fija tu stack (Next.js, shadcn, Supabase, pnpm, Drizzle) y tus principios en **todos** tus proyectos. No lo repites nunca más: es la capa exterior que gobierna todo el harness.
+Eso fija tu stack (Next.js, shadcn, Supabase, pnpm, Drizzle, Vercel) y tus principios en **todos** tus proyectos. No lo repites nunca más: es la capa exterior que gobierna todo el harness.
 
 ---
 
-## Paso 1 · config del proyecto
+## Paso 1 · abre tu carpeta y arranca el proyecto
 
-El repo ya trae su `CLAUDE.md`. Si arrancas de cero, crea uno en la raíz con esto:
+Tu proyecto va en **tu propia carpeta y tu propio repo**, no dentro de `tnf-taller`. Abre la terminal (Warp) y pega:
 
-```markdown
+```bash
+# 1. crea la carpeta y entra
+mkdir waitlist && cd waitlist
+
+# 2. arranca un Next.js limpio (App Router + TypeScript + Tailwind)
+pnpm create next-app@latest . --ts --tailwind --app --eslint --no-src-dir --import-alias "@/*" --use-pnpm
+
+# 3. versiona y sube a GitHub (crea el repo privado en el mismo comando)
+git init && git add -A && git commit -m "init: next.js base"
+gh repo create waitlist --private --source=. --push
+```
+
+Ahora abre el agente **desde esta carpeta**:
+
+```bash
+claude   # o: codex
+```
+
+Desde aquí trabaja el resto del demo.
+
+---
+
+## Paso 2 · config del proyecto (`CLAUDE.md`)
+
+Pídele al agente que cree el `CLAUDE.md` del proyecto:
+
+```
+Crea un CLAUDE.md en la raíz con esto:
+
 # waitlist
 
 ## qué es
@@ -37,45 +81,70 @@ landing con formulario de email + panel con login que lista los inscriptos.
 
 ## este repo
 - una tabla: signups (email, fecha). Defínela en Drizzle (schema.ts), no en el panel de Supabase
-- el panel vive detras de login (Supabase auth)
+- el panel vive detrás de login (Supabase auth)
 - rama por feature, nunca push directo a main
 ```
 
+El global carga el peso (el stack); el del proyecto queda finito (qué es la app y cómo se corre).
+
 ---
 
-## Paso 2 · arranca la waitlist
+## Paso 3 · Supabase (base de datos + auth)
 
-Prompt de arranque. Pégalo en el agente:
+Necesitamos una base de datos Postgres (para Drizzle) y auth (para el login del panel). Las dos vienen de un proyecto de Supabase.
+
+1. Entra a [supabase.com](https://supabase.com) → **New project**. Elige un nombre, una región cercana y **guarda la contraseña** de la base de datos.
+2. **Settings → Database → Connection string → URI** (usa la de *Transaction pooler*). Es tu `DATABASE_URL`.
+3. **Settings → API** → copia **Project URL** y la clave **anon public**.
+
+Crea `.env.local` en la raíz con esos tres valores:
+
+```bash
+DATABASE_URL="postgresql://...transaction-pooler...:6543/postgres"
+NEXT_PUBLIC_SUPABASE_URL="https://TU-PROYECTO.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="TU-ANON-KEY"
+```
+
+> `.env.local` ya está en el `.gitignore` de Next.js: nunca subas tus claves al repo.
+
+---
+
+## Paso 4 · construye la waitlist
+
+Este es el prompt grande. Le das el **qué**; el **cómo** (Drizzle, shadcn, Supabase) ya lo sabe por el global. Pégalo en el agente:
 
 ```
-Construye una waitlist.
+Construye una waitlist con el stack del global (Next.js, shadcn, Supabase, Drizzle).
+
+Base de datos:
+- una tabla `signups` (email único + fecha de alta) definida en Drizzle (schema.ts)
+- configura drizzle-kit y agrega el script `pnpm db:push`; corre el push contra mi Supabase
 
 Landing pública en la home:
 - un formulario con un campo de email que valida el formato
-- al enviar, guarda el inscripto en una tabla `signups` (email + fecha) y muestra un mensaje de confirmación
+- al enviar, guarda el inscripto en `signups` y muestra un mensaje de confirmación
 - no permite emails duplicados
 
-Ruta `/panel`, protegida con login:
+Ruta `/panel`, protegida con login de Supabase:
 - lista los inscriptos ordenados por fecha, con el total arriba
 
-Deja el login funcionando de punta a punta y agrega un test e2e del flujo de alta.
+Deja el login funcionando de punta a punta. Usa las variables de mi .env.local.
+Al terminar, corre `pnpm dev` y verifica el flujo de alta tú mismo.
 ```
 
-Por qué así: le das el **qué** (formulario, tabla, panel, login) sin dictarle el **cómo**. El stack ya lo sabe por el global. Los criterios (valida formato, sin duplicados, total arriba, e2e) le dan con qué verificarse solo.
+Por qué así: le das el **qué** (tabla, form, panel, login) sin dictarle el **cómo**, y le das los criterios (valida formato, sin duplicados, total arriba) con los que se verifica solo.
+
+Cuando termine, revisa en `http://localhost:3000` que el alta funciona.
 
 ---
 
-## Paso 3 · tooling (un skill)
+## Paso 5 · tooling: el skill `crear-pr`
 
-Empaqueta "armar un PR" una vez. Se auto-carga cuando pidas un PR.
+Empaqueta "armar un PR" una vez. Se auto-carga cuando pidas un PR. Pídele al agente:
 
-```bash
-mkdir -p .claude/skills/crear-pr
 ```
+Crea un skill en .claude/skills/crear-pr/SKILL.md con este contenido:
 
-Crea `.claude/skills/crear-pr/SKILL.md`:
-
-```markdown
 ---
 name: crear-pr
 description: Empaqueta cambios en un PR. Úsalo cuando el usuario pida abrir o armar un PR.
@@ -87,32 +156,34 @@ Cuando el usuario pida un PR:
 2. crea una rama nueva descriptiva (feat/..., fix/...)
 3. commit con un mensaje claro en imperativo
 4. git push -u origin la rama
-5. gh pr create con titulo y cuerpo (que cambia y por que)
+5. gh pr create con título y cuerpo (qué cambia y por qué)
 ```
 
-Verifica que aparezca: escribe `/crear-pr`.
+Verifica que aparezca: escribe `/crear-pr` en el agente.
 
 ---
 
-## Paso 4 · e2e (Playwright)
+## Paso 6 · e2e con Playwright
 
-Un MCP que le da un browser real al agente. Conéctalo:
+Un MCP le da un browser real al agente: abre la página, la navega y verifica el comportamiento real (lee el accessibility tree, no adivina). Conéctalo:
 
 ```bash
 claude mcp add playwright -- pnpm dlx @playwright/mcp@latest
 ```
 
-Confirma con `/mcp`. Luego pídele el test. Pégalo en el agente:
+Confirma con `/mcp`. Luego pídele el test:
 
 ```
 Escribe un test e2e del alta en la waitlist con Playwright: abre la home,
-ingresa un email, envia y verifica el mensaje de confirmacion. Despues
-loguea y verifica que el email aparece en /panel. Córrelo hasta que pase.
+ingresa un email, envía y verifica el mensaje de confirmación. Después
+loguéate y verifica que el email aparece en /panel. Córrelo hasta que pase.
 ```
+
+Se auto-verifica: si no coincide con lo esperado, itera solo.
 
 ---
 
-## Paso 5 · el loop (critique pattern)
+## Paso 7 · el loop: `/code-review`
 
 Nunca aceptes el primer output. Un subagente fresco critica el diff sin el sesgo de quien lo escribió.
 
@@ -122,30 +193,48 @@ Nativo, sobre el diff actual:
 /code-review
 ```
 
-O a mano, con un subagente:
-
-```
-Usa un subagente para revisar mis cambios contra el plan.
-Ve solo el diff y los criterios. Lista problemas concretos por severidad.
-No arregles nada todavia.
-```
-
 Y para corregir con la crítica en mano:
 
 ```
-Corrige el output aplicando cada punto de la critica. Despues lo reviso yo.
+Corrige el output aplicando cada punto de la crítica. Después lo reviso yo.
+```
+
+El critique con **1 agente**; en el bloque siguiente lo escalamos a varios.
+
+---
+
+## Paso 8 · deploy a Vercel
+
+Ya tienes el repo en GitHub y la app andando local. Ahora a producción.
+
+1. Entra a [vercel.com/new](https://vercel.com/new) → **Import** tu repo `waitlist` de GitHub. (O desde la terminal: `pnpm dlx vercel` y sigue el link.)
+2. Antes de deployar, en **Settings → Environment Variables** agrega las tres de tu `.env.local`:
+   - `DATABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. **Deploy.** Vercel construye y te da una URL pública.
+4. Vuelve a Supabase → **Authentication → URL Configuration** y agrega tu URL de Vercel (`https://tu-waitlist.vercel.app`) a **Site URL** y **Redirect URLs**, para que el login funcione en producción.
+5. Abre tu URL, da de alta un email y confírmalo en `/panel`. Está en producción.
+
+> Como usas el mismo Supabase para local y para producción, la tabla `signups` ya existe (la creó `db:push` en el paso 4): producción solo necesita las mismas variables.
+
+**A partir de ahora, cada `push` a `main` re-deploya solo.** Eso es CI/CD, y lo vemos a fondo en el curso.
+
+```bash
+git add -A && git commit -m "feat: waitlist en producción" && git push
 ```
 
 ---
 
 ## Lo que armaste
 
-| capa | qué | comando clave |
-|------|-----|---------------|
-| 0 · global  | CLAUDE.md global desde el ejemplo | ver Paso 0 |
-| 1 · config  | CLAUDE.md del proyecto | ya en el repo |
-| 2 · tooling | skill crear-pr | `.claude/skills/crear-pr/SKILL.md` |
-| 3 · e2e     | Playwright MCP | `claude mcp add playwright` |
-| 4 · loop    | critique del diff | `/code-review` |
+| capa | qué | dónde quedó |
+|------|-----|-------------|
+| 0 · global  | `CLAUDE.md` global desde el ejemplo | `~/.claude/CLAUDE.md` |
+| 1 · config  | `CLAUDE.md` del proyecto | raíz del repo |
+| 2 · tooling | skill `crear-pr` | `.claude/skills/crear-pr/SKILL.md` |
+| e2e         | Playwright MCP | `claude mcp add playwright` |
+| loop        | critique del diff | `/code-review` |
+| producción  | app deployada + CI/CD | Vercel + Supabase |
 
-No deployamos hoy: el objetivo era montar y entender el harness, no shippear. El critique con 1 agente; en el bloque siguiente lo escalamos a varios.
+De la idea al producto en vivo: una waitlist real, con harness, deployada y con deploy automático en cada push.

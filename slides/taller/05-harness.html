@@ -227,19 +227,6 @@
     <p class="dim" style="text-align:center;margin:0.5em 0 0">en el demo armamos un <strong>skill</strong>: <code>crear-pr</code> — lo que hacías a mano, empaquetado una vez.</p>
   </section>
 
-  <!-- ══ CAPA 2 · e2e con Playwright ══ -->
-  <section>
-    <span class="capmark t2"><b>capa 2/4</b> · tooling — el e2e que faltaba</span>
-    <h2 style="margin:0 0 0.15em">e2e en el harness: Playwright</h2>
-    <div class="term" style="font-family:'JetBrains Mono',monospace;font-size:0.56em;text-align:left;background:var(--panel-2);border:1px solid var(--rule);border-radius:8px;padding:0.6em 0.9em;color:var(--ink);line-height:1.7;margin-top:0.2em"><span style="color:var(--muted)">$</span> claude mcp add playwright <span style="color:var(--muted)">--</span> pnpm dlx <span style="color:var(--cyan)">@playwright/mcp@latest</span></div>
-    <ul style="margin-top:0.45em;">
-      <li>lee el <strong>accessibility tree</strong>, no screenshots pixel a pixel → selectores estables</li>
-      <li>abre la página, navega, verifica el comportamiento real y saca captura</li>
-      <li>se <strong>auto-verifica</strong>: si no coincide con lo esperado, itera solo</li>
-    </ul>
-    <p class="dim" style="text-align:center;margin:0.5em 0 0">en el demo: "escribe un e2e del alta y córrelo" — lo escribe contra la página real y pasa a la primera.</p>
-  </section>
-
   <!-- ══ CAPA 3 + 4 · agente y su loop: critique pattern (el cierre del demo) ══ -->
   <section>
     <span class="capmark t3"><b>capa 3 → 4</b> · el agente (ya lo viste) y su loop LLMOps</span>
@@ -266,20 +253,20 @@
     <blockquote style="margin:0.5em auto 0">ataca directo la randomness. es el pattern con mejor retorno por esfuerzo.</blockquote>
   </section>
 
-  <!-- ══ el demo, paso a paso: todo el copy-paste vive en la guía ══ -->
+  <!-- ══ el demo: un solo slide · todo el copy-paste vive en la guía ══ -->
   <section>
-    <span class="mode hands">🖐 el demo · paso a paso</span>
-    <h2 style="margin:0 0 0.12em">lo armamos sobre una <em style="font-style:normal;color:var(--amber)">waitlist</em></h2>
-    <p class="dim" style="margin:0 0 0.4em">landing con form de email + panel con login que lista inscriptos. en orden:</p>
+    <span class="mode hands">🖐 ahora sí: el demo</span>
+    <h2 style="margin:0 0 0.1em">vamos a hacer la <em style="font-style:normal;color:var(--amber)">waitlist</em>, de cero a producción</h2>
+    <p class="dim" style="margin:0 0 0.4em">landing con form de email + panel con login. no separamos cada paso en un slide: <strong>todo el copy-paste está en la guía</strong>. el arco completo:</p>
     <div class="hlist">
-      <div class="hrow l4"><span class="hn">0 · global</span><span class="hd">el agente arma tu <b>CLAUDE.md global</b> desde el ejemplo</span></div>
-      <div class="hrow l1"><span class="hn">1 · config</span><span class="hd">el repo ya trae su <b>CLAUDE.md</b> de proyecto</span></div>
-      <div class="hrow l2"><span class="hn">2 · tooling</span><span class="hd">creas el skill <b>crear-pr</b></span></div>
-      <div class="hrow l3"><span class="hn">3 · e2e</span><span class="hd">conectas <b>Playwright</b> y pides el test del alta</span></div>
-      <div class="hrow l1"><span class="hn">4 · loop</span><span class="hd"><b>/code-review</b> sobre el diff · corriges con la crítica</span></div>
+      <div class="hrow l4"><span class="hn">1 · arranca</span><span class="hd">abres tu carpeta y tu repo · <b>Next.js</b> limpio</span></div>
+      <div class="hrow l1"><span class="hn">2 · config</span><span class="hd"><b>CLAUDE.md</b> global (el stack) + el del proyecto</span></div>
+      <div class="hrow l3"><span class="hn">3 · datos</span><span class="hd"><b>Supabase</b> (db + auth) → <b>Drizzle</b> + la waitlist</span></div>
+      <div class="hrow l2"><span class="hn">4 · harness</span><span class="hd">skill <b>crear-pr</b> · <b>Playwright</b> e2e · <b>/code-review</b></span></div>
+      <div class="hrow l4"><span class="hn">5 · deploy</span><span class="hd"><b>Vercel</b> + CI/CD: cada push a main re-deploya solo</span></div>
     </div>
     <a class="mdlink" href="https://github.com/eyalcumartesi/tnf-taller/blob/main/taller/DEMO.md" target="_blank" rel="noopener">
-      📄 <b>taller/DEMO.md</b> <span class="arw">→</span> la guía paso a paso, todo copy-paste
+      📄 <b>taller/DEMO.md</b> <span class="arw">→</span> ahí les doy todo, paso a paso y copy-paste
     </a>
   </section>
 
@@ -292,6 +279,7 @@
       <div class="hrow l2"><span class="hn">capa 2</span><span class="hd"><b>tooling</b> · 1 skill <code>crear-pr</code> + Playwright MCP</span><span class="hx">lo que usa</span></div>
       <div class="hrow l3"><span class="hn">e2e</span><span class="hd"><b>Playwright</b> · verifica la UI, no la adivina</span><span class="hx">browser real</span></div>
       <div class="hrow l4"><span class="hn">loop</span><span class="hd"><b>critique</b> · subagente que critica el diff</span><span class="hx">mejor retorno</span></div>
+      <div class="hrow l3"><span class="hn">deploy</span><span class="hd"><b>Vercel</b> + Supabase · CI/CD en cada push</span><span class="hx">en producción</span></div>
     </div>
     <blockquote style="margin:0.5em auto 0">3-5 skills · 2-4 MCP · 1-2 subagentes. cada dep es una promesa de mantenimiento — déjalo lean.</blockquote>
     <p class="dim" style="text-align:center;margin:0.5em 0 0;font-size:0.6em">critique con <strong>1 agente</strong>. en el próximo bloque lo <strong>escalamos a varios</strong>.</p>

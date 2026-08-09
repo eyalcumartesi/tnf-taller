@@ -201,8 +201,13 @@ localhost:3000 (si no, levántalo); el browser de Playwright abre esa URL real.
 
 Escribe un test e2e del alta en la waitlist con Playwright: abre la home,
 ingresa un email, envía y verifica el mensaje de confirmación. Después
-loguéate con el usuario de Supabase que ya creé y verifica que el email
-aparece en /panel. Córrelo hasta que pase.
+loguéate con el usuario de Supabase que ya creé y verifica que ese mismo
+email aparece en /panel. Córrelo hasta que pase.
+
+importante: la tabla `signups` tiene el email único y apunta a mi Supabase
+real, así que genera un email distinto en cada corrida (p. ej.
+`test+${Date.now()}@demo.com`); si reusas un email fijo, la segunda corrida
+choca con el duplicado, no sale el mensaje de confirmación y el test falla.
 ```
 
 > Pásale al agente el email y la contraseña del usuario que creaste en el Paso 3 para que pueda loguearse en el test.

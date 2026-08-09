@@ -38,11 +38,26 @@ echo '[ -s /opt/homebrew/opt/nvm/nvm.sh ] && . /opt/homebrew/opt/nvm/nvm.sh' >> 
 source ~/.zshrc && nvm install --lts
 ```
 
-## 5. Claude Code (el agente)
+## 5. El agente
+
+Elige uno (o instala los dos, funcionan en paralelo):
 
 ```bash
+# Claude Code (Anthropic)
 npm install -g @anthropic-ai/claude-code
+
+# Codex (OpenAI)
+npm install -g @openai/codex
 ```
+
+## 6. Clona el material del taller
+
+```bash
+git clone https://github.com/eyalcumartesi/tnf-taller.git
+cd tnf-taller
+```
+
+Desde esta carpeta abres el agente (`claude` o `codex`) y tienes todo el material a mano.
 
 ---
 
@@ -50,7 +65,7 @@ npm install -g @anthropic-ai/claude-code
 
 ```bash
 node -v && pnpm -v && git --version
-gh --version && claude --version
+gh --version && claude --version   # y/o: codex --version
 ```
 
 Cada comando imprime una versión. Si es así, vas bien.
@@ -58,7 +73,8 @@ Cada comando imprime una versión. Si es así, vas bien.
 ## Identifícate
 
 ```bash
-claude                 # primera vez: abre el login
+claude                 # primera vez: abre el login (Claude Code)
+codex                  # primera vez: abre el login (Codex)
 gh auth login
 git config --global user.name "Tu Nombre"
 git config --global user.email "tu@email.com"

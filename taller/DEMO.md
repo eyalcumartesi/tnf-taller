@@ -141,6 +141,9 @@ Ruta `/panel`, protegida con login de Supabase:
 - una página de login (email + contraseña) con signInWithPassword de Supabase
 - si no hay sesión, /panel redirige al login; con sesión, lista los inscriptos
   ordenados por fecha, con el total arriba
+- importante: usa `@supabase/ssr` y crea un `middleware.ts` en la raíz que refresque
+  la sesión (updateSession); sin eso el guard de /panel corre en el servidor, no ve
+  la cookie de sesión y te manda al login aunque ya hayas entrado
 
 Deja el login funcionando de punta a punta con el usuario que ya creé en Supabase.
 Usa las variables de mi .env.local. Al terminar, corre `pnpm dev` y verifica tú

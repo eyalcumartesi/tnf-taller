@@ -171,7 +171,7 @@ Cuando el usuario pida un PR:
 5. gh pr create con título y cuerpo (qué cambia y por qué)
 ```
 
-Verifica que aparezca: escribe `/crear-pr` en el agente.
+Verifica que aparezca: escribe `/crear-pr` en el agente. Lo usarás en el Paso 8 para subir la waitlist a GitHub antes de deployar.
 
 ---
 
@@ -220,23 +220,38 @@ El critique con **1 agente**; en el bloque siguiente lo escalamos a varios.
 
 ## Paso 8 · deploy a Vercel
 
-Ya tienes el repo en GitHub y la app andando local. Ahora a producción.
+La app anda local, pero en GitHub tu `main` todavía tiene solo el Next.js vacío del Paso 1: el código de la waitlist vive en tu máquina. Antes de deployar hay que subirlo, y aquí usas por fin el skill del Paso 5.
 
-1. Entra a [vercel.com/new](https://vercel.com/new) → **Import** tu repo `waitlist` de GitHub. (O desde la terminal: `pnpm dlx vercel` y sigue el link.)
-2. Antes de deployar, en **Settings → Environment Variables** agrega las tres de tu `.env.local`:
+1. **Sube la waitlist a `main`** con el skill que armaste. En el agente:
+
+   ```
+   /crear-pr
+   ```
+
+   Arma la rama, el commit y abre el PR. Mergéalo a `main` desde la terminal (o con el botón **Merge** en GitHub):
+
+   ```bash
+   gh pr merge --merge --delete-branch
+   ```
+
+   Ahora `main` tiene la waitlist de verdad, que es lo que Vercel va a deployar.
+2. Entra a [vercel.com/new](https://vercel.com/new) → **Import** tu repo `waitlist` de GitHub. (O desde la terminal: `pnpm dlx vercel` y sigue el link.)
+3. Antes de deployar, en **Settings → Environment Variables** agrega las tres de tu `.env.local`:
    - `DATABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-3. **Deploy.** Vercel construye y te da una URL pública.
-4. Vuelve a Supabase → **Authentication → URL Configuration** y agrega tu URL de Vercel (`https://tu-waitlist.vercel.app`) a **Site URL** y **Redirect URLs**. (Con login de email+contraseña casi no hace falta, pero lo dejas listo por si luego usas magic links.)
-5. Abre tu URL, da de alta un email y entra al `/panel` con **el mismo usuario de Supabase** del Paso 3. Está en producción.
+4. **Deploy.** Vercel construye y te da una URL pública.
+5. Vuelve a Supabase → **Authentication → URL Configuration** y agrega tu URL de Vercel (`https://tu-waitlist.vercel.app`) a **Site URL** y **Redirect URLs**. (Con login de email+contraseña casi no hace falta, pero lo dejas listo por si luego usas magic links.)
+6. Abre tu URL, da de alta un email y entra al `/panel` con **el mismo usuario de Supabase** del Paso 3. Está en producción.
 
 > Como usas el mismo Supabase para local y para producción, la tabla `signups` y tu usuario del panel ya existen (los creaste en los pasos 3 y 4): producción solo necesita las mismas variables.
 
-**A partir de ahora, cada `push` a `main` re-deploya solo.** Eso es CI/CD, y lo vemos a fondo en el curso.
+**A partir de ahora, cada `push` a `main` re-deploya solo.** Eso es CI/CD, y lo vemos a fondo en el curso. Sincroniza tu `main` local con lo que acabas de mergear y, de aquí en más, cualquier cambio que subas sale a producción solo:
 
 ```bash
-git add -A && git commit -m "feat: waitlist en producción" && git push
+git checkout main && git pull
+# cualquier cambio futuro:
+# /crear-pr → merge → Vercel re-deploya
 ```
 
 ---

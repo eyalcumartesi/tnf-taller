@@ -195,6 +195,13 @@ Verifica que aparezca: escribe `/crear-pr` en el agente. Lo usarás en el Paso 8
 Un MCP le da un browser real al agente: abre la página, la navega y verifica el comportamiento real (lee el accessibility tree, no adivina). Conéctalo:
 
 ```bash
+# 1. instala el Chrome que Playwright usa por defecto (lo baja Playwright, ~1 min).
+#    Sin esto el MCP arranca con `channel: chrome` y, si no tienes Google Chrome
+#    instalado (p. ej. solo Safari), revienta con "Chromium distribution 'chrome'
+#    is not found". Este comando deja ese Chrome listo.
+pnpm dlx playwright install chrome
+
+# 2. conecta el MCP
 claude mcp add playwright -- pnpm dlx @playwright/mcp@latest
 ```
 

@@ -278,7 +278,9 @@ La app anda local, pero en GitHub tu `main` todavía tiene solo el Next.js vací
    ```
 
    Ahora `main` tiene la waitlist de verdad, que es lo que Vercel va a deployar.
-2. Entra a [vercel.com/new](https://vercel.com/new) → **Import** tu repo `waitlist` de GitHub. (O desde la terminal: `pnpm dlx vercel` y sigue el link.) Si no ves tu repo, dale a **Adjust GitHub App Permissions** y dale acceso — esto ya lo autorizaste al crear la cuenta en `SETUP.md`, así que debería aparecer directo.
+2. Entra a [vercel.com/new](https://vercel.com/new) → **Import** tu repo `waitlist` de GitHub. Si no ves tu repo, dale a **Adjust GitHub App Permissions** y dale acceso — esto ya lo autorizaste al crear la cuenta en `SETUP.md`, así que debería aparecer directo.
+
+   > Hazlo por el **dashboard**, no por `pnpm dlx vercel`: el CLI deploya de una y **no** te muestra la sección de Environment Variables del paso 3, así que el primer build revienta con `supabaseUrl is required` (justo lo que el dashboard te deja evitar cargando las variables antes de buildear).
 3. En esa misma pantalla de import (**Configure Project**, antes de tocar **Deploy**) abre la sección **Environment Variables** y agrega las tres de tu `.env.local`:
    - `DATABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_URL`

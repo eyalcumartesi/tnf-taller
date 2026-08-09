@@ -102,15 +102,16 @@ El global carga el peso (el stack); el del proyecto queda finito (qué es la app
 Necesitamos una base de datos Postgres (para Drizzle) y auth (para el login del panel). Las dos vienen de un proyecto de Supabase.
 
 1. Entra a [supabase.com](https://supabase.com) → **New project**. Elige un nombre, una región cercana y **guarda la contraseña** de la base de datos.
-2. **Settings → Database → Connection string → URI** y elige **Session pooler** (puerto `5432`, empieza con `postgres.TU-PROYECTO@aws-...pooler.supabase.com`). Es tu `DATABASE_URL`.
-3. **Settings → API** → copia **Project URL** y la clave **anon public**.
+2. Arriba del dashboard dale al botón **Connect**: ese diálogo tiene los tres valores. En **Connection string → Session pooler** copia la URI (puerto `5432`, empieza con `postgres.TU-PROYECTO@...pooler.supabase.com`). Es tu `DATABASE_URL`. (También sale por **Settings → Database**.)
+3. En el mismo diálogo **Connect → App Frameworks** copia el **Project URL** y la **Publishable key** (`sb_publishable_...`). Esa key opaca es el reemplazo actual de la vieja "anon"; funciona igual con `@supabase/ssr`. Si tu proyecto todavía te muestra una **anon public** (en *Settings → API Keys → Legacy API Keys*), esa también sirve.
 
 Crea `.env.local` en la raíz con esos tres valores:
 
 ```bash
 DATABASE_URL="postgresql://postgres.TU-PROYECTO:PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres"
 NEXT_PUBLIC_SUPABASE_URL="https://TU-PROYECTO.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="TU-ANON-KEY"
+# la Publishable key (sb_publishable_...); si tu proyecto aún usa la anon, va aquí igual
+NEXT_PUBLIC_SUPABASE_ANON_KEY="TU-PUBLISHABLE-KEY"
 ```
 
 > **Usa el Session pooler, no el Transaction pooler (6543).** Es el único que sirve para las dos cosas del demo: `pnpm db:push` (migraciones de Drizzle) en tu máquina y la app corriendo en Vercel (es IPv4; la conexión directa es IPv6 y Vercel no la alcanza). El de transacciones rompe el `db:push`.

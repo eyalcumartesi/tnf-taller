@@ -244,185 +244,83 @@ Se auto-verifica: si no coincide con lo esperado, itera solo.
 
 ---
 
-## Paso 7 · el loop: la crítica se dispara sola (hooks + agentes)
+## Paso 7 · el loop: tu propia code-review, disparada por un hook
 
-Nunca aceptes el primer output. Aquí armamos el mismo patrón que corre en producción en Spexs (ahí se llama `critiker`): un **hook** dispara, cuando el agente termina, un **reviewer externo y fresco** que critica el diff contra **una sola rúbrica**. No es un cazador de bugs genérico (de eso ya se encarga CI): tiene un trabajo y nada más.
+Nunca aceptes el primer output. Dos piezas del harness lo automatizan: un **agente** que critica con ojos frescos, y un **hook** que lo dispara solo cuando el principal termina.
 
 ```
-   agente principal termina el turno
+   agente principal termina
             │
-            │  ⚡ Stop hook  ── "cuando termina → dispara la crítica"
+            │  ⚡ Stop hook  ── "cuando termina → corre el critico"
             ▼
-   ┌───────────────────────────────┐
-   │  motor: git diff → gate        │  diff chico y sin riesgo = ni se molesta
-   └───────────────────────────────┘
-            │  routing por blast-radius
-            ├── diff chico          → 1 lente  (la rúbrica completa)
-            └── grande / riesgoso   → 3 lentes en paralelo  (email · sesión · tipos)
-            ▼
-   cada lente = `claude -p` HEADLESS y EXTERNO   (proceso aparte = cero sesgo de autor,
-   read-only, puntúa SOLO contra .claude/critico/rubric.md)
+   ┌──────────────────────┐
+   │   agente critico      │  contexto fresco · read-only (Read/Grep/Glob)
+   │  tu code-review con    │  no escribió el código → no arrastra el sesgo
+   │  unos constraints      │
+   └──────────────────────┘
             │
             ▼
-   .agent/critico/report.md  +  CRITICO_TALLY: {"p0":n,"p1":n,"p2":n}
-            │
-            ├── modo report  → tantea 1 línea, NO bloquea   (humano en el loop) ← default
-            └── modo enforce → P0/P1 bloquean el Stop → el agente corrige antes de terminar
+   crítica del diff ──▶ el principal corrige ──▶ recién ahí revisas tú
 ```
 
-Las tres piezas, una línea cada una:
+Las dos piezas, una línea cada una:
 
-- **Hook (el loop):** un `Stop` hook. El evento "el agente terminó" corre un comando: la crítica. No la pides, se dispara sola.
-- **Reviewer externo:** un `claude -p` headless, en **otro proceso**. Contexto fresco, read-only: como no escribió el código, no defiende sus propias decisiones. Reusa tu login, sin billing extra.
-- **Rúbrica (un solo trabajo):** el reviewer puntúa **solo** contra `rubric.md`. Rails finitos: si no está en la rúbrica, no es su problema. Eso es lo que lo vuelve útil en vez de ruidoso.
+- **Agente (subagente):** un revisor aparte, con **contexto fresco** y **read-only** (`Read/Grep/Glob`, no edita nada). Es **tu propia versión de `/code-review`**, pero con los constraints que le pongas. Como no escribió el código, no defiende sus decisiones.
+- **Hook:** un **disparador**. El evento "el agente terminó" corre el critico. No lo pides: se dispara solo.
 
-**1 · El atajo nativo (cero setup).** Antes del sistema completo, el mismo loop con un comando:
+**1 · El atajo nativo (cero setup).** El mismo loop con un comando, sin crear nada:
 
 ```
 /code-review
 ```
 
-Y para corregir con la crítica en mano:
+**2 · Tu agente critico.** Un archivo: el agente con sus constraints adentro. Pídele al agente que lo cree:
 
 ```
-Corrige el output aplicando cada punto de la crítica. Después lo reviso yo.
-```
+Crea un subagente en .claude/agents/critico.md con este contenido:
 
-**2 · El sistema `critico` (recomendado).** Cuatro archivos: la rúbrica, el motor, el hook y el subagente para pedirlo a mano. Pídele al agente que los cree con este contenido exacto:
-
-````
-Crea el sistema de crítica con estos cuatro archivos (contenido exacto) y dale
-permiso de ejecución a los dos .sh (chmod +x):
-
---- .claude/critico/rubric.md ---
-# Rúbrica del Critico — reglas de la waitlist, nada más
-
-Eres un revisor externo y escéptico. No escribiste este código y no le debes el
-beneficio de la duda. Ves solo el diff y los archivos que abras. No admires el
-cambio, no caces bugs genéricos (de eso se encarga CI), no bikeshees.
-
-Barra escéptica: cada hallazgo necesita `archivo:línea` + el texto ofensor. Si no
-estás seguro de que viola una regla de abajo, NO es un hallazgo. El silencio gana.
-
-## P0 — Bloquean (un usuario real recibe datos mal, o se abre un escape de tipos)
-1. El email se valida (formato) antes de insertar en `signups`.
-2. Sin duplicados: el alta maneja el choque de email único, no revienta.
-3. El guard de `/panel` corre en el server (`proxy.ts` / server component), nunca
-   confía en el cliente para decidir si hay sesión.
-4. Secretos solo desde `.env` (`process.env`), nunca hardcodeados en el código.
-5. Nada de `any` ni `as` en el path de datos. `unknown` + type guard es el fix.
-
-## P1 — Importantes (pudren el patrón, serán P0 después)
-6. Tipos estructurados en la query de Drizzle, destructurados DENTRO del método
-   (no spread/destructure en el call site).
-7. Reusa el schema de Drizzle (`signups`); no redefinas la forma en otro lado.
-8. Return types explícitos en funciones exportadas.
-9. Nada de band-aid: ningún `if` que parchee un email/caso puntual en vez del root cause.
-
-## P2 — Nits (cuéntalos, no te explayes): naming, dead code, comentario que miente.
-
-## Formato de salida (exacto)
-Por hallazgo:
-[P0|P1|P2] <regla #> <archivo>:<línea>
-  <una frase: qué viola qué regla>
-  evidencia: <el código ofensor, recortado>
-  fix: <el movimiento limpio en una línea>
-
-Última línea SIEMPRE (aunque sea todo cero):
-CRITICO_TALLY: {"p0":<n>,"p1":<n>,"p2":<n>}
-Si nada viola una regla: escribe `Sin violaciones.` y luego la línea del tally.
-
---- .claude/agents/critico.md ---
 ---
 name: critico
-description: Revisor externo del diff contra la rúbrica de la waitlist. Read-only, no arregla.
-tools: Read, Grep, Glob, Bash
-model: inherit
+description: Critica el diff de la waitlist. Read-only, no arregla.
+tools: Read, Grep, Glob
 ---
 
-# Critico
-Revisas un diff contra `.claude/critico/rubric.md`, nada más. No escribiste este código.
-1. Lee la rúbrica. Si algo no está ahí, no es tu problema.
-2. Toma el diff: `git diff "$(git merge-base HEAD @{upstream} 2>/dev/null || git rev-parse HEAD~1)"`.
-3. Cada hallazgo necesita `archivo:línea` + el texto ofensor. Si dudas, lo descartas.
-4. Read-only: encuentras, NO arreglas. El principal arregla.
-5. Emite en el formato de la rúbrica y cierra con la línea `CRITICO_TALLY:`.
+Eres un revisor con contexto fresco. No escribiste este código; no le debes el
+beneficio de la duda. Read-only: encuentras, NO arreglas. El principal arregla.
 
---- .claude/hooks/critico-run.sh ---
-#!/usr/bin/env bash
-# Motor del Critico: reviewer EXTERNO y read-only sobre el diff, puntuado solo contra
-# rubric.md. 1 lente para un diff chico; 3 en paralelo si es grande o toca zona de riesgo.
-set -uo pipefail
-FORCE=0; [ "${1:-}" = "--force" ] && FORCE=1
-ROOT="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || echo .)}"
-cd "$ROOT" || exit 0
-OUT="$ROOT/.agent/critico"; mkdir -p "$OUT"
-zero(){ echo 'CRITICO_TALLY_TOTAL: {"p0":0,"p1":0,"p2":0}'; exit 0; }
-BIN="$(command -v claude)"; [ -n "$BIN" ] || zero
-BASE="$(git merge-base HEAD @{upstream} 2>/dev/null || git rev-parse HEAD~1 2>/dev/null || echo HEAD)"
-DIFF="$(git diff "$BASE" -- '*.ts' '*.tsx' 2>/dev/null)"; [ -n "$DIFF" ] || zero
-LINES="$(printf '%s\n' "$DIFF" | grep -cE '^[+-]' || true)"
-RISK=0; printf '%s' "$DIFF" | grep -qiE '(signInWithPassword|updateSession|proxy\.ts|signups|drizzle| as any|\bas )' && RISK=1
-if [ "$FORCE" = 0 ] && [ "$LINES" -lt "${CRITICO_FLOOR:-20}" ] && [ "$RISK" = 0 ]; then zero; fi
-RUBRIC="$(cat "$ROOT/.claude/critico/rubric.md")"; [ -n "$RUBRIC" ] || zero
-if [ "$LINES" -ge "${CRITICO_BIG:-300}" ] || [ "$RISK" = 1 ]; then
-  LENSES=("validación de email y duplicados" "sesión y guard de /panel (server, no cliente)" "forma de tipos: any/as, schema de Drizzle, return types")
-else LENSES=("la rúbrica completa"); fi
-run(){ printf '%s' "$DIFF" | CRITICO_CHILD=1 "$BIN" -p "Eres Critico. Revisa el diff de stdin SOLO contra esta rúbrica. FOCO: $1.
-<rubrica>
-$RUBRIC
-</rubrica>
-Cierra con la línea CRITICO_TALLY." --allowedTools "Read,Grep,Glob,Bash" >"$OUT/lens-$2.out" 2>/dev/null || true; }
-i=0; for l in "${LENSES[@]}"; do run "$l" "$i" & i=$((i+1)); done; wait
-cat "$OUT"/lens-*.out > "$OUT/report.md" 2>/dev/null
-TOTAL="$(cat "$OUT"/lens-*.out 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const t={p0:0,p1:0,p2:0};for(const m of s.matchAll(/CRITICO_TALLY:\s*(\{[^}]*\})/g)){try{const o=JSON.parse(m[1]);t.p0+=o.p0||0;t.p1+=o.p1||0;t.p2+=o.p2||0}catch{}}process.stdout.write("CRITICO_TALLY_TOTAL: "+JSON.stringify(t))})' 2>/dev/null || echo 'CRITICO_TALLY_TOTAL: {"p0":0,"p1":0,"p2":0}')"
-echo "$TOTAL"
+Toma el diff (git diff contra main) y revísalo SOLO contra estos constraints:
+- el email se valida antes de insertar en `signups`, y el alta maneja el duplicado
+- el guard de /panel corre en el server (proxy.ts), nunca confía en el cliente
+- secretos solo desde process.env, nunca hardcodeados
+- nada de `any` ni `as` en el path de datos
+- reusa el schema de Drizzle (`signups`), no redefinas la forma
 
---- .claude/hooks/critico.sh ---
-#!/usr/bin/env bash
-# Stop hook = EL LOOP. El agente termina → Critico revisa en un proceso externo y fresco.
-# report (default): tantea, no bloquea. enforce: P0/P1 bloquean el Stop para que corrija.
-set -uo pipefail
-[ "${CRITICO_CHILD:-}" = "1" ] && exit 0            # el reviewer no re-dispara su propio Stop
-MODE="${CRITICO_MODE:-report}"; [ "$MODE" = off ] && exit 0
-active="$(cat | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{process.stdout.write(String(JSON.parse(s).stop_hook_active))}catch{process.stdout.write("false")}})' 2>/dev/null || echo false)"
-DIR="${CLAUDE_PROJECT_DIR:-.}/.claude/hooks"
-total="$("$DIR/critico-run.sh" 2>/dev/null | grep '^CRITICO_TALLY_TOTAL:' | tail -1)"
-[ -n "$total" ] || exit 0
-read -r p0 p1 p2 < <(printf '%s' "${total#CRITICO_TALLY_TOTAL: }" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const o=JSON.parse(s);process.stdout.write(`${o.p0||0} ${o.p1||0} ${o.p2||0}`)}catch{process.stdout.write("0 0 0")}})' 2>/dev/null || echo "0 0 0")
-sum="Critico: $p0 P0, $p1 P1, $p2 P2 (ver .agent/critico/report.md)"
-if [ "$MODE" = enforce ] && [ "$((p0+p1))" -gt 0 ] && [ "$active" != "true" ]; then
-  printf '%s\n' "$sum — corrige los P0/P1 y termina." >&2; exit 2   # bloquea 1 vez por cadena
-fi
-[ "$((p0+p1+p2))" -gt 0 ] && printf '{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"%s"}}\n' "$sum"
-exit 0
-````
+Cada hallazgo: `archivo:línea` + qué viola + el fix en una línea. Si dudas, lo
+descartas: el silencio gana al ruido. Si no hay nada, dilo y listo.
+```
 
-Y engancha el hook en `.claude/settings.json` (crea el archivo si no existe):
+**3 · El hook que lo dispara solo.** Para que no dependa de que te acuerdes, un `Stop` hook lo lanza cuando el agente termina. Agrega esto a `.claude/settings.json`:
 
 ```json
 {
   "hooks": {
     "Stop": [
-      { "hooks": [ { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/critico.sh" } ] }
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "grep -q '\"stop_hook_active\": *true' && exit 0; printf '{\"decision\":\"block\",\"reason\":\"Antes de terminar: usa el subagente critico para revisar el diff actual y corrige cada punto que marque.\"}'"
+          }
+        ]
+      }
     ]
   }
 }
 ```
 
-**3 · A mano cuando quieras**, sin esperar al Stop, pídeselo al agente:
+> El `grep ... stop_hook_active` es el **freno anti-loop**: cuando el critico ya corrió y el agente vuelve a terminar, el hook lo deja parar en vez de re-dispararse para siempre. Si algo se traba, Ctrl-C y borra el bloque `Stop`.
 
-```
-Corre el critico sobre el diff actual: .claude/hooks/critico-run.sh --force
-Después mostrame el report agrupado por severidad (P0 primero), no arregles nada.
-```
-
-Cómo pensar los dos controles:
-
-- **`report` vs `enforce`** (`export CRITICO_MODE=enforce`): en `report` (default, seguro para el demo) el critico tantea una línea y **el humano decide**; en `enforce`, un P0/P1 **bloquea el Stop** y el agente corrige antes de terminar.
-- **1→N por blast-radius:** un cambio chico va con 1 lente; si el diff es grande (≥300 líneas) o toca zona de riesgo (auth, `signups`, `proxy.ts`, `as any`) salen **3 lentes en paralelo**. Ese salto de 1 a varios agentes es el próximo bloque (orquestación).
-
-> **Doble freno anti-loop:** `CRITICO_CHILD=1` hace que el reviewer no dispare su propio Stop, y `stop_hook_active` bloquea como máximo una vez por cadena. Si algo se traba: Ctrl-C, `export CRITICO_MODE=off` y sigue.
+En Spexs esto es un sistema más grande (reviewer externo, rúbrica aparte, varias lentes por blast-radius). Para este proyecto **déjalo lean**: un agente + un hook alcanza. El salto a varios agentes es el próximo bloque (orquestación).
 
 ---
 
@@ -488,7 +386,7 @@ De aquí en más, cualquier cambio futuro: **/crear-pr → merge → Vercel re-d
 | 1 · config  | `CLAUDE.md` del proyecto | raíz del repo |
 | 2 · tooling | skill `crear-pr` | `.claude/skills/crear-pr/SKILL.md` |
 | e2e         | Playwright MCP | `claude mcp add playwright` |
-| loop        | crítica del diff (hook + reviewer externo) | `.claude/hooks/critico.sh` + `/code-review` |
+| loop        | crítica del diff (agente + hook) | `.claude/agents/critico.md` + `/code-review` |
 | producción  | app deployada + CI/CD | Vercel + Supabase |
 
 De la idea al producto en vivo: una waitlist real, con harness, deployada y con deploy automático en cada push.

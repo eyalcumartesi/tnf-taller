@@ -1,6 +1,6 @@
 # Demo: la waitlist, de cero a producción
 
-Vamos a construir una **waitlist** real y **deployarla a Vercel**. Esta guía es todo el copy-paste del demo: la sigues de arriba hacia abajo y no te falta nada. El agente escribe el código; tú pegas comandos y aprietas los botones de las cuentas (Supabase, Vercel).
+Vamos a construir una **waitlist** real y **deployarla a Vercel**. Esta guía es todo el copy-paste del demo: la sigues de arriba hacia abajo y no te falta nada. **Tú no tocas la terminal:** el agente escribe el código y corre todos los comandos (crear el proyecto, el repo, la base de datos, el deploy); tú le dictas los prompts, creas los archivos desde el IDE y aprietas los botones de las cuentas (Supabase, Vercel). Lo único que tecleas en la terminal es `claude` para abrir el agente.
 
 Qué armamos: una landing pública con un formulario de email y un panel con login que lista los inscriptos. En vivo, sobre tu propia carpeta y tu propio repo.
 
@@ -13,9 +13,9 @@ Mapa del demo (cada paso está abajo, en orden):
 | # | paso | dónde |
 |---|------|-------|
 | 0 | tu config global (el stack por defecto) | agente |
-| 1 | abres tu carpeta y arrancas el proyecto | terminal |
+| 1 | el agente arranca tu proyecto | agente + IDE |
 | 2 | config del proyecto (`CLAUDE.md`) | agente |
-| 3 | Supabase: base de datos + auth | supabase.com + `.env.local` |
+| 3 | Supabase: base de datos + auth | supabase.com + IDE |
 | 4 | construyes la waitlist (Drizzle, form, panel, login) | agente |
 | 5 | tooling: el skill `crear-pr` | agente |
 | 6 | e2e con Playwright | agente |
@@ -36,35 +36,31 @@ Eso fija tu stack (Next.js, shadcn, Supabase, pnpm, Drizzle, Vercel) y tus princ
 
 ---
 
-## Paso 1 · abre tu carpeta y arranca el proyecto
+## Paso 1 · el agente arranca tu proyecto
 
-Tu proyecto va en **tu propia carpeta y tu propio repo**, no dentro de `tnf-taller`. Abre la terminal (Warp) y pega:
+Tu proyecto va en **tu propia carpeta y tu propio repo**, no dentro de `tnf-taller`. No lo creas tú a mano en la terminal: se lo pides al agente que ya tienes abierto (el del Paso 0, parado en `tnf-taller`). Pégale esto:
 
-```bash
-# 1. sal de tnf-taller antes de crear tu carpeta (en el Paso 0 quedaste dentro de
-#    tnf-taller). Así waitlist queda al lado, no como un repo git dentro de otro.
-cd ~
+```
+Armá mi proyecto de la waitlist por mí, corriendo tú los comandos (yo no toco la terminal):
 
-# 2. crea la carpeta y entra
-mkdir waitlist && cd waitlist
-
-# 3. arranca un Next.js limpio (App Router + TypeScript + Tailwind)
-#    --yes acepta los valores por defecto de lo que no pasamos (React Compiler, AGENTS.md),
-#    así el comando corre de una sin frenar a preguntarte nada.
-#    create-next-app ya te deja el repo git iniciado y el primer commit hecho (rama main).
-pnpm create next-app@latest . --ts --tailwind --app --eslint --no-src-dir --import-alias "@/*" --use-pnpm --yes
-
-# 4. sube a GitHub ese primer commit (crea el repo privado en el mismo comando)
-gh repo create waitlist --private --source=. --push
+1. Andá a mi home (~), NO lo crees dentro de tnf-taller (así waitlist queda al
+   lado, no como un repo git dentro de otro).
+2. Scaffoldeá un Next.js limpio (App Router + TS + Tailwind) en la carpeta `waitlist`:
+   pnpm create next-app@latest waitlist --ts --tailwind --app --eslint --no-src-dir --import-alias "@/*" --use-pnpm --yes
+   (--yes acepta los defaults de lo que no paso, así no frena a preguntar; y
+   create-next-app ya inicia el repo git y hace el primer commit en main, no lo repitas).
+3. Entrá a ~/waitlist y subí ese commit a GitHub creando el repo privado:
+   gh repo create waitlist --private --source=. --push
+4. Cuando termine, avisame para abrir la carpeta en el IDE.
 ```
 
-Ahora abre el agente **desde esta carpeta**:
+Cuando el agente termine, **abre la carpeta `~/waitlist` en tu IDE** (Cursor/VS Code → *File → Open Folder*). Desde la terminal integrada del IDE (que ya abre parada en esa carpeta) lanza el agente ahí:
 
 ```bash
 claude   # o: codex
 ```
 
-Desde aquí trabaja el resto del demo.
+Ese `claude` es el **único texto que tecleas en la terminal** en todo el demo. De aquí en más todo se lo pides al agente, lo creas en el IDE o lo aprietas en los dashboards.
 
 ---
 
@@ -105,9 +101,9 @@ Necesitamos una base de datos Postgres (para Drizzle) y auth (para el login del 
 2. Arriba del dashboard dale al botón **Connect**: ese diálogo tiene los tres valores. En **Connection string → Session pooler** copia la URI (puerto `5432`, empieza con `postgres.TU-PROYECTO@...pooler.supabase.com`). Es tu `DATABASE_URL`. (También sale por **Settings → Database**.)
 3. En el mismo diálogo **Connect → App Frameworks** copia el **Project URL** y la **Publishable key** (`sb_publishable_...`). Esa key opaca es el reemplazo actual de la vieja "anon"; funciona igual con `@supabase/ssr`. Si tu proyecto todavía te muestra una **anon public** (en *Settings → API Keys → Legacy API Keys*), esa también sirve.
 
-Crea `.env.local` en la raíz con esos tres valores:
+**En tu IDE**, crea un archivo nuevo `.env.local` en la raíz del proyecto (click derecho en la carpeta → *New File*) y pega esos tres valores:
 
-```bash
+```
 DATABASE_URL="postgresql://postgres.TU-PROYECTO:PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres"
 NEXT_PUBLIC_SUPABASE_URL="https://TU-PROYECTO.supabase.co"
 # la Publishable key (sb_publishable_...); si tu proyecto aún usa la anon, va aquí igual
@@ -197,28 +193,23 @@ Verifica que aparezca: escribe `/crear-pr` en el agente. Lo usarás en el Paso 8
 
 ## Paso 6 · e2e con Playwright
 
-Un MCP le da un browser real al agente: abre la página, la navega y verifica el comportamiento real (lee el accessibility tree, no adivina). Conéctalo.
+Un MCP le da un browser real al agente: abre la página, la navega y verifica el comportamiento real (lee el accessibility tree, no adivina). Que el agente se conecte solo; tú no tocas la terminal. Pégale esto:
 
-Estos comandos van **en la terminal, no dentro del agente**. Sal del agente (`/exit` o Ctrl-C dos veces) o usa otra pestaña de Warp:
+```
+Conectá Playwright como MCP para este proyecto, corriendo tú los comandos.
+Estás parado en ~/waitlist, así que corrélos acá (el MCP se registra con scope
+local, keyed a esta carpeta, que es la correcta):
 
-```bash
-# 1. párate en la carpeta del proyecto. `claude mcp add` registra el MCP para
-#    la carpeta donde lo corres (scope local), así que si estás en otra (una
-#    pestaña nueva abre en ~), el server queda en el proyecto equivocado y no
-#    aparece al relanzar `claude` desde waitlist.
-cd ~/waitlist
+1. pnpm dlx playwright install chrome
+   (baja el Chrome que Playwright usa por defecto, ~1 min; sin él el MCP arranca
+   con `channel: chrome` y revienta con "Chromium distribution 'chrome' is not
+   found" si no tengo Google Chrome instalado, p. ej. solo Safari).
+2. claude mcp add playwright -- pnpm dlx @playwright/mcp@latest
 
-# 2. instala el Chrome que Playwright usa por defecto (lo baja Playwright, ~1 min).
-#    Sin esto el MCP arranca con `channel: chrome` y, si no tienes Google Chrome
-#    instalado (p. ej. solo Safari), revienta con "Chromium distribution 'chrome'
-#    is not found". Este comando deja ese Chrome listo.
-pnpm dlx playwright install chrome
-
-# 3. registra el MCP en la config del proyecto
-claude mcp add playwright -- pnpm dlx @playwright/mcp@latest
+Cuando termine, avisame para relanzar el agente (los MCP se cargan al arrancar).
 ```
 
-**Vuelve a abrir el agente** (`claude`) desde la carpeta: los MCP se cargan al arrancar, así que el que registraste no aparece en la sesión que ya tenías abierta hasta relanzarla. Confirma con `/mcp` que sale `playwright`. Luego pídele el test:
+**Cierra el agente y vuelve a abrirlo** (`/exit` o Ctrl-C dos veces, y teclea `claude` de nuevo en la misma carpeta): los MCP se cargan al arrancar, así que el que registró no aparece en la sesión que ya tenías abierta hasta relanzarla. Confirma con `/mcp` que sale `playwright`. Luego pídele el test:
 
 ```
 Antes de correr el test, verifica que `pnpm dev` esté levantado en
@@ -271,10 +262,10 @@ La app anda local, pero en GitHub tu `main` todavía tiene solo el Next.js vací
    /crear-pr
    ```
 
-   Arma la rama, el commit y abre el PR. Mergéalo a `main` desde la terminal (o con el botón **Merge** en GitHub):
+   Arma la rama, el commit y abre el PR. Mergéalo a `main` con el botón **Merge** en la página del PR en GitHub, o pídeselo al agente:
 
-   ```bash
-   gh pr merge --merge --delete-branch
+   ```
+   Mergeá el PR a main (gh pr merge --merge --delete-branch) y borrá la rama.
    ```
 
    Ahora `main` tiene la waitlist de verdad, que es lo que Vercel va a deployar.
@@ -293,13 +284,13 @@ La app anda local, pero en GitHub tu `main` todavía tiene solo el Next.js vací
 
 > Como usas el mismo Supabase para local y para producción, la tabla `signups` y tu usuario del panel ya existen (los creaste en los pasos 3 y 4): producción solo necesita las mismas variables.
 
-**A partir de ahora, cada `push` a `main` re-deploya solo.** Eso es CI/CD, y lo vemos a fondo en el curso. Sincroniza tu `main` local con lo que acabas de mergear y, de aquí en más, cualquier cambio que subas sale a producción solo:
+**A partir de ahora, cada `push` a `main` re-deploya solo.** Eso es CI/CD, y lo vemos a fondo en el curso. Sincroniza tu `main` local con lo que acabas de mergear pidiéndoselo al agente:
 
-```bash
-git checkout main && git pull
-# cualquier cambio futuro:
-# /crear-pr → merge → Vercel re-deploya
 ```
+Sincronizá mi main local con GitHub: git checkout main && git pull.
+```
+
+De aquí en más, cualquier cambio futuro: **/crear-pr → merge → Vercel re-deploya solo.**
 
 ---
 

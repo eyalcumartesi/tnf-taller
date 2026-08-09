@@ -107,6 +107,13 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY="TU-ANON-KEY"
 
 > `.env.local` ya está en el `.gitignore` de Next.js: nunca subas tus claves al repo.
 
+**Crea tu usuario del panel (para que el login funcione en el demo).** El `/panel` vive detrás de login, así que necesitas una cuenta con la que entrar:
+
+4. **Authentication → Providers → Email**: deja activado *Email*, y **apaga "Confirm email"** (así puedes entrar sin abrir un correo de confirmación en vivo).
+5. **Authentication → Users → Add user → Create new user**: pon un email y una contraseña que recuerdes. Este es el usuario con el que entrarás al panel.
+
+> Con "Confirm email" apagado y el usuario ya creado a mano, el login del `/panel` funciona al instante, sin pasos de correo en medio del demo.
+
 ---
 
 ## Paso 4 · construye la waitlist
@@ -126,10 +133,13 @@ Landing pública en la home:
 - no permite emails duplicados
 
 Ruta `/panel`, protegida con login de Supabase:
-- lista los inscriptos ordenados por fecha, con el total arriba
+- una página de login (email + contraseña) con signInWithPassword de Supabase
+- si no hay sesión, /panel redirige al login; con sesión, lista los inscriptos
+  ordenados por fecha, con el total arriba
 
-Deja el login funcionando de punta a punta. Usa las variables de mi .env.local.
-Al terminar, corre `pnpm dev` y verifica el flujo de alta tú mismo.
+Deja el login funcionando de punta a punta con el usuario que ya creé en Supabase.
+Usa las variables de mi .env.local. Al terminar, corre `pnpm dev` y verifica tú
+mismo el alta y que puedes entrar al panel con mi email y contraseña.
 ```
 
 Por qué así: le das el **qué** (tabla, form, panel, login) sin dictarle el **cómo**, y le das los criterios (valida formato, sin duplicados, total arriba) con los que se verifica solo.
@@ -176,8 +186,11 @@ Confirma con `/mcp`. Luego pídele el test:
 ```
 Escribe un test e2e del alta en la waitlist con Playwright: abre la home,
 ingresa un email, envía y verifica el mensaje de confirmación. Después
-loguéate y verifica que el email aparece en /panel. Córrelo hasta que pase.
+loguéate con el usuario de Supabase que ya creé y verifica que el email
+aparece en /panel. Córrelo hasta que pase.
 ```
+
+> Pásale al agente el email y la contraseña del usuario que creaste en el Paso 3 para que pueda loguearse en el test.
 
 Se auto-verifica: si no coincide con lo esperado, itera solo.
 
@@ -213,10 +226,10 @@ Ya tienes el repo en GitHub y la app andando local. Ahora a producción.
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 3. **Deploy.** Vercel construye y te da una URL pública.
-4. Vuelve a Supabase → **Authentication → URL Configuration** y agrega tu URL de Vercel (`https://tu-waitlist.vercel.app`) a **Site URL** y **Redirect URLs**, para que el login funcione en producción.
-5. Abre tu URL, da de alta un email y confírmalo en `/panel`. Está en producción.
+4. Vuelve a Supabase → **Authentication → URL Configuration** y agrega tu URL de Vercel (`https://tu-waitlist.vercel.app`) a **Site URL** y **Redirect URLs**. (Con login de email+contraseña casi no hace falta, pero lo dejas listo por si luego usas magic links.)
+5. Abre tu URL, da de alta un email y entra al `/panel` con **el mismo usuario de Supabase** del Paso 3. Está en producción.
 
-> Como usas el mismo Supabase para local y para producción, la tabla `signups` ya existe (la creó `db:push` en el paso 4): producción solo necesita las mismas variables.
+> Como usas el mismo Supabase para local y para producción, la tabla `signups` y tu usuario del panel ya existen (los creaste en los pasos 3 y 4): producción solo necesita las mismas variables.
 
 **A partir de ahora, cada `push` a `main` re-deploya solo.** Eso es CI/CD, y lo vemos a fondo en el curso.
 

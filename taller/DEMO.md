@@ -196,6 +196,9 @@ claude mcp add playwright -- pnpm dlx @playwright/mcp@latest
 Confirma con `/mcp`. Luego pídele el test:
 
 ```
+Antes de correr el test, verifica que `pnpm dev` esté levantado en
+localhost:3000 (si no, levántalo); el browser de Playwright abre esa URL real.
+
 Escribe un test e2e del alta en la waitlist con Playwright: abre la home,
 ingresa un email, envía y verifica el mensaje de confirmación. Después
 loguéate con el usuario de Supabase que ya creé y verifica que el email

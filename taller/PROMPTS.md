@@ -2,6 +2,12 @@
 
 todos los prompts que usé en las demos, listos para copiar.
 
+## 0. arrancar el proyecto (la waitlist del demo)
+```
+Arma una waitlist: una landing con formulario de email que guarda los
+inscriptos, y un panel con login que los lista.
+```
+
 ## 1. critique pattern (el que corrimos al final)
 ```
 Revisa el código que acabas de escribir como si fueras un senior reviewer
@@ -27,4 +33,4 @@ Ve solo el diff y los criterios. Lista problemas concretos por severidad.
 No arregles nada todavía.
 ```
 
-Comandos y setup completo del harness: ver `CHEATSHEET.md`.
+Setup del entorno y CLAUDE.md global: ver `SETUP.md`.

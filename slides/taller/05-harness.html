@@ -65,16 +65,6 @@
   .capmark.t2 b { color: var(--cyan); }
   .capmark.t3 b { color: var(--green); }
 
-  /* hilo del demo: "en vivo" al pie de cada capa */
-  .live {
-    display: flex; align-items: center; gap: 0.5em; margin-top: 0.55em;
-    font-family: "JetBrains Mono", monospace; font-size: 0.52em; text-align: left;
-    background: rgba(159,232,112,0.07); border: 1px solid var(--rule);
-    border-left: 3px solid var(--green); border-radius: 8px; padding: 0.5em 0.8em; color: var(--ink);
-  }
-  .live b { color: var(--green); font-weight: 600; }
-  .live code { font-size: 0.92em; }
-
   /* tabla de decisión: skill / command / subagente / MCP */
   .dtable { width: 100%; border-collapse: collapse; margin-top: 0.35em; text-align: left; }
   .dtable th {
@@ -104,30 +94,17 @@
   .hrow.l1 { --ac: var(--amber); } .hrow.l2 { --ac: var(--cyan); }
   .hrow.l3 { --ac: var(--red); }   .hrow.l4 { --ac: var(--green); }
 
-  /* ── barra copy-paste: comando visible o contenido embebido, con botón copiar ── */
-  .cpy {
-    display: flex; align-items: center; gap: 0.55em; margin-top: 0.4em; text-align: left;
-    background: var(--panel-2); border: 1px solid var(--rule); border-left: 3px solid var(--green);
-    border-radius: 8px; padding: 0.4em 0.55em 0.4em 0.7em;
+  /* ── link a la guía paso a paso (MD) ── */
+  .mdlink {
+    display: inline-flex; align-items: center; gap: 0.5em; margin-top: 0.7em;
+    text-decoration: none; font-family: "JetBrains Mono", monospace; font-size: 0.56em;
+    color: var(--ink); background: var(--panel); border: 1px solid var(--rule);
+    border-left: 4px solid var(--green); border-radius: 10px; padding: 0.65em 1.1em;
+    transition: border-color .14s ease, transform .14s ease, box-shadow .14s ease;
   }
-  .cpy .cl {
-    font-family: "JetBrains Mono", monospace; color: var(--green); font-weight: 600;
-    font-size: 0.42em; letter-spacing: 0.04em; white-space: nowrap; text-transform: uppercase;
-  }
-  .cpy > code {
-    flex: 1; min-width: 0; background: transparent; color: var(--ink);
-    font-family: "JetBrains Mono", monospace; font-size: 0.56em; padding: 0;
-    white-space: nowrap; overflow-x: auto;
-  }
-  .cpy .clabel { flex: 1; min-width: 0; font-family: "Inter", sans-serif; color: var(--muted); font-size: 0.55em; }
-  .cpy .clabel b { color: var(--ink); font-weight: 600; }
-  .cpy .cbtn {
-    flex: 0 0 auto; cursor: pointer; font-family: "JetBrains Mono", monospace;
-    font-size: 0.46em; color: var(--green); background: var(--panel); border: 1px solid var(--green);
-    border-radius: 6px; padding: 0.42em 0.75em; transition: background .12s, color .12s;
-  }
-  .cpy .cbtn:hover, .cpy .cbtn.ok { background: var(--green); color: var(--bg); }
-  .cpy .src { display: none; }
+  .mdlink:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: 0 12px 30px -14px rgba(159,232,112,0.5); }
+  .mdlink b { color: var(--green); font-weight: 600; }
+  .mdlink .arw { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -195,24 +172,6 @@
     <p class="dim" style="text-align:center;margin:0.55em 0 0">este es el mapa. ahora lo <strong>seteamos capa por capa</strong>, de afuera hacia adentro → <span style="color:var(--amber)">gobierno</span> · <span style="color:var(--cyan)">tooling</span> · <span style="color:var(--green)">el loop</span>.</p>
   </section>
 
-  <!-- ══ el demo: lo armamos juntos, capa por capa ══ -->
-  <section>
-    <span class="mode hands">🖐 demo · follow-along</span>
-    <h2 style="margin:0 0 0.2em">armamos un harness completo, juntos</h2>
-    <p class="dim" style="margin:0 0 0.5em">no teoría suelta — cada capa la seteamos en vivo, en tu repo, hasta cerrar el <strong>critique pattern</strong>.</p>
-    <div class="flow" style="margin-top:0.3em">
-      <div class="step"><span class="n">capa 1</span><span class="l">config</span></div>
-      <div class="arrow">→</div>
-      <div class="step"><span class="n">capa 2</span><span class="l">tooling</span></div>
-      <div class="arrow">→</div>
-      <div class="step"><span class="n">e2e</span><span class="l">Playwright</span></div>
-      <div class="arrow">→</div>
-      <div class="step"><span class="n">capa 3·4</span><span class="l">critique</span></div>
-    </div>
-    <div class="live" style="margin-top:0.6em">📋 <span><b>copy-paste:</b> todo vive en <code>taller/CHEATSHEET.md</code> — ábrelo y sigue paso a paso, nada de tipear desde la pantalla.</span></div>
-    <p class="dim" style="text-align:center;margin:0.5em 0 0;font-size:0.6em">base en la doc oficial de ago 2026 · <span style="color:var(--ink)">regla madre: déjalo lean, cada pieza se gana su lugar.</span></p>
-  </section>
-
   <!-- ══ CAPA 1 · GOBIERNO: la config ══ -->
   <section>
     <span class="capmark"><b>capa 1/4</b> · gobierno — el borde ámbar del diagrama</span>
@@ -221,39 +180,16 @@
     <div class="cards" style="--n:2; margin-top:0.3em;">
       <div class="card">
         <span class="icon">🌐</span>
-        <div class="t">config global</div>
-        <div class="d">tu forma de trabajar — aplica a <strong>todos</strong> tus repos. estilo, idioma, lo que nunca quieres.</div>
+        <div class="t">global · una vez</div>
+        <div class="d">el <strong>stack</strong> que no vas a redefinir cada vez: Next.js, shadcn, Supabase, pnpm, Drizzle. <strong>ya lo instalaste en el setup.</strong></div>
       </div>
       <div class="card c-cyan">
         <span class="icon">📁</span>
-        <div class="t">CLAUDE.md del proyecto</div>
-        <div class="d"><strong>&lt; 500 líneas.</strong> solo lo que Claude fallaría sin saber: cómo se corre, se testea, convenciones.</div>
+        <div class="t">proyecto · ya en el repo</div>
+        <div class="d">qué es la app y cómo se corre. <strong>viene definido</strong>, no lo escribes: lo abres y listo.</div>
       </div>
     </div>
-    <div class="cpy">
-      <span class="cl">en vivo</span>
-      <code>/init</code>
-      <button class="cbtn">copiar ⧉</button>
-    </div>
-    <div class="cpy">
-      <span class="cl">o base</span>
-      <span class="clabel"><b>CLAUDE.md</b> mínimo · cómo se corre, tests, estilo, etiqueta</span>
-      <button class="cbtn">copiar ⧉</button>
-      <pre class="src"># reglas del proyecto
-
-## cómo se corre
-- dev: npm run dev
-- tests: npm test
-- build: npm run build
-
-## estilo
-- TypeScript estricto, sin any
-- nada de comentarios obvios
-
-## etiqueta del repo
-- rama por feature, nunca push directo a main
-</pre>
-    </div>
+    <p class="dim" style="text-align:center;margin:0.55em 0 0">para founders no-técnicos: el <strong>global carga el peso</strong>, el proyecto queda finito. no lo memorizan, lo heredan.</p>
   </section>
 
   <!-- ══ CAPA 2 · TOOLING: skill vs command vs subagente vs MCP ══ -->
@@ -288,49 +224,20 @@
         </tr>
       </tbody>
     </table>
-    <div class="cpy">
-      <span class="cl">en vivo</span>
-      <span class="clabel">skill <b>crear-pr</b> → <code style="font-size:1em;background:transparent;color:var(--muted);padding:0">.claude/skills/crear-pr/SKILL.md</code></span>
-      <button class="cbtn">copiar ⧉</button>
-      <pre class="src">---
-name: crear-pr
-description: Empaqueta cambios en un PR. Usalo cuando el usuario pida abrir o armar un PR.
----
-
-Cuando el usuario pida un PR:
-
-1. git add -A y muestra el diff resumido para confirmar
-2. crea una rama nueva descriptiva (feat/..., fix/...)
-3. commit con un mensaje claro en imperativo
-4. git push -u origin la rama
-5. gh pr create con titulo y cuerpo (que cambia y por que)
-</pre>
-    </div>
+    <p class="dim" style="text-align:center;margin:0.5em 0 0">en el demo armamos un <strong>skill</strong>: <code>crear-pr</code> — lo que hacías a mano, empaquetado una vez.</p>
   </section>
 
   <!-- ══ CAPA 2 · e2e con Playwright ══ -->
   <section>
     <span class="capmark t2"><b>capa 2/4</b> · tooling — el e2e que faltaba</span>
     <h2 style="margin:0 0 0.15em">e2e en el harness: Playwright</h2>
-    <p class="dim" style="margin:0 0 0.4em">un <strong>MCP</strong> que le da un browser real al agente — deja de adivinar la UI y la <strong>verifica</strong>.</p>
-    <div class="cpy">
-      <span class="cl">setup</span>
-      <code>claude mcp add playwright -- npx -y @playwright/mcp@latest</code>
-      <button class="cbtn">copiar ⧉</button>
-    </div>
-    <ul style="margin-top:0.4em;">
+    <div class="term" style="font-family:'JetBrains Mono',monospace;font-size:0.56em;text-align:left;background:var(--panel-2);border:1px solid var(--rule);border-radius:8px;padding:0.6em 0.9em;color:var(--ink);line-height:1.7;margin-top:0.2em"><span style="color:var(--muted)">$</span> claude mcp add playwright <span style="color:var(--muted)">--</span> pnpm dlx <span style="color:var(--cyan)">@playwright/mcp@latest</span></div>
+    <ul style="margin-top:0.45em;">
       <li>lee el <strong>accessibility tree</strong>, no screenshots pixel a pixel → selectores estables</li>
       <li>abre la página, navega, verifica el comportamiento real y saca captura</li>
       <li>se <strong>auto-verifica</strong>: si no coincide con lo esperado, itera solo</li>
     </ul>
-    <div class="cpy">
-      <span class="cl">en vivo</span>
-      <span class="clabel"><b>prompt:</b> escribe y corre un e2e del login contra la página real</span>
-      <button class="cbtn">copiar ⧉</button>
-      <pre class="src">Escribe un test e2e del login con Playwright: navega a /login, ingresa
-credenciales y verifica el redirect al dashboard. Correlo hasta que pase.
-</pre>
-    </div>
+    <p class="dim" style="text-align:center;margin:0.5em 0 0">en el demo: "escribe un e2e del alta y córrelo" — lo escribe contra la página real y pasa a la primera.</p>
   </section>
 
   <!-- ══ CAPA 3 + 4 · agente y su loop: critique pattern (el cierre del demo) ══ -->
@@ -356,20 +263,23 @@ credenciales y verifica el redirect al dashboard. Correlo hasta que pase.
         <div class="body"><b>el agente construye</b><span>produce el primer intento</span></div>
       </div>
     </div>
-    <div class="cpy">
-      <span class="cl">en vivo</span>
-      <code>/code-review</code>
-      <button class="cbtn">copiar ⧉</button>
+    <blockquote style="margin:0.5em auto 0">ataca directo la randomness. es el pattern con mejor retorno por esfuerzo.</blockquote>
+  </section>
+
+  <!-- ══ el demo, paso a paso: todo el copy-paste vive en la guía ══ -->
+  <section>
+    <span class="mode hands">🖐 el demo · paso a paso</span>
+    <h2 style="margin:0 0 0.12em">lo armamos sobre una <em style="font-style:normal;color:var(--amber)">waitlist</em></h2>
+    <p class="dim" style="margin:0 0 0.4em">landing con form de email + panel con login que lista inscriptos. los 4 pasos, en orden:</p>
+    <div class="hlist">
+      <div class="hrow l1"><span class="hn">1 · config</span><span class="hd">el repo ya trae su <b>CLAUDE.md</b> · el global lo instalaste en el setup</span></div>
+      <div class="hrow l2"><span class="hn">2 · tooling</span><span class="hd">creas el skill <b>crear-pr</b></span></div>
+      <div class="hrow l3"><span class="hn">3 · e2e</span><span class="hd">conectas <b>Playwright</b> y pides el test del alta</span></div>
+      <div class="hrow l4"><span class="hn">4 · loop</span><span class="hd"><b>/code-review</b> sobre el diff · corriges con la crítica</span></div>
     </div>
-    <div class="cpy">
-      <span class="cl">o a mano</span>
-      <span class="clabel"><b>prompt:</b> subagente fresco que ve solo el diff y lista problemas</span>
-      <button class="cbtn">copiar ⧉</button>
-      <pre class="src">Usa un subagente para revisar mis cambios contra el plan.
-Ve solo el diff y los criterios. Lista problemas concretos por severidad.
-No arregles nada todavia.
-</pre>
-    </div>
+    <a class="mdlink" href="https://github.com/eyalcumartesi/tnf-taller/blob/main/taller/HARNESS.md" target="_blank" rel="noopener">
+      📄 <b>taller/HARNESS.md</b> <span class="arw">→</span> la guía paso a paso, todo copy-paste
+    </a>
   </section>
 
   <!-- ══ el harness completo: lo que armamos + la regla lean ══ -->
@@ -406,29 +316,5 @@ No arregles nada todavia.
 </script>
 <!-- navegación continua entre bloques (bordes → salta de deck). Cargar DESPUÉS del init. -->
 <script src="../shared/deck-nav.js"></script>
-<!-- copy-paste: cada .cbtn copia su <code> hermano o el <pre class="src"> embebido -->
-<script>
-  document.querySelectorAll('.cpy .cbtn').forEach(function (btn) {
-    btn.addEventListener('click', async function (e) {
-      e.stopPropagation();
-      var box = btn.closest('.cpy');
-      var src = box.querySelector('.src') || box.querySelector('code');
-      if (!src) return;
-      var text = src.textContent.replace(/^\n+/, '').replace(/\s+$/, '');
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch (err) {
-        var ta = document.createElement('textarea');
-        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-        document.body.appendChild(ta); ta.select();
-        try { document.execCommand('copy'); } catch (e2) {}
-        document.body.removeChild(ta);
-      }
-      var prev = btn.textContent;
-      btn.textContent = '✓ copiado'; btn.classList.add('ok');
-      setTimeout(function () { btn.textContent = prev; btn.classList.remove('ok'); }, 1200);
-    });
-  });
-</script>
 </body>
 </html>

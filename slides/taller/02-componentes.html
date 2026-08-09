@@ -18,13 +18,13 @@
   }
   .ft-slide .sub b { color: var(--ink); }
 
-  .ft-wrap { display: flex; gap: 0.6em; align-items: stretch; }
-  .ft-wrap .stack-rail { font-size: 0.34em; }
-  .ft { flex: 1; display: flex; flex-direction: column; gap: 0.22em; min-width: 0; }
+  .ft-wrap { display: flex; gap: 0.7em; align-items: stretch; }
+  .ft-wrap .stack-rail { font-size: 0.5em; }
+  .ft { flex: 1; display: flex; flex-direction: column; gap: 0.5em; min-width: 0; }
 
-  .ft-head, .ft-row { display: grid; grid-template-columns: 1.05fr 1.7fr 1.5fr; gap: 0.4em; }
+  .ft-head, .ft-row { display: grid; grid-template-columns: 1.05fr 1.7fr 1.5fr; gap: 0.5em; }
   .ft-head > span {
-    font-family: "JetBrains Mono", monospace; font-size: 0.38em; letter-spacing: 0.09em;
+    font-family: "JetBrains Mono", monospace; font-size: 0.52em; letter-spacing: 0.09em;
     text-transform: uppercase; color: var(--muted); padding: 0 0.6em; text-align: left;
   }
   .ft-head .h-no  { color: var(--red); }
@@ -32,14 +32,14 @@
 
   .ft-row > div {
     background: var(--panel); border: 1px solid var(--rule); border-radius: 8px;
-    padding: 0.42em 0.7em; min-width: 0; transition: background .12s ease; text-align: left;
+    padding: 0.7em 0.95em; min-width: 0; transition: background .12s ease; text-align: left;
   }
   .ft-row .capa b, .ft-row .capa .hint { display: block; }
   .ft-row:hover > div { background: #161B27; }
-  .ft-row .capa { border-left: 4px solid var(--accent, var(--amber)); }
-  .ft-row .capa b { font-family: "Space Grotesk", sans-serif; color: var(--ink); font-size: 0.55em; line-height: 1.1; }
-  .ft-row .capa .hint { color: var(--muted); font-family: "JetBrains Mono", monospace; font-size: 0.4em; margin-top: 0.06em; }
-  .ft-row .no, .ft-row .fix { font-size: 0.46em; line-height: 1.26; overflow-wrap: anywhere; }
+  .ft-row .capa { border-left: 5px solid var(--accent, var(--amber)); }
+  .ft-row .capa b { font-family: "Space Grotesk", sans-serif; color: var(--ink); font-size: 0.82em; line-height: 1.1; }
+  .ft-row .capa .hint { color: var(--muted); font-family: "JetBrains Mono", monospace; font-size: 0.54em; margin-top: 0.1em; }
+  .ft-row .no, .ft-row .fix { font-size: 0.68em; line-height: 1.3; overflow-wrap: anywhere; }
   .ft-row .no  { color: var(--ink); }
   .ft-row .fix { color: var(--ink); }
   .ft-row .no::before  { content: "✗ "; color: var(--red);   font-weight: 700; }
@@ -71,50 +71,32 @@
           <span class="h-fix">quién lo soluciona · vendors</span>
         </div>
 
-        <div class="ft-row c-green">
-          <div class="capa"><b>mantenimiento</b><span class="hint">observabilidad</span></div>
-          <div class="no">no sabes si algo se rompió en prod ni qué usan</div>
-          <div class="fix">Sentry · PostHog · Datadog · Grafana</div>
-        </div>
-
-        <div class="ft-row c-green">
-          <div class="capa"><b>infraestructura</b><span class="hint">hosting · deploy</span></div>
-          <div class="no">env por entorno (dev/prod) · secretos fuera del repo · dominio/DNS · autoescala</div>
-          <div class="fix">Vercel · Railway · AWS · Cloudflare · Doppler</div>
-        </div>
-
         <div class="ft-row c-cyan">
           <div class="capa"><b>frontend + UI</b><span class="hint">lo que ve el user</span></div>
           <div class="no">estados: loading / error / vacío — solo el happy path</div>
-          <div class="fix">shadcn/ui · Radix · TanStack Query</div>
-        </div>
-
-        <div class="ft-row c-cyan">
-          <div class="capa"><b>HTTP</b><span class="hint">cliente ↔ servidor</span></div>
-          <div class="no">reverse proxy · load balancing · API gateway · TLS/HTTPS</div>
-          <div class="fix">Nginx · Cloudflare · Kong · Traefik</div>
+          <div class="fix">shadcn/ui · Radix</div>
         </div>
 
         <div class="ft-row c-cyan">
           <div class="capa"><b>backend / API</b><span class="hint">la lógica</span></div>
-          <div class="no">validar en el server · authz · manejo de errores</div>
-          <div class="fix">tRPC · Zod · Clerk · Sentry</div>
+          <div class="no">validar en el server · permisos · manejo de errores</div>
+          <div class="fix">tRPC · Zod · Clerk</div>
         </div>
 
         <div class="ft-row c-cyan">
           <div class="capa"><b>bases de datos</b><span class="hint">los datos</span></div>
-          <div class="no">schema · índices · migraciones · backups</div>
-          <div class="fix">Prisma · Drizzle · Supabase · Neon</div>
+          <div class="no">schema · migraciones · backups</div>
+          <div class="fix">Drizzle · Supabase · Neon</div>
         </div>
 
         <div class="ft-row c-amber">
-          <div class="capa"><b>hardware</b><span class="hint">cómputo</span></div>
-          <div class="no">límites de memoria y cómputo</div>
-          <div class="fix">serverless (Vercel/Lambda) · Fly.io · Modal · Replicate</div>
+          <div class="capa"><b>infraestructura</b><span class="hint">hosting · el metal</span></div>
+          <div class="no">env por entorno · secretos fuera del repo · dominio/DNS · cómputo</div>
+          <div class="fix">Vercel · Cloudflare · AWS</div>
         </div>
       </div>
     </div>
-    <p class="dim" style="margin-top:0.4em; text-align:center; font-size:0.6em;">no lo dominas — lo <b style="color:var(--ink)">nombras</b> y se lo <b style="color:var(--ink)">delegas al agente a propósito</b>. el que no sabe que existe, no lo pide.</p>
+    <p class="dim" style="margin-top:0.4em; text-align:center; font-size:0.6em;">transversal a todo el stack: <b style="color:var(--ink)">observabilidad</b> (Sentry · PostHog · Datadog). no lo dominas — lo <b style="color:var(--ink)">nombras</b> y se lo <b style="color:var(--ink)">delegas al agente a propósito</b>.</p>
   </section>
 
   <section>

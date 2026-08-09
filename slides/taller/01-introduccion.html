@@ -33,23 +33,23 @@
   .err-slide h2 { font-size: clamp(1.05em, 1.24em, 1.36em); margin-bottom: 0.5em; }
   .err-slide h2 .dim { font-size: 0.6em; }
   .err-grid {
-    display: grid; grid-template-columns: repeat(5, 1fr);
-    gap: clamp(8px, 0.85vw, 12px); width: 100%; text-align: left;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: clamp(14px, 1.3vw, 20px); width: 100%; text-align: left;
   }
   .err {
     position: relative; overflow: hidden;
     background: linear-gradient(180deg, rgba(240,113,120,0.07), rgba(19,23,34,0.35));
-    border: 1px solid var(--rule); border-top: 3px solid var(--red); border-radius: 12px;
-    padding: clamp(10px, 0.95vw, 14px) clamp(10px, 0.9vw, 13px) clamp(12px, 1vw, 15px);
+    border: 1px solid var(--rule); border-top: 3px solid var(--red); border-radius: 14px;
+    padding: clamp(16px, 1.5vw, 22px) clamp(16px, 1.4vw, 20px) clamp(18px, 1.6vw, 24px);
     display: flex; flex-direction: column;
     transition: transform .14s ease, border-color .14s ease, box-shadow .14s ease;
   }
   .err:hover { transform: translateY(-3px); border-color: rgba(240,113,120,0.55); box-shadow: 0 12px 28px -14px rgba(240,113,120,0.5); }
-  .err .ghost { position: absolute; top: -10px; right: 3px; pointer-events: none; font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: clamp(48px, 4.4vw, 62px); line-height: 1; color: rgba(240,113,120,0.10); }
-  .err .num { font-family: "JetBrains Mono", monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.16em; color: var(--red); position: relative; z-index: 1; margin-bottom: 8px; }
-  .err .t { font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: clamp(12.5px, 1.05vw, 15px); line-height: 1.2; color: var(--ink); position: relative; z-index: 1; overflow-wrap: anywhere; }
-  .err .d { color: var(--muted); font-size: clamp(10.5px, 0.86vw, 12px); line-height: 1.38; margin-top: 6px; position: relative; z-index: 1; overflow-wrap: anywhere; }
-  .err-note { margin-top: clamp(12px, 1.4vw, 18px); }
+  .err .ghost { position: absolute; top: -14px; right: 6px; pointer-events: none; font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: clamp(66px, 6.2vw, 96px); line-height: 1; color: rgba(240,113,120,0.10); }
+  .err .num { font-family: "JetBrains Mono", monospace; font-size: 14px; font-weight: 600; letter-spacing: 0.16em; color: var(--red); position: relative; z-index: 1; margin-bottom: 10px; }
+  .err .t { font-family: "Space Grotesk", sans-serif; font-weight: 600; font-size: clamp(17px, 1.55vw, 23px); line-height: 1.18; color: var(--ink); position: relative; z-index: 1; overflow-wrap: anywhere; }
+  .err .d { color: var(--muted); font-size: clamp(12.5px, 1.05vw, 16px); line-height: 1.4; margin-top: 8px; position: relative; z-index: 1; overflow-wrap: anywhere; }
+  .err-note { margin-top: clamp(14px, 1.6vw, 22px); }
 </style>
 </head>
 <body>
@@ -126,20 +126,16 @@
   </section>
 
   <section class="err-slide">
-    <h2>los 10 errores construyendo con AI <span class="dim" style="font-family:'JetBrains Mono',monospace">· 1–10</span></h2>
+    <h2>los errores más comunes construyendo con AI <span class="dim" style="font-family:'JetBrains Mono',monospace">· los que más veo</span></h2>
     <div class="err-grid">
-      <div class="err"><span class="ghost">01</span><span class="num">01</span><div class="t">aceptar el primer output</div><div class="d">sin crítica, sin revisión</div></div>
+      <div class="err"><span class="ghost">01</span><span class="num">01</span><div class="t">aceptar el output sin leerlo</div><div class="d">sin crítica — si no lo entendés, no es tuyo</div></div>
       <div class="err"><span class="ghost">02</span><span class="num">02</span><div class="t">cero spec</div><div class="d">"hazme una app de X" y a rezar</div></div>
       <div class="err"><span class="ghost">03</span><span class="num">03</span><div class="t">contexto sobrecargado</div><div class="d">conversaciones eternas, pierde el hilo</div></div>
-      <div class="err"><span class="ghost">04</span><span class="num">04</span><div class="t">empaquetar de más</div><div class="d">40 skills y plugins que nadie entiende</div></div>
-      <div class="err"><span class="ghost">05</span><span class="num">05</span><div class="t">multi-agente por moda</div><div class="d">cuando un agente bien equipado ganaba</div></div>
-      <div class="err"><span class="ghost">06</span><span class="num">06</span><div class="t">loops overnight sin probar manual</div><div class="d">despertar con un desastre</div></div>
-      <div class="err"><span class="ghost">07</span><span class="num">07</span><div class="t">sin verificación e2e</div><div class="d">el agente dice "listo" y nadie lo comprobó</div></div>
-      <div class="err"><span class="ghost">08</span><span class="num">08</span><div class="t">secretos en el repo</div><div class="d">API keys commiteadas (pasa más de lo que crees)</div></div>
-      <div class="err"><span class="ghost">09</span><span class="num">09</span><div class="t">ignorar el costo</div><div class="d">hasta que llega la factura</div></div>
-      <div class="err"><span class="ghost">10</span><span class="num">10</span><div class="t">no leer lo que el AI hizo</div><div class="d">si no lo entiendes, no es tuyo</div></div>
+      <div class="err"><span class="ghost">04</span><span class="num">04</span><div class="t">sobrecargar el harness</div><div class="d">40 skills y multi-agente por moda; uno bastaba</div></div>
+      <div class="err"><span class="ghost">05</span><span class="num">05</span><div class="t">no verificar de verdad</div><div class="d">sin e2e, loops overnight, "listo" sin comprobar</div></div>
+      <div class="err"><span class="ghost">06</span><span class="num">06</span><div class="t">seguridad y costo al final</div><div class="d">API keys en el repo, la factura sorpresa</div></div>
     </div>
-    <p class="dim err-note">los detalles van en <code>/taller/10-errores.md</code> como take-home.</p>
+    <p class="dim err-note">los <strong>10 completos</strong>, con detalle, en <code>/taller/10-errores.md</code> como take-home.</p>
   </section>
 
 </div>

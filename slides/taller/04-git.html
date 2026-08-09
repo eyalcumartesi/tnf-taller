@@ -9,19 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/theme.css">
 <style>
-  /* ajuste local: lista compacta de comandos tipo terminal (filas escaneables) */
-  .cmdgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.45em 1.1em; text-align:left; margin-top:0.4em; font-family:"JetBrains Mono", monospace; }
-  .cmd { display:flex; align-items:baseline; gap:0.5em; background:var(--panel); border:1px solid var(--rule); border-left:3px solid var(--cyan); border-radius:7px; padding:0.42em 0.75em; transition:border-color .12s ease, background .12s ease; }
-  .cmd:hover { background:#161B27; }
-  .cmd .k { color:var(--cyan); font-weight:600; font-size:0.62em; white-space:nowrap; flex:0 0 auto; }
-  .cmd .a { color:var(--amber); font-size:0.6em; }
-  .cmd .d { color:var(--muted); font-size:0.58em; line-height:1.25; }
-  .cmd.c-green { border-left-color:var(--green); }
-  .cmd.c-green .k { color:var(--green); }
-  .cmd.c-amber { border-left-color:var(--amber); }
-  .cmd.c-amber .k { color:var(--amber); }
-  .cmdlist { display:flex; flex-direction:column; gap:0.45em; }
-  .cmdlist .cmd { justify-content:flex-start; }
+  /* ── 3 frases que fijan el modelo mental (sin comandos) ── */
+  .mm { display:flex; flex-direction:column; gap:0.5em; text-align:left; margin:0.5em auto 0; max-width:860px; }
+  .mm .row { display:flex; align-items:baseline; gap:0.7em; background:var(--panel); border:1px solid var(--rule); border-left:3px solid var(--ac); border-radius:9px; padding:0.5em 0.9em; }
+  .mm .k { font-family:"JetBrains Mono", monospace; font-weight:600; color:var(--ac); font-size:0.7em; flex:0 0 5.5em; }
+  .mm .d { color:var(--ink); font-size:0.68em; line-height:1.35; }
+  .mm .d b { color:var(--ac); font-weight:600; }
+  .mm .repo   { --ac: var(--cyan); }
+  .mm .github { --ac: var(--amber); }
+  .mm .branch { --ac: var(--green); }
 </style>
 </head>
 <body>
@@ -31,77 +27,93 @@
   <section class="block-header">
     <span class="path"><b>eyal@taller</b>:~ $ <b style="color:var(--ink)">git</b></span>
     <h1>git</h1>
-    <span class="mins">~15 min</span>
+    <span class="mins">~10 min · el modelo mental, no los comandos</span>
   </section>
 
+  <!-- ══ SLIDE 1 · dónde vive tu código: carpeta → GitHub → Vercel ══ -->
   <section>
-    <h2 style="margin-bottom:0.1em;">git: lo que usas a diario</h2>
-    <p class="dim" style="margin-top:0;">no lo memorices — reconócelo. cada flecha te dice qué hace.</p>
-    <div class="cmdgrid">
-      <div class="cmd"><span class="k">clone</span><span class="a">→</span><span class="d">traer el repo</span></div>
-      <div class="cmd c-green"><span class="k">branch</span><span class="a">→</span><span class="d">trabajar sin romper lo que sirve</span></div>
-      <div class="cmd"><span class="k">status</span><span class="a">→</span><span class="d">ver qué cambió</span></div>
-      <div class="cmd c-green"><span class="k">switch / checkout</span><span class="a">→</span><span class="d">cambiar de branch</span></div>
-      <div class="cmd"><span class="k">add</span><span class="a">→</span><span class="d">marcar cambios</span></div>
-      <div class="cmd c-amber"><span class="k">push</span><span class="a">→</span><span class="d">subirlo a GitHub</span></div>
-      <div class="cmd"><span class="k">commit</span><span class="a">→</span><span class="d">guardar un cambio con nombre</span></div>
-      <div class="cmd c-amber"><span class="k">pull</span><span class="a">→</span><span class="d">traer lo nuevo</span></div>
-      <div class="cmd c-green"><span class="k">merge</span><span class="a">→</span><span class="d">unir branches</span></div>
-      <div class="cmd c-amber"><span class="k">amend</span><span class="a">→</span><span class="d">corregir el último commit</span></div>
+    <h2 style="margin-bottom:0.1em;">dónde vive tu código</h2>
+    <p class="dim" style="margin-top:0;">los comandos los corre el agente. tú solo tenés que entender <strong>dónde vive</strong>.</p>
+    <div style="max-width:960px; margin:0.2em auto 0;">
+      <svg viewBox="0 0 960 300" style="width:100%; height:auto; display:block;" font-family="JetBrains Mono, monospace">
+        <defs>
+          <marker id="a-amber" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="var(--amber)"/></marker>
+          <marker id="a-mute"  markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="var(--muted)"/></marker>
+          <marker id="a-green" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="var(--green)"/></marker>
+        </defs>
+
+        <!-- rótulos de zona -->
+        <text x="150" y="34" fill="var(--muted)" font-size="14" text-anchor="middle" letter-spacing="1.5">TU COMPU</text>
+        <text x="655" y="34" fill="var(--muted)" font-size="14" text-anchor="middle" letter-spacing="1.5">LA NUBE</text>
+
+        <!-- Box A: carpeta / repo -->
+        <rect x="40" y="70" width="220" height="120" rx="12" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.8"/>
+        <text x="150" y="112" fill="var(--ink)" font-size="22" text-anchor="middle">📁 carpeta/</text>
+        <text x="150" y="140" fill="var(--cyan)" font-size="14" text-anchor="middle">= tu app (el repo)</text>
+        <text x="150" y="163" fill="var(--muted)" font-size="13" text-anchor="middle">+ guarda cada versión</text>
+
+        <!-- Box B: GitHub -->
+        <rect x="410" y="72" width="200" height="116" rx="12" fill="var(--panel)" stroke="var(--amber)" stroke-width="1.8"/>
+        <text x="510" y="114" fill="var(--amber)" font-size="20" text-anchor="middle">GitHub</text>
+        <text x="510" y="140" fill="var(--ink)" font-size="14" text-anchor="middle">la copia en la nube</text>
+        <text x="510" y="162" fill="var(--muted)" font-size="13" text-anchor="middle">que todos (y Vercel) ven</text>
+
+        <!-- push / pull entre A y B -->
+        <line x1="262" y1="112" x2="406" y2="112" stroke="var(--amber)" stroke-width="2" marker-end="url(#a-amber)"/>
+        <text x="334" y="102" fill="var(--amber)" font-size="13" text-anchor="middle">push ▶</text>
+        <line x1="406" y1="150" x2="262" y2="150" stroke="var(--muted)" stroke-width="2" marker-end="url(#a-mute)"/>
+        <text x="334" y="169" fill="var(--muted)" font-size="13" text-anchor="middle">◀ pull</text>
+
+        <!-- Box C: Vercel -->
+        <rect x="740" y="72" width="180" height="116" rx="12" fill="var(--panel)" stroke="var(--green)" stroke-width="1.8"/>
+        <text x="830" y="114" fill="var(--green)" font-size="20" text-anchor="middle">Vercel</text>
+        <text x="830" y="140" fill="var(--ink)" font-size="14" text-anchor="middle">publica sola</text>
+        <text x="830" y="162" fill="var(--muted)" font-size="13" text-anchor="middle">mira la rama main</text>
+
+        <!-- GitHub → Vercel -->
+        <line x1="612" y1="130" x2="736" y2="130" stroke="var(--green)" stroke-width="2" marker-end="url(#a-green)"/>
+        <text x="674" y="120" fill="var(--green)" font-size="13" text-anchor="middle">vigila</text>
+
+        <!-- remate -->
+        <text x="480" y="250" fill="var(--ink)" font-size="17" text-anchor="middle">push a <tspan fill="var(--green)">main</tspan>  →  tu web se actualiza <tspan fill="var(--green)">sola</tspan></text>
+      </svg>
     </div>
   </section>
 
+  <!-- ══ SLIDE 2 · qué es un branch (la parte que más cuesta) ══ -->
   <section>
-    <h2 style="margin-bottom:0.15em;">git como grafo (+ avanzado)</h2>
-    <div class="cols" style="align-items:center; gap:1.4em;">
-      <div style="flex:1 1 52%; min-width:300px;">
-        <svg viewBox="0 0 440 250" style="width:100%; max-height:340px; height:auto; display:block;" font-family="JetBrains Mono, monospace">
-          <!-- remote / GitHub -->
-          <rect x="332" y="8" width="94" height="30" rx="6" fill="var(--panel)" stroke="var(--amber)" stroke-width="1.5"/>
-          <text x="379" y="28" fill="var(--amber)" font-size="14" text-anchor="middle">GitHub</text>
+    <h2 style="margin-bottom:0.1em;">qué es un branch</h2>
+    <p class="dim" style="margin-top:0;">una <strong>copia paralela</strong> de tu carpeta para probar sin romper lo que ya funciona.</p>
+    <div style="max-width:820px; margin:0.3em auto 0;">
+      <svg viewBox="0 0 820 230" style="width:100%; height:auto; display:block;" font-family="JetBrains Mono, monospace">
+        <!-- main line -->
+        <line x1="40" y1="70" x2="780" y2="70" stroke="var(--amber)" stroke-width="2.5"/>
+        <circle cx="90"  cy="70" r="9" fill="var(--panel)" stroke="var(--amber)" stroke-width="2.5"/>
+        <circle cx="200" cy="70" r="9" fill="var(--panel)" stroke="var(--amber)" stroke-width="2.5"/>
+        <circle cx="620" cy="70" r="9" fill="var(--panel)" stroke="var(--green)" stroke-width="2.5"/>
+        <circle cx="730" cy="70" r="9" fill="var(--panel)" stroke="var(--amber)" stroke-width="2.5"/>
+        <text x="60" y="52" fill="var(--amber)" font-size="15">main</text>
+        <text x="120" y="110" fill="var(--muted)" font-size="13">lo que sirve · lo que Vercel publica</text>
 
-          <!-- main branch -->
-          <line x1="28" y1="98" x2="412" y2="98" stroke="var(--rule)" stroke-width="2"/>
-          <!-- feature branch: fork down + merge up -->
-          <path d="M118 98 C 150 98, 155 158, 190 158" fill="none" stroke="var(--rule)" stroke-width="2"/>
-          <line x1="190" y1="158" x2="300" y2="158" stroke="var(--rule)" stroke-width="2"/>
-          <path d="M300 158 C 335 158, 305 98, 336 98" fill="none" stroke="var(--rule)" stroke-width="2"/>
-
-          <!-- push arrow to remote -->
-          <path d="M388 90 L 388 40" fill="none" stroke="var(--amber)" stroke-width="1.6" marker-end="url(#ah)"/>
-          <defs>
-            <marker id="ah" markerWidth="8" markerHeight="8" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="var(--amber)"/></marker>
-          </defs>
-
-          <!-- main commits -->
-          <circle cx="58" cy="98" r="8" fill="var(--panel)" stroke="var(--amber)" stroke-width="2.5"/>
-          <circle cx="118" cy="98" r="8" fill="var(--panel)" stroke="var(--amber)" stroke-width="2.5"/>
-          <circle cx="336" cy="98" r="8" fill="var(--panel)" stroke="var(--green)" stroke-width="2.5"/>
-          <circle cx="388" cy="98" r="8" fill="var(--panel)" stroke="var(--amber)" stroke-width="2.5"/>
-          <!-- feature commits -->
-          <circle cx="222" cy="158" r="8" fill="var(--panel)" stroke="var(--cyan)" stroke-width="2.5"/>
-          <circle cx="272" cy="158" r="8" fill="var(--panel)" stroke="var(--cyan)" stroke-width="2.5"/>
-
-          <!-- labels -->
-          <text x="58" y="76" fill="var(--amber)" font-size="13" text-anchor="middle">commit</text>
-          <text x="150" y="130" fill="var(--cyan)" font-size="13" text-anchor="middle">branch</text>
-          <text x="247" y="196" fill="var(--cyan)" font-size="13" text-anchor="middle">PR · review</text>
-          <text x="336" y="130" fill="var(--green)" font-size="13" text-anchor="middle">merge</text>
-          <text x="408" y="60" fill="var(--amber)" font-size="13" text-anchor="middle">push</text>
-        </svg>
-      </div>
-      <div style="flex:1 1 40%; min-width:230px;">
-        <div class="cmdlist">
-          <div class="cmd c-amber"><span class="k">PR</span><span class="a">→</span><span class="d">proponer y revisar cambios</span></div>
-          <div class="cmd"><span class="k">worktree</span><span class="a">→</span><span class="d">dos branches abiertos a la vez</span></div>
-          <div class="cmd c-green"><span class="k">stack</span><span class="a">→</span><span class="d">PRs pequeños encadenados (gh stack, nuevo)</span></div>
-        </div>
-        <p class="dim" style="margin-top:0.7em; font-size:0.62em; line-height:1.4;">gh stack nació justo porque los agentes generan código más rápido de lo que los humanos revisan.</p>
-      </div>
+        <!-- copia (branch) -->
+        <path d="M200 70 C 260 70, 270 150, 330 150" fill="none" stroke="var(--cyan)" stroke-width="2.5"/>
+        <line x1="330" y1="150" x2="500" y2="150" stroke="var(--cyan)" stroke-width="2.5"/>
+        <path d="M500 150 C 560 150, 560 70, 620 70" fill="none" stroke="var(--green)" stroke-width="2.5"/>
+        <circle cx="370" cy="150" r="9" fill="var(--panel)" stroke="var(--cyan)" stroke-width="2.5"/>
+        <circle cx="460" cy="150" r="9" fill="var(--panel)" stroke="var(--cyan)" stroke-width="2.5"/>
+        <text x="330" y="190" fill="var(--cyan)" font-size="15">copia (branch)</text>
+        <text x="330" y="212" fill="var(--muted)" font-size="13">probás acá — main sigue intacto</text>
+        <text x="628" y="52" fill="var(--green)" font-size="14">merge → vuelve a main</text>
+      </svg>
+    </div>
+    <div class="mm">
+      <div class="row repo"><span class="k">repo</span><span class="d">tu <b>carpeta</b>, pero guarda cada versión (máquina del tiempo)</span></div>
+      <div class="row github"><span class="k">GitHub</span><span class="d">la copia en la <b>nube</b> que todos — y Vercel — ven</span></div>
+      <div class="row branch"><span class="k">branch</span><span class="d">una <b>copia paralela</b> para experimentar sin romper main</span></div>
     </div>
   </section>
 
-  <!-- SLIDE WORKTREES — movido desde bloque temporal. -->
+  <!-- ══ SLIDE 3 · worktrees ══ -->
   <section>
     <h2 style="margin-bottom:0.2em;">worktrees: agentes en paralelo sin pisarse</h2>
     <div class="cols" style="align-items:center; gap:1.4em;">

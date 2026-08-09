@@ -136,7 +136,8 @@
   .prims { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45em; margin: 0.2em auto 0.4em; max-width: 1180px; text-align: left; }
   .prim { position: relative; background: var(--panel); border: 1px solid var(--rule); border-left: 3px solid var(--ac); border-radius: 12px; padding: 0.55em 0.75em 0.5em; }
   .prim.h { --ac: var(--amber); } .prim.a { --ac: var(--green); } .prim.s { --ac: var(--red); } .prim.c { --ac: var(--cyan); }
-  .prim .ph { display: flex; align-items: baseline; gap: 0.5em; }
+  .prim .ph { display: flex; align-items: center; gap: 0.45em; }
+  .prim .ph .pico { font-size: 1.5em; line-height: 1; }
   .prim .ph b { font-family: "Space Grotesk", sans-serif; font-size: 0.72em; color: var(--ac); }
   .prim .ph .pk { font-family: "JetBrains Mono", monospace; font-size: 0.42em; color: var(--muted); letter-spacing: 0.03em; }
   .prim .pd { font-size: 0.44em; color: var(--ink); line-height: 1.32; margin: 0.26em 0 0.36em; }
@@ -226,7 +227,7 @@
 
   <!-- ══ CAPA 1 · GOBIERNO: la config ══ -->
   <section>
-    <span class="capmark"><b>capa 1/4</b> · gobierno — el borde ámbar del diagrama</span>
+    <span class="capmark"><b>capa 1</b> · gobierno — el borde ámbar del diagrama</span>
     <h2 style="margin:0 0 0.15em">config: las reglas del harness</h2>
     <p class="dim" style="margin:0 0 0.4em">no son comandos ni tools — es <strong>cómo se comporta</strong> el agente antes de tocar nada.</p>
     <div class="cards" style="--n:2; margin-top:0.3em;">
@@ -244,87 +245,33 @@
     <p class="dim" style="text-align:center;margin:0.55em 0 0">para founders no-técnicos: el <strong>global carga el peso</strong>, el proyecto queda finito. no lo memorizan, lo heredan.</p>
   </section>
 
-  <!-- ══ CAPA 2 · TOOLING: hook · agente · skill · command (la elección, gráfica) ══ -->
+  <!-- ══ CAPA 2 · TOOLING: hook · agente · skill · command (tabla visual) ══ -->
   <section>
-    <span class="capmark t2"><b>capa 2/4</b> · tooling — la caja cian del diagrama</span>
-    <h2 style="margin:0 0 0.06em">hook · agente · skill · command: ¿cuál?</h2>
-    <p class="dim" style="margin:0 0 0.1em">no se elige por tamaño, sino por <strong>dónde corre</strong> y <strong>de quién es el sesgo</strong>:</p>
+    <span class="capmark t2"><b>capa 2</b> · tooling — la caja cian del diagrama</span>
+    <h2 style="margin:0 0 0.06em">hook · agente · skill · command</h2>
+    <p class="dim" style="margin:0 0 0.3em">¿quién aprieta el botón? — esa es toda la diferencia.</p>
 
     <div class="prims">
       <div class="prim h">
-        <div class="ph"><b>Hook</b><span class="pk">shell · determinista</span></div>
-        <p class="pd">un script que Claude Code corre solo en un evento del ciclo de vida (PreToolUse, PostToolUse, Stop…). ningún LLM decide si corre: se dispara y ya.</p>
-        <div class="pattr">
-          <span>disparado por</span><b>un evento, automático</b>
-          <span>corre en</span><b>un shell — sin modelo</b>
-          <span>¿saltable?</span><b>no — determinista</b>
-        </div>
-        <div class="pv yes">✓ el <u>loop</u> del critico — dispara la review en Stop</div>
+        <div class="ph"><span class="pico">⚡</span><b>Hook</b><span class="pk">se dispara solo</span></div>
+        <div class="pv yes">ej: al terminar → corre la review</div>
       </div>
 
       <div class="prim a">
-        <div class="ph"><b>Agente / subagente</b><span class="pk">contexto LLM aislado</span></div>
-        <p class="pd">una invocación aparte del modelo, con su propio contexto y sus tools. ve solo lo que le pasas: sin historia, sin sesgo de autor. ojos frescos por construcción.</p>
-        <div class="pattr">
-          <span>disparado por</span><b>código o el modelo principal</b>
-          <span>corre en</span><b>un contexto fresco, aislado</b>
-          <span>¿sesgo de autor?</span><b>ninguno — hoja en blanco</b>
-        </div>
-        <div class="pv yes">✓ el <u>reviewer</u> del critico — read-only</div>
+        <div class="ph"><span class="pico">👁️</span><b>Agente</b><span class="pk">ojos frescos</span></div>
+        <div class="pv yes">ej: el reviewer, en contexto aparte</div>
       </div>
 
       <div class="prim s">
-        <div class="ph"><b>Skill</b><span class="pk">conocimiento en contexto</span></div>
-        <p class="pd">un procedimiento empaquetado que el modelo principal carga y sigue él mismo, en el chat actual. ideal para "cómo hacemos X". pero corre en el mismo contexto: el autor corrige su propio trabajo.</p>
-        <div class="pattr">
-          <span>disparado por</span><b>el modelo, cuando aplica</b>
-          <span>corre en</span><b>el MISMO contexto</b>
-          <span>¿sesgo de autor?</span><b>total — es el autor</b>
-        </div>
-        <div class="pv no">✗ descartado para review · ✓ el demo: <code>crear-pr</code></div>
+        <div class="ph"><span class="pico">📄</span><b>Skill</b><span class="pk">cómo hacemos X</span></div>
+        <div class="pv yes">ej: <code>crear-pr</code></div>
       </div>
 
       <div class="prim c">
-        <div class="ph"><b>Slash command</b><span class="pk">disparo manual</span></div>
-        <p class="pd">un prompt que tecleas tú (<code>/critico</code>) e inyecta instrucciones en el chat. deliberado, on-demand: el humano elige el momento.</p>
-        <div class="pattr">
-          <span>disparado por</span><b>tú, tecleándolo</b>
-          <span>corre en</span><b>el contexto principal</b>
-          <span>¿saltable?</span><b>sí — es opcional</b>
-        </div>
-        <div class="pv yes">✓ el critico on-demand · <code>/code-review</code></div>
+        <div class="ph"><span class="pico">⌨️</span><b>Command</b><span class="pk">lo disparo yo</span></div>
+        <div class="pv yes">ej: <code>/code-review</code></div>
       </div>
     </div>
-
-    <div class="pick">
-      <div class="pt">la pregunta que elige el mecanismo</div>
-      <div class="prow"><span>¿debe dispararse solo en un evento, sin que un modelo decida?</span><span class="ar">→</span><b class="amber">Hook</b></div>
-      <div class="prow"><span>¿necesitas razonamiento aislado / ojos frescos en otro contexto?</span><span class="ar">→</span><b class="green">Agente</b></div>
-      <div class="prow"><span>¿un procedimiento reusable que el modelo sigue en este chat?</span><span class="ar">→</span><b class="redx">Skill</b></div>
-      <div class="prow"><span>¿una acción manual que dispara el usuario?</span><span class="ar">→</span><b class="cyan">Command</b></div>
-    </div>
-  </section>
-
-  <!-- ══ CAPA 3 + 4 · el loop: hook + reviewer externo (el cierre del demo) ══ -->
-  <section>
-    <span class="capmark t3"><b>capa 3 → 4</b> · el agente (ya lo viste) y su loop LLMOps</span>
-    <h2 style="margin:0 0 0.1em">el cierre: tu propia code-review, por un hook</h2>
-    <p class="dim" style="margin:0 0 0.4em">un <strong>hook</strong> dispara, cuando el agente termina, un <strong>agente crítico fresco</strong> · critica sin el sesgo de quien escribió el código.</p>
-
-    <div class="critflow">
-      <div class="cf-node"><b>agente principal</b><span>termina · escribió el código</span></div>
-      <div class="cf-link"><span class="cf-hk">⚡ Stop hook</span><span class="cf-ar">──▶</span></div>
-      <div class="cf-node cf-crit"><b>agente critico</b><span>fresco · read-only (Read/Grep/Glob)</span><span class="cf-sp">tu code-review con unos constraints</span></div>
-      <div class="cf-link"><span class="cf-ar">──▶</span></div>
-      <div class="cf-node"><b>corrige</b><span>recién ahí revisas tú</span></div>
-    </div>
-
-    <div class="cfnote">
-      <div><span class="k">agente</span> subagente aparte: contexto fresco + read-only, no defiende su código</div>
-      <div><span class="k">hook</span> disparador: "terminó → corre el critico" · nativo: <code>/code-review</code></div>
-    </div>
-
-    <blockquote style="margin:0.4em auto 0">déjalo lean: un agente + un hook. en Spexs es más grande — acá no hace falta.</blockquote>
   </section>
 
   <!-- ══ el demo: un solo slide · todo el copy-paste vive en la guía ══ -->
@@ -356,7 +303,6 @@
       <div class="hrow l3"><span class="hn">deploy</span><span class="hd"><b>Vercel</b> + Supabase · CI/CD en cada push</span><span class="hx">en producción</span></div>
     </div>
     <blockquote style="margin:0.5em auto 0">3-5 skills · 2-4 MCP · 1-2 subagentes. cada dep es una promesa de mantenimiento — déjalo lean.</blockquote>
-    <p class="dim" style="text-align:center;margin:0.5em 0 0;font-size:0.6em">critique con <strong>1 agente</strong>. en el próximo bloque lo <strong>escalamos a varios</strong>.</p>
   </section>
 
 </div>
@@ -365,7 +311,7 @@
 <!-- navegación entre decks -->
 <a class="deck-nav prev" href="04-git.html">◄ bloque anterior</a>
 <a class="deck-nav hub"  href="index.html">agenda</a>
-<a class="deck-nav next" href="06-orquestar.html">bloque siguiente ►</a>
+<a class="deck-nav next" href="06-herramientas.html">bloque siguiente ►</a>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/plugin/markdown/markdown.min.js"></script>

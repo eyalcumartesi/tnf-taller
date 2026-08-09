@@ -55,9 +55,10 @@ npm install -g @openai/codex
 ```bash
 git clone https://github.com/eyalcumartesi/tnf-taller.git
 cd tnf-taller
+cat taller/DEMO.md   # la guía del demo del harness: todos los prompts, paso a paso
 ```
 
-Desde esta carpeta abres el agente (`claude` o `codex`) y tienes todo el material a mano.
+Desde esta carpeta abres el agente (`claude` o `codex`) y tienes todo el material a mano. Todo lo del taller vive en ese repo: es tuyo.
 
 ## 7. Las cuentas del demo (gratis, créalas ya)
 
@@ -108,6 +109,5 @@ Casi todo se instala una sola vez y temprano. Por eso lo hacemos ahora.
 | 03 · qué es un agente | `claude` |
 | 04 · git | `git` · `gh` |
 | 05 · el harness | `claude` · `node` · `pnpm` · `supabase` · cuentas + CLIs (Supabase/Vercel) logueados |
-| 06 · orquestar | `claude` · `git worktree` |
-| 07 · herramientas | `node` · `pnpm` |
-| 08 · negocio | nada |
+| 06 · herramientas | `node` · `pnpm` |
+| 07 · negocio | nada |

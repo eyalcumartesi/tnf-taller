@@ -26,7 +26,7 @@ Mapa del demo (cada paso está abajo, en orden):
 
 ## Paso 0 · tu config global (una vez, antes de todo)
 
-Abre el agente en cualquier carpeta y pídele que arme tu config global desde el ejemplo del taller:
+Abre el agente **desde la carpeta `tnf-taller`** que clonaste en el setup (ahí vive el ejemplo) y pídele que arme tu config global:
 
 ```
 Lee taller/CLAUDE_EXAMPLE.md de este repo y usalo como base para mi ~/.claude/CLAUDE.md global.
@@ -94,16 +94,18 @@ El global carga el peso (el stack); el del proyecto queda finito (qué es la app
 Necesitamos una base de datos Postgres (para Drizzle) y auth (para el login del panel). Las dos vienen de un proyecto de Supabase.
 
 1. Entra a [supabase.com](https://supabase.com) → **New project**. Elige un nombre, una región cercana y **guarda la contraseña** de la base de datos.
-2. **Settings → Database → Connection string → URI** (usa la de *Transaction pooler*). Es tu `DATABASE_URL`.
+2. **Settings → Database → Connection string → URI** y elige **Session pooler** (puerto `5432`, empieza con `postgres.TU-PROYECTO@aws-...pooler.supabase.com`). Es tu `DATABASE_URL`.
 3. **Settings → API** → copia **Project URL** y la clave **anon public**.
 
 Crea `.env.local` en la raíz con esos tres valores:
 
 ```bash
-DATABASE_URL="postgresql://...transaction-pooler...:6543/postgres"
+DATABASE_URL="postgresql://postgres.TU-PROYECTO:PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres"
 NEXT_PUBLIC_SUPABASE_URL="https://TU-PROYECTO.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="TU-ANON-KEY"
 ```
+
+> **Usa el Session pooler, no el Transaction pooler (6543).** Es el único que sirve para las dos cosas del demo: `pnpm db:push` (migraciones de Drizzle) en tu máquina y la app corriendo en Vercel (es IPv4; la conexión directa es IPv6 y Vercel no la alcanza). El de transacciones rompe el `db:push`.
 
 > `.env.local` ya está en el `.gitignore` de Next.js: nunca subas tus claves al repo.
 

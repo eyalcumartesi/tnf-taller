@@ -46,11 +46,11 @@ mkdir waitlist && cd waitlist
 
 # 2. arranca un Next.js limpio (App Router + TypeScript + Tailwind)
 #    --yes acepta los valores por defecto de lo que no pasamos (React Compiler, AGENTS.md),
-#    así el comando corre de una sin frenar a preguntarte nada
+#    así el comando corre de una sin frenar a preguntarte nada.
+#    create-next-app ya te deja el repo git iniciado y el primer commit hecho (rama main).
 pnpm create next-app@latest . --ts --tailwind --app --eslint --no-src-dir --import-alias "@/*" --use-pnpm --yes
 
-# 3. versiona y sube a GitHub (crea el repo privado en el mismo comando)
-git init && git add -A && git commit -m "init: next.js base"
+# 3. sube a GitHub ese primer commit (crea el repo privado en el mismo comando)
 gh repo create waitlist --private --source=. --push
 ```
 

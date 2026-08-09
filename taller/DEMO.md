@@ -45,7 +45,9 @@ Tu proyecto va en **tu propia carpeta y tu propio repo**, no dentro de `tnf-tall
 mkdir waitlist && cd waitlist
 
 # 2. arranca un Next.js limpio (App Router + TypeScript + Tailwind)
-pnpm create next-app@latest . --ts --tailwind --app --eslint --no-src-dir --import-alias "@/*" --use-pnpm
+#    --yes acepta los valores por defecto de lo que no pasamos (React Compiler, AGENTS.md),
+#    así el comando corre de una sin frenar a preguntarte nada
+pnpm create next-app@latest . --ts --tailwind --app --eslint --no-src-dir --import-alias "@/*" --use-pnpm --yes
 
 # 3. versiona y sube a GitHub (crea el repo privado en el mismo comando)
 git init && git add -A && git commit -m "init: next.js base"
@@ -64,10 +66,12 @@ Desde aquí trabaja el resto del demo.
 
 ## Paso 2 · config del proyecto (`CLAUDE.md`)
 
-Pídele al agente que cree el `CLAUDE.md` del proyecto:
+El scaffold de Next.js 16 ya te dejó **dos archivos**: un `CLAUDE.md` que solo importa `@AGENTS.md`, y un `AGENTS.md` con reglas clave de Next 16 (que `next dev` reescribe solo). **No los borres**: ese import es lo que le recuerda al agente que Next 16 cambió cosas respecto a lo que "sabe". Solo le sumamos la config del proyecto.
+
+Pídele al agente que agregue el bloque del proyecto al `CLAUDE.md`, **dejando la línea `@AGENTS.md` arriba**:
 
 ```
-Crea un CLAUDE.md en la raíz con esto:
+Agrega esto al CLAUDE.md que ya existe, conservando la línea `@AGENTS.md` de arriba:
 
 # waitlist
 

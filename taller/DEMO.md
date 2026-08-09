@@ -80,8 +80,8 @@ landing con formulario de email + panel con login que lista los inscriptos.
 
 ## cómo se corre
 - dev: pnpm dev
-- tests: pnpm test
 - base de datos: pnpm db:push
+- e2e: Playwright vía MCP (browser real); no hay runner `pnpm test`, no lo inventes
 
 ## este repo
 - una tabla: signups (email, fecha). Defínela en Drizzle (schema.ts), no en el panel de Supabase

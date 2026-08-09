@@ -128,6 +128,9 @@ Construye una waitlist con el stack del global (Next.js, shadcn, Supabase, Drizz
 Base de datos:
 - una tabla `signups` (email único + fecha de alta) definida en Drizzle (schema.ts)
 - configura drizzle-kit y agrega el script `pnpm db:push`; corre el push contra mi Supabase
+- importante: drizzle-kit no lee `.env.local` solo (eso es de Next.js), así que en
+  `drizzle.config.ts` carga ese archivo a mano (`dotenv.config({ path: ".env.local" })`)
+  para que `pnpm db:push` encuentre el `DATABASE_URL`
 
 Landing pública en la home:
 - un formulario con un campo de email que valida el formato

@@ -196,7 +196,9 @@ Verifica que aparezca: escribe `/crear-pr` en el agente. Lo usarás en el Paso 8
 
 ## Paso 6 · e2e con Playwright
 
-Un MCP le da un browser real al agente: abre la página, la navega y verifica el comportamiento real (lee el accessibility tree, no adivina). Conéctalo:
+Un MCP le da un browser real al agente: abre la página, la navega y verifica el comportamiento real (lee el accessibility tree, no adivina). Conéctalo.
+
+Estos dos comandos van **en la terminal, no dentro del agente**. Sal del agente (`/exit` o Ctrl-C dos veces) o usa otra pestaña de Warp:
 
 ```bash
 # 1. instala el Chrome que Playwright usa por defecto (lo baja Playwright, ~1 min).
@@ -205,11 +207,11 @@ Un MCP le da un browser real al agente: abre la página, la navega y verifica el
 #    is not found". Este comando deja ese Chrome listo.
 pnpm dlx playwright install chrome
 
-# 2. conecta el MCP
+# 2. registra el MCP en la config del proyecto
 claude mcp add playwright -- pnpm dlx @playwright/mcp@latest
 ```
 
-Confirma con `/mcp`. Luego pídele el test:
+**Vuelve a abrir el agente** (`claude`) desde la carpeta: los MCP se cargan al arrancar, así que el que registraste no aparece en la sesión que ya tenías abierta hasta relanzarla. Confirma con `/mcp` que sale `playwright`. Luego pídele el test:
 
 ```
 Antes de correr el test, verifica que `pnpm dev` esté levantado en

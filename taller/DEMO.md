@@ -1,6 +1,6 @@
 # Demo: la waitlist, de cero a producción
 
-Vamos a construir una **waitlist** real y **deployarla a Vercel**. Esta guía es todo el copy-paste del demo: la sigues de arriba hacia abajo y no te falta nada. **Tú no tocas la terminal:** el agente escribe el código y corre todos los comandos (crear el proyecto, el repo, la base de datos, el deploy); tú le dictas los prompts, creas los archivos desde el IDE y aprietas los botones de las cuentas (Supabase, Vercel). Lo único que tecleas en la terminal es `claude` para abrir el agente.
+Vamos a construir una **waitlist** real y **deployarla a Vercel**. Esta guía es todo el copy-paste del demo: la sigues de arriba hacia abajo y no te falta nada. **Tú no tocas la terminal:** el agente escribe el código y corre todos los comandos por CLI (crear el proyecto, el repo, Supabase, el deploy a Vercel); tú solo le dictas los prompts. Las cuentas ya las creaste y logueaste en el `SETUP.md`; si algo se traba en vivo, cada paso trae un fallback de dashboard. Lo único que tecleas en la terminal es `claude` para abrir el agente.
 
 Qué armamos: una landing pública con un formulario de email y un panel con login que lista los inscriptos. En vivo, sobre tu propia carpeta y tu propio repo.
 
@@ -15,12 +15,12 @@ Mapa del demo (cada paso está abajo, en orden):
 | 0 | tu config global (el stack por defecto) | agente |
 | 1 | el agente arranca tu proyecto | agente + IDE |
 | 2 | config del proyecto (`CLAUDE.md`) | agente |
-| 3 | Supabase: base de datos + auth | supabase.com + IDE |
+| 3 | Supabase: base de datos + auth | agente · CLI |
 | 4 | construyes la waitlist (Drizzle, form, panel, login) | agente |
 | 5 | tooling: el skill `crear-pr` | agente |
 | 6 | e2e con Playwright | agente |
-| 7 | el loop: `/code-review` | agente |
-| 8 | deploy a Vercel | vercel.com |
+| 7 | el loop: crítica automática (hook + agente `critico`) | agente |
+| 8 | deploy a Vercel | agente · CLI |
 
 ---
 
@@ -93,33 +93,45 @@ El global carga el peso (el stack); el del proyecto queda finito (qué es la app
 
 ---
 
-## Paso 3 · Supabase (base de datos + auth)
+## Paso 3 · Supabase (base de datos + auth) — el agente lo arma por CLI
 
-Necesitamos una base de datos Postgres (para Drizzle) y auth (para el login del panel). Las dos vienen de un proyecto de Supabase.
-
-1. Entra a [supabase.com](https://supabase.com) → **New project**. Elige un nombre, una región cercana y **guarda la contraseña** de la base de datos.
-2. Arriba del dashboard dale al botón **Connect**: ese diálogo tiene los tres valores. En **Connection string → Session pooler** copia la URI (puerto `5432`, empieza con `postgres.TU-PROYECTO@...pooler.supabase.com`). Es tu `DATABASE_URL`. (También sale por **Settings → Database**.)
-3. En el mismo diálogo **Connect → App Frameworks** copia el **Project URL** y la **Publishable key** (`sb_publishable_...`). Esa key opaca es el reemplazo actual de la vieja "anon"; funciona igual con `@supabase/ssr`. Si tu proyecto todavía te muestra una **anon public** (en *Settings → API Keys → Legacy API Keys*), esa también sirve.
-
-**En tu IDE**, crea un archivo nuevo `.env.local` en la raíz del proyecto (click derecho en la carpeta → *New File*) y pega esos tres valores:
+Necesitamos Postgres (para Drizzle) y auth (para el login del panel). El agente crea el proyecto y cablea todo con el **CLI de Supabase**, que ya dejaste logueado en el SETUP. Tú no tocas la terminal. Pégale esto (cambia el email y la contraseña del panel por los tuyos):
 
 ```
-DATABASE_URL="postgresql://postgres.TU-PROYECTO:PASSWORD@aws-0-REGION.pooler.supabase.com:5432/postgres"
-NEXT_PUBLIC_SUPABASE_URL="https://TU-PROYECTO.supabase.co"
-# la Publishable key (sb_publishable_...); si tu proyecto aún usa la anon, va aquí igual
-NEXT_PUBLIC_SUPABASE_ANON_KEY="TU-PUBLISHABLE-KEY"
+Creá y cableá mi Supabase por CLI, corriendo tú los comandos (yo no toco la terminal).
+Voy a entrar al /panel con este usuario:  EMAIL=yo@demo.com  PASSWORD=una-que-recuerde
+
+1. Proyecto: mirá mis orgs con `supabase orgs list` y creá el proyecto:
+   supabase projects create waitlist --org-id <mi-org> --db-password <generá una fuerte y guardámela> --region <una cercana, p. ej. us-east-1>
+   Esperá a que termine de provisionar (~2 min) antes de seguir.
+2. Claves: sacá la Publishable key y la Secret key (service_role) con
+   `supabase projects api-keys --project-ref <ref>`.
+3. Armá el DATABASE_URL del Session pooler (puerto 5432, IPv4; sirve para db:push y para Vercel):
+   postgresql://postgres.<ref>:<db-password>@aws-0-<region>.pooler.supabase.com:5432/postgres
+4. Escribí .env.local en la raíz con los tres valores:
+   - DATABASE_URL (el del pooler de arriba)
+   - NEXT_PUBLIC_SUPABASE_URL = https://<ref>.supabase.co
+   - NEXT_PUBLIC_SUPABASE_ANON_KEY = la Publishable key (sb_publishable_...)
+5. Auth: dejá el proveedor Email activo y APAGÁ la confirmación de email (así entro sin
+   abrir un correo en vivo): poné enable_confirmations=false en supabase/config.toml y
+   corré `supabase config push`; si tu versión del CLI no cubre ese setting en el push,
+   hacelo por la Management API de auth.
+6. Creá mi usuario del panel vía la Admin API con la Secret key (service_role):
+   POST /auth/v1/admin/users con el EMAIL y PASSWORD de arriba y email_confirm=true.
+
+Cuando termines, confirmame que .env.local quedó escrito y el usuario creado.
 ```
 
-> **Usa el Session pooler, no el Transaction pooler (6543).** Es el único que sirve para las dos cosas del demo: `pnpm db:push` (migraciones de Drizzle) en tu máquina y la app corriendo en Vercel (es IPv4; la conexión directa es IPv6 y Vercel no la alcanza). El de transacciones rompe el `db:push`.
+> **Usa el Session pooler, no el Transaction pooler (6543).** Es el único que sirve para las dos cosas del demo: `pnpm db:push` (migraciones de Drizzle) en tu máquina y la app en Vercel (es IPv4; la conexión directa es IPv6 y Vercel no la alcanza). El de transacciones rompe el `db:push`.
 
-> `.env.local` ya está en el `.gitignore` de Next.js: nunca subas tus claves al repo.
+> `.env.local` ya está en el `.gitignore` de Next.js: el agente nunca sube tus claves al repo.
 
-**Crea tu usuario del panel (para que el login funcione en el demo).** El `/panel` vive detrás de login, así que necesitas una cuenta con la que entrar:
-
-4. **Authentication → Providers → Email**: deja activado *Email*, y **apaga "Confirm email"** (así puedes entrar sin abrir un correo de confirmación en vivo).
-5. **Authentication → Users → Add user → Create new user**: pon un email y una contraseña que recuerdes. Este es el usuario con el que entrarás al panel.
-
-> Con "Confirm email" apagado y el usuario ya creado a mano, el login del `/panel` funciona al instante, sin pasos de correo en medio del demo.
+> **Fallback dashboard (si el CLI se traba en vivo).** Es el mismo resultado, a mano:
+> 1. [supabase.com](https://supabase.com) → **New project** (guarda la contraseña).
+> 2. Botón **Connect**: en *Connection string → Session pooler* copia el `DATABASE_URL`, y en *App Frameworks* el **Project URL** y la **Publishable key** (`sb_publishable_...`).
+> 3. Crea `.env.local` en el IDE (*New File*) y pega esos tres valores.
+> 4. **Authentication → Providers → Email**: apaga *Confirm email*.
+> 5. **Authentication → Users → Add user**: crea el usuario con tu email y contraseña.
 
 ---
 
@@ -232,11 +244,39 @@ Se auto-verifica: si no coincide con lo esperado, itera solo.
 
 ---
 
-## Paso 7 · el loop: `/code-review`
+## Paso 7 · el loop: la crítica se dispara sola (hooks + agentes)
 
-Nunca aceptes el primer output. Un subagente fresco critica el diff sin el sesgo de quien lo escribió.
+Nunca aceptes el primer output. Aquí armamos el mismo patrón que corre en producción en Spexs (ahí se llama `critiker`): un **hook** dispara, cuando el agente termina, un **reviewer externo y fresco** que critica el diff contra **una sola rúbrica**. No es un cazador de bugs genérico (de eso ya se encarga CI): tiene un trabajo y nada más.
 
-Nativo, sobre el diff actual:
+```
+   agente principal termina el turno
+            │
+            │  ⚡ Stop hook  ── "cuando termina → dispara la crítica"
+            ▼
+   ┌───────────────────────────────┐
+   │  motor: git diff → gate        │  diff chico y sin riesgo = ni se molesta
+   └───────────────────────────────┘
+            │  routing por blast-radius
+            ├── diff chico          → 1 lente  (la rúbrica completa)
+            └── grande / riesgoso   → 3 lentes en paralelo  (email · sesión · tipos)
+            ▼
+   cada lente = `claude -p` HEADLESS y EXTERNO   (proceso aparte = cero sesgo de autor,
+   read-only, puntúa SOLO contra .claude/critico/rubric.md)
+            │
+            ▼
+   .agent/critico/report.md  +  CRITICO_TALLY: {"p0":n,"p1":n,"p2":n}
+            │
+            ├── modo report  → tantea 1 línea, NO bloquea   (humano en el loop) ← default
+            └── modo enforce → P0/P1 bloquean el Stop → el agente corrige antes de terminar
+```
+
+Las tres piezas, una línea cada una:
+
+- **Hook (el loop):** un `Stop` hook. El evento "el agente terminó" corre un comando: la crítica. No la pides, se dispara sola.
+- **Reviewer externo:** un `claude -p` headless, en **otro proceso**. Contexto fresco, read-only: como no escribió el código, no defiende sus propias decisiones. Reusa tu login, sin billing extra.
+- **Rúbrica (un solo trabajo):** el reviewer puntúa **solo** contra `rubric.md`. Rails finitos: si no está en la rúbrica, no es su problema. Eso es lo que lo vuelve útil en vez de ruidoso.
+
+**1 · El atajo nativo (cero setup).** Antes del sistema completo, el mismo loop con un comando:
 
 ```
 /code-review
@@ -248,13 +288,147 @@ Y para corregir con la crítica en mano:
 Corrige el output aplicando cada punto de la crítica. Después lo reviso yo.
 ```
 
-El critique con **1 agente**; en el bloque siguiente lo escalamos a varios.
+**2 · El sistema `critico` (recomendado).** Cuatro archivos: la rúbrica, el motor, el hook y el subagente para pedirlo a mano. Pídele al agente que los cree con este contenido exacto:
+
+````
+Crea el sistema de crítica con estos cuatro archivos (contenido exacto) y dale
+permiso de ejecución a los dos .sh (chmod +x):
+
+--- .claude/critico/rubric.md ---
+# Rúbrica del Critico — reglas de la waitlist, nada más
+
+Eres un revisor externo y escéptico. No escribiste este código y no le debes el
+beneficio de la duda. Ves solo el diff y los archivos que abras. No admires el
+cambio, no caces bugs genéricos (de eso se encarga CI), no bikeshees.
+
+Barra escéptica: cada hallazgo necesita `archivo:línea` + el texto ofensor. Si no
+estás seguro de que viola una regla de abajo, NO es un hallazgo. El silencio gana.
+
+## P0 — Bloquean (un usuario real recibe datos mal, o se abre un escape de tipos)
+1. El email se valida (formato) antes de insertar en `signups`.
+2. Sin duplicados: el alta maneja el choque de email único, no revienta.
+3. El guard de `/panel` corre en el server (`proxy.ts` / server component), nunca
+   confía en el cliente para decidir si hay sesión.
+4. Secretos solo desde `.env` (`process.env`), nunca hardcodeados en el código.
+5. Nada de `any` ni `as` en el path de datos. `unknown` + type guard es el fix.
+
+## P1 — Importantes (pudren el patrón, serán P0 después)
+6. Tipos estructurados en la query de Drizzle, destructurados DENTRO del método
+   (no spread/destructure en el call site).
+7. Reusa el schema de Drizzle (`signups`); no redefinas la forma en otro lado.
+8. Return types explícitos en funciones exportadas.
+9. Nada de band-aid: ningún `if` que parchee un email/caso puntual en vez del root cause.
+
+## P2 — Nits (cuéntalos, no te explayes): naming, dead code, comentario que miente.
+
+## Formato de salida (exacto)
+Por hallazgo:
+[P0|P1|P2] <regla #> <archivo>:<línea>
+  <una frase: qué viola qué regla>
+  evidencia: <el código ofensor, recortado>
+  fix: <el movimiento limpio en una línea>
+
+Última línea SIEMPRE (aunque sea todo cero):
+CRITICO_TALLY: {"p0":<n>,"p1":<n>,"p2":<n>}
+Si nada viola una regla: escribe `Sin violaciones.` y luego la línea del tally.
+
+--- .claude/agents/critico.md ---
+---
+name: critico
+description: Revisor externo del diff contra la rúbrica de la waitlist. Read-only, no arregla.
+tools: Read, Grep, Glob, Bash
+model: inherit
+---
+
+# Critico
+Revisas un diff contra `.claude/critico/rubric.md`, nada más. No escribiste este código.
+1. Lee la rúbrica. Si algo no está ahí, no es tu problema.
+2. Toma el diff: `git diff "$(git merge-base HEAD @{upstream} 2>/dev/null || git rev-parse HEAD~1)"`.
+3. Cada hallazgo necesita `archivo:línea` + el texto ofensor. Si dudas, lo descartas.
+4. Read-only: encuentras, NO arreglas. El principal arregla.
+5. Emite en el formato de la rúbrica y cierra con la línea `CRITICO_TALLY:`.
+
+--- .claude/hooks/critico-run.sh ---
+#!/usr/bin/env bash
+# Motor del Critico: reviewer EXTERNO y read-only sobre el diff, puntuado solo contra
+# rubric.md. 1 lente para un diff chico; 3 en paralelo si es grande o toca zona de riesgo.
+set -uo pipefail
+FORCE=0; [ "${1:-}" = "--force" ] && FORCE=1
+ROOT="${CLAUDE_PROJECT_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || echo .)}"
+cd "$ROOT" || exit 0
+OUT="$ROOT/.agent/critico"; mkdir -p "$OUT"
+zero(){ echo 'CRITICO_TALLY_TOTAL: {"p0":0,"p1":0,"p2":0}'; exit 0; }
+BIN="$(command -v claude)"; [ -n "$BIN" ] || zero
+BASE="$(git merge-base HEAD @{upstream} 2>/dev/null || git rev-parse HEAD~1 2>/dev/null || echo HEAD)"
+DIFF="$(git diff "$BASE" -- '*.ts' '*.tsx' 2>/dev/null)"; [ -n "$DIFF" ] || zero
+LINES="$(printf '%s\n' "$DIFF" | grep -cE '^[+-]' || true)"
+RISK=0; printf '%s' "$DIFF" | grep -qiE '(signInWithPassword|updateSession|proxy\.ts|signups|drizzle| as any|\bas )' && RISK=1
+if [ "$FORCE" = 0 ] && [ "$LINES" -lt "${CRITICO_FLOOR:-20}" ] && [ "$RISK" = 0 ]; then zero; fi
+RUBRIC="$(cat "$ROOT/.claude/critico/rubric.md")"; [ -n "$RUBRIC" ] || zero
+if [ "$LINES" -ge "${CRITICO_BIG:-300}" ] || [ "$RISK" = 1 ]; then
+  LENSES=("validación de email y duplicados" "sesión y guard de /panel (server, no cliente)" "forma de tipos: any/as, schema de Drizzle, return types")
+else LENSES=("la rúbrica completa"); fi
+run(){ printf '%s' "$DIFF" | CRITICO_CHILD=1 "$BIN" -p "Eres Critico. Revisa el diff de stdin SOLO contra esta rúbrica. FOCO: $1.
+<rubrica>
+$RUBRIC
+</rubrica>
+Cierra con la línea CRITICO_TALLY." --allowedTools "Read,Grep,Glob,Bash" >"$OUT/lens-$2.out" 2>/dev/null || true; }
+i=0; for l in "${LENSES[@]}"; do run "$l" "$i" & i=$((i+1)); done; wait
+cat "$OUT"/lens-*.out > "$OUT/report.md" 2>/dev/null
+TOTAL="$(cat "$OUT"/lens-*.out 2>/dev/null | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const t={p0:0,p1:0,p2:0};for(const m of s.matchAll(/CRITICO_TALLY:\s*(\{[^}]*\})/g)){try{const o=JSON.parse(m[1]);t.p0+=o.p0||0;t.p1+=o.p1||0;t.p2+=o.p2||0}catch{}}process.stdout.write("CRITICO_TALLY_TOTAL: "+JSON.stringify(t))})' 2>/dev/null || echo 'CRITICO_TALLY_TOTAL: {"p0":0,"p1":0,"p2":0}')"
+echo "$TOTAL"
+
+--- .claude/hooks/critico.sh ---
+#!/usr/bin/env bash
+# Stop hook = EL LOOP. El agente termina → Critico revisa en un proceso externo y fresco.
+# report (default): tantea, no bloquea. enforce: P0/P1 bloquean el Stop para que corrija.
+set -uo pipefail
+[ "${CRITICO_CHILD:-}" = "1" ] && exit 0            # el reviewer no re-dispara su propio Stop
+MODE="${CRITICO_MODE:-report}"; [ "$MODE" = off ] && exit 0
+active="$(cat | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{process.stdout.write(String(JSON.parse(s).stop_hook_active))}catch{process.stdout.write("false")}})' 2>/dev/null || echo false)"
+DIR="${CLAUDE_PROJECT_DIR:-.}/.claude/hooks"
+total="$("$DIR/critico-run.sh" 2>/dev/null | grep '^CRITICO_TALLY_TOTAL:' | tail -1)"
+[ -n "$total" ] || exit 0
+read -r p0 p1 p2 < <(printf '%s' "${total#CRITICO_TALLY_TOTAL: }" | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const o=JSON.parse(s);process.stdout.write(`${o.p0||0} ${o.p1||0} ${o.p2||0}`)}catch{process.stdout.write("0 0 0")}})' 2>/dev/null || echo "0 0 0")
+sum="Critico: $p0 P0, $p1 P1, $p2 P2 (ver .agent/critico/report.md)"
+if [ "$MODE" = enforce ] && [ "$((p0+p1))" -gt 0 ] && [ "$active" != "true" ]; then
+  printf '%s\n' "$sum — corrige los P0/P1 y termina." >&2; exit 2   # bloquea 1 vez por cadena
+fi
+[ "$((p0+p1+p2))" -gt 0 ] && printf '{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"%s"}}\n' "$sum"
+exit 0
+````
+
+Y engancha el hook en `.claude/settings.json` (crea el archivo si no existe):
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      { "hooks": [ { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/critico.sh" } ] }
+    ]
+  }
+}
+```
+
+**3 · A mano cuando quieras**, sin esperar al Stop, pídeselo al agente:
+
+```
+Corre el critico sobre el diff actual: .claude/hooks/critico-run.sh --force
+Después mostrame el report agrupado por severidad (P0 primero), no arregles nada.
+```
+
+Cómo pensar los dos controles:
+
+- **`report` vs `enforce`** (`export CRITICO_MODE=enforce`): en `report` (default, seguro para el demo) el critico tantea una línea y **el humano decide**; en `enforce`, un P0/P1 **bloquea el Stop** y el agente corrige antes de terminar.
+- **1→N por blast-radius:** un cambio chico va con 1 lente; si el diff es grande (≥300 líneas) o toca zona de riesgo (auth, `signups`, `proxy.ts`, `as any`) salen **3 lentes en paralelo**. Ese salto de 1 a varios agentes es el próximo bloque (orquestación).
+
+> **Doble freno anti-loop:** `CRITICO_CHILD=1` hace que el reviewer no dispare su propio Stop, y `stop_hook_active` bloquea como máximo una vez por cadena. Si algo se traba: Ctrl-C, `export CRITICO_MODE=off` y sigue.
 
 ---
 
-## Paso 8 · deploy a Vercel
+## Paso 8 · deploy a Vercel — el agente lo hace por CLI
 
-La app anda local, pero en GitHub tu `main` todavía tiene solo el Next.js vacío del Paso 1: el código de la waitlist vive en tu máquina. Antes de deployar hay que subirlo, y aquí usas por fin el skill del Paso 5.
+La app anda local, pero en GitHub tu `main` todavía tiene solo el Next.js vacío del Paso 1: el código de la waitlist vive en tu máquina. Primero lo subimos a `main` (con el skill del Paso 5) y después el agente deploya con el **CLI de Vercel**, que ya dejaste logueado en el SETUP.
 
 1. **Sube la waitlist a `main`** con el skill que armaste. En el agente:
 
@@ -269,22 +443,34 @@ La app anda local, pero en GitHub tu `main` todavía tiene solo el Next.js vací
    ```
 
    Ahora `main` tiene la waitlist de verdad, que es lo que Vercel va a deployar.
-2. Entra a [vercel.com/new](https://vercel.com/new) → **Import** tu repo `waitlist` de GitHub. Si no ves tu repo, dale a **Adjust GitHub App Permissions** y dale acceso — esto ya lo autorizaste al crear la cuenta en `SETUP.md`, así que debería aparecer directo.
+2. **Deploya por CLI.** Tú no tocas la terminal; pégale al agente:
 
-   > Hazlo por el **dashboard**, no por `pnpm dlx vercel`: el CLI deploya de una y **no** te muestra la sección de Environment Variables del paso 3, así que el primer build revienta con `supabaseUrl is required` (justo lo que el dashboard te deja evitar cargando las variables antes de buildear).
-3. En esa misma pantalla de import (**Configure Project**, antes de tocar **Deploy**) abre la sección **Environment Variables** y agrega las tres de tu `.env.local`:
-   - `DATABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   ```
+   Deployá a Vercel por CLI, corriendo tú los comandos (yo no toco la terminal).
+   Ya estoy logueado (hice vercel login en el setup). Parado en ~/waitlist:
 
-   > Cárgalas **ahí, en el import**, no en *Settings*: ese menú de Settings recién existe después de crear el proyecto. Y tienen que estar antes del primer build: la home usa el cliente de Supabase al pre-renderizar, así que sin las variables el primer deploy **falla en el build** (`supabaseUrl is required`).
-4. **Deploy.** Vercel construye y te da una URL pública.
-5. Vuelve a Supabase → **Authentication → URL Configuration** y agrega tu URL de Vercel (`https://tu-waitlist.vercel.app`) a **Site URL** y **Redirect URLs**. (Con login de email+contraseña casi no hace falta, pero lo dejas listo por si luego usas magic links.)
-6. Abre tu URL, da de alta un email y entra al `/panel` con **el mismo usuario de Supabase** del Paso 3. Está en producción.
+   1. pnpm dlx vercel link --yes   (crea/linkea el proyecto, autodetecta Next.js)
+   2. Cargá las 3 env vars a production, leyendo los valores de mi .env.local:
+      pnpm dlx vercel env add DATABASE_URL production
+      pnpm dlx vercel env add NEXT_PUBLIC_SUPABASE_URL production
+      pnpm dlx vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
+      IMPORTANTE: cargálas ANTES de deployar. Si deployás sin ellas, el build
+      revienta con "supabaseUrl is required" (la home usa Supabase al pre-renderizar).
+   3. pnpm dlx vercel git connect   (conecta el repo de GitHub → CI/CD: cada push a main re-deploya)
+   4. pnpm dlx vercel deploy --prod   (build + deploy; me da la URL pública)
+
+   Al terminar, decime la URL.
+   ```
+
+   > **Por qué el orden importa:** el CLI deploya sin pasar por el dashboard, así que si no cargas las env vars *antes* (`vercel env add`), el primer build falla con `supabaseUrl is required`. Con las variables ya puestas, el CLI es el camino limpio y de paso `vercel git connect` te deja el CI/CD activo sin tocar el dashboard.
+3. Con la URL en mano, agrégala en Supabase → **Authentication → URL Configuration** (**Site URL** + **Redirect URLs**), o pídeselo al agente por CLI/Management API. Con login email+contraseña casi no hace falta, pero lo dejas listo por si luego usas magic links.
+4. Abre tu URL, da de alta un email y entra al `/panel` con **el mismo usuario de Supabase** del Paso 3. Está en producción.
 
 > Como usas el mismo Supabase para local y para producción, la tabla `signups` y tu usuario del panel ya existen (los creaste en los pasos 3 y 4): producción solo necesita las mismas variables.
 
-**A partir de ahora, cada `push` a `main` re-deploya solo.** Eso es CI/CD, y lo vemos a fondo en el curso. Sincroniza tu `main` local con lo que acabas de mergear pidiéndoselo al agente:
+> **Fallback dashboard (si el CLI se traba en vivo).** Importa el repo en [vercel.com/new](https://vercel.com/new), y en **Configure Project → Environment Variables** (antes de **Deploy**) agrega las tres de tu `.env.local` (`DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`). Cárgalas ahí, en el import, no en *Settings*.
+
+**A partir de ahora, cada `push` a `main` re-deploya solo** (eso lo activó `vercel git connect`). Eso es CI/CD, y lo vemos a fondo en el curso. Sincroniza tu `main` local con lo que acabas de mergear pidiéndoselo al agente:
 
 ```
 Sincronizá mi main local con GitHub: git checkout main && git pull.
@@ -302,7 +488,7 @@ De aquí en más, cualquier cambio futuro: **/crear-pr → merge → Vercel re-d
 | 1 · config  | `CLAUDE.md` del proyecto | raíz del repo |
 | 2 · tooling | skill `crear-pr` | `.claude/skills/crear-pr/SKILL.md` |
 | e2e         | Playwright MCP | `claude mcp add playwright` |
-| loop        | critique del diff | `/code-review` |
+| loop        | crítica del diff (hook + reviewer externo) | `.claude/hooks/critico.sh` + `/code-review` |
 | producción  | app deployada + CI/CD | Vercel + Supabase |
 
 De la idea al producto en vivo: una waitlist real, con harness, deployada y con deploy automático en cada push.

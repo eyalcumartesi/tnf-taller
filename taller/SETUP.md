@@ -24,11 +24,11 @@ RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/
 ## 3. Las herramientas (una sola línea)
 
 ```bash
-brew install git gh nvm pnpm ripgrep jq
+brew install git gh nvm pnpm ripgrep jq supabase/tap/supabase
 brew install --cask warp cursor
 ```
 
-`git` y `gh` = versionado + GitHub · `warp` = la terminal · `cursor` = el IDE (alternativa: VS Code).
+`git` y `gh` = versionado + GitHub · `supabase` = el CLI con el que el agente crea la base en el demo · `warp` = la terminal · `cursor` = el IDE (alternativa: VS Code).
 
 ## 4. Node LTS (vía nvm)
 
@@ -75,7 +75,7 @@ En el demo del harness deployamos una waitlist de verdad. Necesitas tres cuentas
 
 ```bash
 node -v && pnpm -v && git --version
-gh --version && claude --version   # y/o: codex --version
+gh --version && claude --version && supabase --version   # y/o: codex --version
 ```
 
 Cada comando imprime una versión. Si es así, vas bien.
@@ -86,9 +86,13 @@ Cada comando imprime una versión. Si es así, vas bien.
 claude                 # primera vez: abre el login (Claude Code)
 codex                  # primera vez: abre el login (Codex)
 gh auth login
+supabase login         # abre el browser → Authorize (auto-captura el token, no copias nada)
+pnpm dlx vercel login  # device flow → Authorize en el browser
 git config --global user.name "Tu Nombre"
 git config --global user.email "tu@email.com"
 ```
+
+> **Por qué `supabase login` y `vercel login` ahora.** En el demo el agente crea la base y deploya **por CLI, por ti** (tú no tocas la terminal). Esos CLIs no pueden hacer el login solos (abren el browser), así que los dejas logueados aquí, una vez, y en el demo el agente corre todo sin frenarse. Ambos son un clic de *Authorize* (ya estás con GitHub), sin pegar tokens.
 
 > Tu `CLAUDE.md` global (el stack por defecto) lo armas al inicio del demo del harness, en el **paso 0** de `DEMO.md`. Ahí el agente lo genera por ti desde `CLAUDE_EXAMPLE.md`.
 
@@ -103,7 +107,7 @@ Casi todo se instala una sola vez y temprano. Por eso lo hacemos ahora.
 | 01 · 02 | nada, solo mirar |
 | 03 · qué es un agente | `claude` |
 | 04 · git | `git` · `gh` |
-| 05 · el harness | `claude` · `node` · `pnpm` · cuentas Supabase + Vercel |
+| 05 · el harness | `claude` · `node` · `pnpm` · `supabase` · cuentas + CLIs (Supabase/Vercel) logueados |
 | 06 · orquestar | `claude` · `git worktree` |
 | 07 · herramientas | `node` · `pnpm` |
 | 08 · negocio | nada |

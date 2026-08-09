@@ -26,6 +26,13 @@ Contenido de referencia (de aquí para abajo es lo que vive en el global):
 - tipos estrictos, nada de any
 - destructura los tipos dentro de la función, no en la firma, para que se propaguen solos
 
+## validación y datos
+- valida todo input externo con Zod en el borde (Server Actions, route handlers, forms)
+- deriva schemas de Drizzle con drizzle-zod; los tipos salen de z.infer, no los dupliques
+- las env vars viven en un env.ts que Zod-parsea process.env y falla temprano si falta una
+- leer = Server Components, mutar = Server Actions; nunca fetchees tu propia DB desde el cliente
+- antes de sumar una lib, dime por qué y prefiere lo nativo de Next/Supabase/Vercel
+
 ## cómo me hablas
 - explícame solo lo que no es obvio, no me narres cada paso
 - antes de algo riesgoso o irreversible, pregúntame

@@ -4,7 +4,7 @@ Vamos a construir una **waitlist** real y **deployarla a Vercel**. Esta guía es
 
 Qué armamos: una landing pública con un formulario de email y un panel con login que lista los inscriptos. En vivo, sobre tu propia carpeta y tu propio repo.
 
-> **Antes de esto** ya dejaste el entorno listo (Homebrew, node, pnpm, `gh`, el agente): ver `SETUP.md`.
+> **Antes de esto** ya dejaste el entorno listo (Homebrew, node, pnpm, `gh`, el agente) y creaste las cuentas gratis de **Supabase** y **Vercel** conectadas con tu GitHub: ver `SETUP.md`. Aquí solo las usamos.
 
 **Regla madre: déjalo lean.** 3-5 skills, 2-4 MCP, 1-2 subagentes. Cada dependencia es una promesa de mantenimiento futuro.
 
@@ -235,7 +235,7 @@ La app anda local, pero en GitHub tu `main` todavía tiene solo el Next.js vací
    ```
 
    Ahora `main` tiene la waitlist de verdad, que es lo que Vercel va a deployar.
-2. Entra a [vercel.com/new](https://vercel.com/new) → **Import** tu repo `waitlist` de GitHub. (O desde la terminal: `pnpm dlx vercel` y sigue el link.)
+2. Entra a [vercel.com/new](https://vercel.com/new) → **Import** tu repo `waitlist` de GitHub. (O desde la terminal: `pnpm dlx vercel` y sigue el link.) Si no ves tu repo, dale a **Adjust GitHub App Permissions** y dale acceso — esto ya lo autorizaste al crear la cuenta en `SETUP.md`, así que debería aparecer directo.
 3. Antes de deployar, en **Settings → Environment Variables** agrega las tres de tu `.env.local`:
    - `DATABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_URL`

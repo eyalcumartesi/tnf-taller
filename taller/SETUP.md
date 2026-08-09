@@ -59,6 +59,16 @@ cd tnf-taller
 
 Desde esta carpeta abres el agente (`claude` o `codex`) y tienes todo el material a mano.
 
+## 7. Las cuentas del demo (gratis, créalas ya)
+
+En el demo del harness deployamos una waitlist de verdad. Necesitas tres cuentas; las tres son gratis y conviene crearlas **ahora**, no en medio del demo:
+
+- **GitHub** — ya la usas con `gh auth login` arriba. Es la base: Supabase y Vercel se conectan a ella.
+- **[Supabase](https://supabase.com)** — base de datos + auth. Entra con **"Continue with GitHub"**. No crees el proyecto todavía: eso es el paso 3 del demo.
+- **[Vercel](https://vercel.com/signup)** — el deploy. Entra con **"Continue with GitHub"** y, cuando te lo pida, **autoriza la Vercel GitHub App** (permite instalarla en tus repos). Así en el demo puedes importar tu repo con un clic, sin frenar a autorizar nada.
+
+> Las tres conectadas con la misma cuenta de GitHub = cero fricción en el demo: el repo, la base y el deploy se hablan solos.
+
 ---
 
 ## Verifica que todo responde
@@ -93,7 +103,7 @@ Casi todo se instala una sola vez y temprano. Por eso lo hacemos ahora.
 | 01 · 02 | nada, solo mirar |
 | 03 · qué es un agente | `claude` |
 | 04 · git | `git` · `gh` |
-| 05 · el harness | `claude` · `node` · `pnpm` |
+| 05 · el harness | `claude` · `node` · `pnpm` · cuentas Supabase + Vercel |
 | 06 · orquestar | `claude` · `git worktree` |
 | 07 · herramientas | `node` · `pnpm` |
 | 08 · negocio | nada |

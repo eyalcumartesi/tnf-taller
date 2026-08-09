@@ -147,9 +147,12 @@ Ruta `/panel`, protegida con login de Supabase:
 - una página de login (email + contraseña) con signInWithPassword de Supabase
 - si no hay sesión, /panel redirige al login; con sesión, lista los inscriptos
   ordenados por fecha, con el total arriba
-- importante: usa `@supabase/ssr` y crea un `middleware.ts` en la raíz que refresque
-  la sesión (updateSession); sin eso el guard de /panel corre en el servidor, no ve
-  la cookie de sesión y te manda al login aunque ya hayas entrado
+- importante: usa `@supabase/ssr` para refrescar la sesión en cada request. En Next 16
+  el `middleware.ts` se renombró a `proxy.ts` (con `export function proxy`), así que crea
+  un `proxy.ts` en la raíz con la lógica de `updateSession` de @supabase/ssr. Sin eso el
+  guard de /panel corre en el servidor, no ve la cookie de sesión y te manda al login
+  aunque ya hayas entrado. Si terminas con un `middleware.ts` funciona igual, pero Next 16
+  lo marca como deprecado, así que prefiere `proxy.ts`
 
 Deja el login funcionando de punta a punta con el usuario que ya creé en Supabase.
 Usa las variables de mi .env.local. Al terminar, corre `pnpm dev` y verifica tú

@@ -1,135 +1,134 @@
-# Demo: la waitlist, de cero a producción
+# Demo: tu waitlist, de cero a producción
 
-Vamos a construir una **waitlist** real y **deployarla a Vercel**. Esta guía es todo el copy-paste del demo: la sigues de arriba hacia abajo y no te falta nada. **Tú no tocas la terminal:** el agente escribe el código y corre todos los comandos por CLI (crear el proyecto, el repo, Supabase, el deploy a Vercel); tú solo le dictas los prompts. Las cuentas ya las creaste y logueaste en el `SETUP.md`; si algo se traba en vivo, cada paso trae un fallback de dashboard. Lo único que tecleas en la terminal es `claude` para abrir el agente.
+Vas a construir una **waitlist** real y ponerla **online en Vercel**. En vivo, sobre tu carpeta y tu repo.
 
-Qué armamos: una landing pública con un formulario de email y un panel con login que lista los inscriptos. En vivo, sobre tu propia carpeta y tu propio repo.
+**Qué es una waitlist:** una página pública con un formulario de email, y un panel privado (con login) que lista a los que se anotaron.
 
-> **Antes de esto** ya dejaste el entorno listo (Homebrew, node, pnpm, `gh`, el agente) y creaste las cuentas gratis de **Supabase** y **Vercel** conectadas con tu GitHub: ver `SETUP.md`. Aquí solo las usamos.
+**Cómo funciona este demo:**
+- Tú **no tocas la terminal**. El agente escribe el código y corre los comandos por ti.
+- Tú solo le pegas los prompts de esta guía, en orden.
+- Lo único que escribes en la terminal es `claude`, para abrir el agente.
 
-**Regla madre: déjalo lean.** 3-5 skills, 2-4 MCP, 1-2 subagentes. Cada dependencia es una promesa de mantenimiento futuro.
+Antes de esto ya hiciste el `SETUP.md`: instalaste todo y creaste las cuentas de **Supabase** y **Vercel** con tu GitHub.
 
-Mapa del demo (cada paso está abajo, en orden):
+> **Regla de oro: mantenlo simple.** Pocas piezas. Cada cosa que agregas es algo que después hay que mantener.
+
+Mapa del demo:
 
 | # | paso | dónde |
 |---|------|-------|
-| 0 | tu config global (el stack por defecto) | agente |
-| 1 | el agente arranca tu proyecto | agente + IDE |
-| 2 | config del proyecto (`CLAUDE.md`) | agente |
-| 3 | Supabase: base de datos + auth | agente · CLI |
-| 4 | construyes la waitlist (Drizzle, form, panel, login) | agente |
-| 5 | tooling: el skill `crear-pr` | agente |
-| 6 | e2e con Playwright | agente |
-| 7 | el loop: crítica automática (hook + agente `critico`) | agente |
-| 8 | deploy a Vercel | agente · CLI |
+| 0 | tu config global (tu stack por defecto) | agente |
+| 1 | el agente crea tu proyecto | agente + IDE |
+| 2 | la config del proyecto (`CLAUDE.md`) | agente |
+| 3 | Supabase: base de datos + login | agente |
+| 4 | construyes la waitlist | agente |
+| 5 | tu primer skill: `crear-pr` | agente |
+| 6 | pruebas e2e con Playwright | agente |
+| 7 | tu code-review automática | agente |
+| 8 | deploy a Vercel | agente |
 
 ---
 
-## Paso 0 · tu config global (una vez, antes de todo)
+## Paso 0 · tu config global
 
-Abre el agente **desde la carpeta `tnf-taller`** que clonaste en el setup (ahí vive el ejemplo) y pídele que arme tu config global:
+Esto le enseña al agente tu **stack** (Next, Supabase, etc.) y tus reglas, para **todos** tus proyectos. Lo armas una vez y no lo repites nunca más.
+
+Abre el agente desde la carpeta `tnf-taller` (la que clonaste en el setup) y pégale esto:
 
 ```
-Lee taller/CLAUDE_EXAMPLE.md de este repo y usalo como base para mi ~/.claude/CLAUDE.md global.
+Lee taller/CLAUDE_EXAMPLE.md de este repo y úsalo como base para mi ~/.claude/CLAUDE.md global.
 ```
 
-Eso fija tu stack (Next.js, shadcn, Supabase, pnpm, Drizzle, Vercel) y tus principios en **todos** tus proyectos. No lo repites nunca más: es la capa exterior que gobierna todo el harness.
+Listo. De aquí en más, cuando le pidas algo, el agente **ya sabe el cómo**. Tú solo dices el **qué**.
 
 ---
 
-## Paso 1 · el agente arranca tu proyecto
+## Paso 1 · el agente crea tu proyecto
 
-Tu proyecto va en **tu propia carpeta y tu propio repo**, no dentro de `tnf-taller`. No lo creas tú a mano en la terminal: se lo pides al agente que ya tienes abierto (el del Paso 0, parado en `tnf-taller`). Pégale esto:
+Tu proyecto va en tu propia carpeta (`~/waitlist`), **no** dentro de `tnf-taller`. No la creas tú: se lo pides al agente que ya tienes abierto. Pégale esto:
 
 ```
-Armá mi proyecto de la waitlist por mí, corriendo tú los comandos (yo no toco la terminal):
+Crea mi proyecto de waitlist por mí (yo no toco la terminal):
 
-1. Andá a mi home (~), NO lo crees dentro de tnf-taller (así waitlist queda al
-   lado, no como un repo git dentro de otro).
-2. Scaffoldeá un Next.js limpio (App Router + TS + Tailwind) en la carpeta `waitlist`:
+1. Ve a mi home (~). No lo crees dentro de tnf-taller.
+2. Crea un Next.js limpio en la carpeta `waitlist`:
    pnpm create next-app@latest waitlist --ts --tailwind --app --eslint --no-src-dir --import-alias "@/*" --use-pnpm --yes
-   (--yes acepta los defaults de lo que no paso, así no frena a preguntar; y
-   create-next-app ya inicia el repo git y hace el primer commit en main, no lo repitas).
-3. Entrá a ~/waitlist y subí ese commit a GitHub creando el repo privado:
+   (create-next-app ya inicia git y hace el primer commit; no lo repitas.)
+3. Entra a ~/waitlist y sube ese commit a GitHub creando el repo privado:
    gh repo create waitlist --private --source=. --push
-4. Cuando termine, avisame para abrir la carpeta en el IDE.
+4. Cuando termines, avísame para abrir la carpeta en el IDE.
 ```
 
-Cuando el agente termine, **abre la carpeta `~/waitlist` en tu IDE** (Cursor/VS Code → *File → Open Folder*). Desde la terminal integrada del IDE (que ya abre parada en esa carpeta) lanza el agente ahí:
+Cuando termine, **abre `~/waitlist` en tu IDE** (Cursor o VS Code → *File → Open Folder*). En la terminal del IDE (ya abre en esa carpeta) escribe:
 
 ```bash
-claude   # o: codex
+claude
 ```
 
-Ese `claude` es el **único texto que tecleas en la terminal** en todo el demo. De aquí en más todo se lo pides al agente, lo creas en el IDE o lo aprietas en los dashboards.
+Ese `claude` es lo **único** que escribes en la terminal en todo el demo. De aquí en más, todo se lo pides al agente.
 
 ---
 
-## Paso 2 · config del proyecto (`CLAUDE.md`)
+## Paso 2 · la config del proyecto
 
-El scaffold de Next.js 16 ya te dejó **dos archivos**: un `CLAUDE.md` que solo importa `@AGENTS.md`, y un `AGENTS.md` con reglas clave de Next 16 (que `next dev` reescribe solo). **No los borres**: ese import es lo que le recuerda al agente que Next 16 cambió cosas respecto a lo que "sabe". Solo le sumamos la config del proyecto.
+El scaffold te dejó dos archivos: un `CLAUDE.md` que importa `@AGENTS.md`, y un `AGENTS.md` con reglas de Next 16. **No los borres.**
 
-Pídele al agente que agregue el bloque del proyecto al `CLAUDE.md`, **dejando la línea `@AGENTS.md` arriba**:
+Solo agrégale al `CLAUDE.md` **qué es** esta app. Pégale:
 
 ```
-Agrega esto al CLAUDE.md que ya existe, conservando la línea `@AGENTS.md` de arriba:
+Agrega esto al CLAUDE.md que ya existe, dejando la línea `@AGENTS.md` arriba:
 
 # waitlist
 
 ## qué es
-landing con formulario de email + panel con login que lista los inscriptos.
+Una landing con formulario de email + un panel con login que lista los inscriptos.
 
 ## cómo se corre
 - dev: pnpm dev
 - base de datos: pnpm db:push
-- e2e: Playwright vía MCP (browser real); no hay runner `pnpm test`, no lo inventes
+- e2e: Playwright vía MCP (no hay `pnpm test`, no lo inventes)
 
-## este repo
-- una tabla: signups (email, fecha). Defínela en Drizzle (schema.ts), no en el panel de Supabase
-- el panel vive detrás de login (Supabase auth)
+## reglas
+- una tabla: signups (email, fecha), definida en Drizzle
+- el panel va detrás de login (Supabase auth)
 - rama por feature, nunca push directo a main
 ```
 
-El global carga el peso (el stack); el del proyecto queda finito (qué es la app y cómo se corre).
+El global lleva el peso (el stack y el cómo). Esto solo dice **qué es** la app.
 
 ---
 
-## Paso 3 · Supabase (base de datos + auth) — el agente lo arma por CLI
+## Paso 3 · Supabase: base de datos + login
 
-Necesitamos Postgres (para Drizzle) y auth (para el login del panel). El agente crea el proyecto y cablea todo con el **CLI de Supabase**, que ya dejaste logueado en el SETUP. Tú no tocas la terminal. Pégale esto (cambia el email y la contraseña del panel por los tuyos):
+El agente crea el proyecto de Supabase y lo conecta, todo por CLI (ya lo dejaste logueado en el setup). Tú no tocas la terminal.
+
+Cambia el email y la contraseña por los tuyos y pégale:
 
 ```
-Creá y cableá mi Supabase por CLI, corriendo tú los comandos (yo no toco la terminal).
-Voy a entrar al /panel con este usuario:  EMAIL=yo@demo.com  PASSWORD=una-que-recuerde
+Crea y conecta mi Supabase por CLI (yo no toco la terminal).
+Voy a entrar al /panel con:  EMAIL=yo@demo.com  PASSWORD=una-que-recuerde
 
-1. Proyecto: mirá mis orgs con `supabase orgs list` y creá el proyecto:
-   supabase projects create waitlist --org-id <mi-org> --db-password <generá una fuerte y guardámela> --region <una cercana, p. ej. us-east-1>
-   Esperá a que termine de provisionar (~2 min) antes de seguir.
-2. Claves: sacá la Publishable key y la Secret key (service_role) con
-   `supabase projects api-keys --project-ref <ref>`.
-3. Armá el DATABASE_URL del Session pooler (puerto 5432, IPv4; sirve para db:push y para Vercel):
-   postgresql://postgres.<ref>:<db-password>@aws-0-<region>.pooler.supabase.com:5432/postgres
-4. Escribí .env.local en la raíz con los tres valores:
-   - DATABASE_URL (el del pooler de arriba)
+1. Mira mis orgs con `supabase orgs list` y crea el proyecto:
+   supabase projects create waitlist --org-id <mi-org> --db-password <genera una fuerte y guárdamela> --region <una cercana, ej. us-east-1>
+   Espera a que termine de provisionar (~2 min).
+2. Saca las claves con `supabase projects api-keys --project-ref <ref>`.
+3. Escribe .env.local en la raíz con:
+   - DATABASE_URL = el del Session pooler (como dice mi global)
    - NEXT_PUBLIC_SUPABASE_URL = https://<ref>.supabase.co
    - NEXT_PUBLIC_SUPABASE_ANON_KEY = la Publishable key (sb_publishable_...)
-5. Auth: dejá el proveedor Email activo y APAGÁ la confirmación de email (así entro sin
-   abrir un correo en vivo): poné enable_confirmations=false en supabase/config.toml y
-   corré `supabase config push`; si tu versión del CLI no cubre ese setting en el push,
-   hacelo por la Management API de auth.
-6. Creá mi usuario del panel vía la Admin API con la Secret key (service_role):
-   POST /auth/v1/admin/users con el EMAIL y PASSWORD de arriba y email_confirm=true.
+4. Deja el login por email activo y apaga la confirmación de email
+   (así entro sin abrir un correo en vivo).
+5. Crea mi usuario del panel con el EMAIL y PASSWORD de arriba, ya confirmado.
 
-Cuando termines, confirmame que .env.local quedó escrito y el usuario creado.
+Cuando termines, confírmame que .env.local quedó escrito y el usuario creado.
 ```
 
-> **Usa el Session pooler, no el Transaction pooler (6543).** Es el único que sirve para las dos cosas del demo: `pnpm db:push` (migraciones de Drizzle) en tu máquina y la app en Vercel (es IPv4; la conexión directa es IPv6 y Vercel no la alcanza). El de transacciones rompe el `db:push`.
+> `.env.local` ya está en el `.gitignore` de Next.js: tus claves nunca suben al repo.
 
-> `.env.local` ya está en el `.gitignore` de Next.js: el agente nunca sube tus claves al repo.
-
-> **Fallback dashboard (si el CLI se traba en vivo).** Es el mismo resultado, a mano:
+> **Si el CLI se traba en vivo, hazlo a mano en el dashboard:**
 > 1. [supabase.com](https://supabase.com) → **New project** (guarda la contraseña).
-> 2. Botón **Connect**: en *Connection string → Session pooler* copia el `DATABASE_URL`, y en *App Frameworks* el **Project URL** y la **Publishable key** (`sb_publishable_...`).
-> 3. Crea `.env.local` en el IDE (*New File*) y pega esos tres valores.
+> 2. Botón **Connect**: en *Session pooler* copia el `DATABASE_URL`; en *App Frameworks*, el **Project URL** y la **Publishable key**.
+> 3. Crea `.env.local` en el IDE y pega esos tres valores.
 > 4. **Authentication → Providers → Email**: apaga *Confirm email*.
 > 5. **Authentication → Users → Add user**: crea el usuario con tu email y contraseña.
 
@@ -137,50 +136,40 @@ Cuando termines, confirmame que .env.local quedó escrito y el usuario creado.
 
 ## Paso 4 · construye la waitlist
 
-Este es el prompt grande. Le das el **qué**; el **cómo** (Drizzle, shadcn, Supabase) ya lo sabe por el global. Pégalo en el agente:
+Este es el prompt grande, y fíjate lo corto que es: solo le das el **qué**. El **cómo** (Drizzle, shadcn, `proxy.ts`, `dotenv`, `@supabase/ssr`) ya lo sabe por tu global. Pégale:
 
 ```
-Construye una waitlist con el stack del global (Next.js, shadcn, Supabase, Drizzle).
+Construye una waitlist con mi stack (Next.js, shadcn, Supabase, Drizzle).
+Que se vea moderna y prolija: usa componentes de shadcn, con aire y buena
+jerarquía visual (como dice mi global). Nada de HTML pelado.
 
 Base de datos:
-- una tabla `signups` (email único + fecha de alta) definida en Drizzle (schema.ts)
-- configura drizzle-kit y agrega el script `pnpm db:push`; corre el push contra mi Supabase
-- importante: drizzle-kit no lee `.env.local` solo (eso es de Next.js), así que instala
-  `dotenv` (`pnpm add -D dotenv`) y en `drizzle.config.ts` carga ese archivo a mano
-  (`dotenv.config({ path: ".env.local" })`) para que `pnpm db:push` encuentre el
-  `DATABASE_URL`. Instálalo sí o sí: pnpm no deja importar `dotenv` si no es dependencia
-  directa del proyecto, así que sin `pnpm add` el push revienta con "Cannot find module 'dotenv'"
+- una tabla `signups`: email único + fecha de alta, definida en Drizzle
+- configura drizzle-kit, agrega el script `pnpm db:push` y corre el push contra mi Supabase
 
-Landing pública en la home:
+Landing en la home:
 - un formulario con un campo de email que valida el formato
-- al enviar, guarda el inscripto en `signups` y muestra un mensaje de confirmación
+- al enviar, guarda el inscripto y muestra un mensaje de confirmación
 - no permite emails duplicados
 
 Ruta `/panel`, protegida con login de Supabase:
-- una página de login (email + contraseña) con signInWithPassword de Supabase
-- si no hay sesión, /panel redirige al login; con sesión, lista los inscriptos
-  ordenados por fecha, con el total arriba
-- importante: usa `@supabase/ssr` para refrescar la sesión en cada request. En Next 16
-  el `middleware.ts` se renombró a `proxy.ts` (con `export function proxy`), así que crea
-  un `proxy.ts` en la raíz con la lógica de `updateSession` de @supabase/ssr. Sin eso el
-  guard de /panel corre en el servidor, no ve la cookie de sesión y te manda al login
-  aunque ya hayas entrado. Si terminas con un `middleware.ts` funciona igual, pero Next 16
-  lo marca como deprecado, así que prefiere `proxy.ts`
+- una página de login (email + contraseña)
+- sin sesión, /panel manda al login; con sesión, lista los inscriptos
+  por fecha, con el total arriba
 
-Deja el login funcionando de punta a punta con el usuario que ya creé en Supabase.
-Usa las variables de mi .env.local. Al terminar, corre `pnpm dev` y verifica tú
-mismo el alta y que puedes entrar al panel con mi email y contraseña.
+Usa las variables de mi .env.local y el usuario que ya creé.
+Al terminar, corre `pnpm dev` y verifica tú mismo el alta y el login al panel.
 ```
 
-Por qué así: le das el **qué** (tabla, form, panel, login) sin dictarle el **cómo**, y le das los criterios (valida formato, sin duplicados, total arriba) con los que se verifica solo.
+Compara este prompt con el del Paso 3: aquí casi no hay detalle técnico. **El global ya lo tiene.** Tú solo describes la app.
 
-Cuando termine, revisa en `http://localhost:3000` que el alta funciona.
+Cuando termine, abre `http://localhost:3000` y prueba el alta.
 
 ---
 
-## Paso 5 · tooling: el skill `crear-pr`
+## Paso 5 · tu primer skill: `crear-pr`
 
-Empaqueta "armar un PR" una vez. Se auto-carga cuando pidas un PR. Pídele al agente:
+Un **skill** empaqueta una tarea una vez, para reusarla siempre. Este arma un PR y se activa solo cuando pidas uno. Pégale:
 
 ```
 Crea un skill en .claude/skills/crear-pr/SKILL.md con este contenido:
@@ -199,113 +188,101 @@ Cuando el usuario pida un PR:
 5. gh pr create con título y cuerpo (qué cambia y por qué)
 ```
 
-Verifica que aparezca: escribe `/crear-pr` en el agente. Lo usarás en el Paso 8 para subir la waitlist a GitHub antes de deployar.
+Para probar que quedó: escribe `/crear-pr` en el agente. Lo usarás en el Paso 8.
 
 ---
 
-## Paso 6 · e2e con Playwright
+## Paso 6 · pruebas e2e con Playwright
 
-Un MCP le da un browser real al agente: abre la página, la navega y verifica el comportamiento real (lee el accessibility tree, no adivina). Que el agente se conecte solo; tú no tocas la terminal. Pégale esto:
+Un **MCP** le da al agente un browser real: abre la página, la navega y verifica que de verdad funciona. Se conecta solo; tú no tocas la terminal. Pégale:
 
 ```
-Conectá Playwright como MCP para este proyecto, corriendo tú los comandos.
-Estás parado en ~/waitlist, así que corrélos acá (el MCP se registra con scope
-local, keyed a esta carpeta, que es la correcta):
+Conecta Playwright como MCP para este proyecto (yo no toco la terminal).
+Estás parado en ~/waitlist, corre los comandos acá:
 
 1. pnpm dlx playwright install chrome
-   (baja el Chrome que Playwright usa por defecto, ~1 min; sin él el MCP arranca
-   con `channel: chrome` y revienta con "Chromium distribution 'chrome' is not
-   found" si no tengo Google Chrome instalado, p. ej. solo Safari).
+   (baja el Chrome que Playwright usa, ~1 min.)
 2. claude mcp add playwright -- pnpm dlx @playwright/mcp@latest
 
-Cuando termine, avisame para relanzar el agente (los MCP se cargan al arrancar).
+Cuando termines, avísame para relanzar el agente.
 ```
 
-**Cierra el agente y vuelve a abrirlo** (`/exit` o Ctrl-C dos veces, y teclea `claude` de nuevo en la misma carpeta): los MCP se cargan al arrancar, así que el que registró no aparece en la sesión que ya tenías abierta hasta relanzarla. Confirma con `/mcp` que sale `playwright`. Luego pídele el test:
+**Cierra el agente y vuelve a abrirlo** (escribe `/exit`, y luego `claude` de nuevo en la misma carpeta): los MCP se cargan al arrancar. Confirma con `/mcp` que aparece `playwright`. Luego pídele el test:
 
 ```
-Antes de correr el test, verifica que `pnpm dev` esté levantado en
-localhost:3000 (si no, levántalo); el browser de Playwright abre esa URL real.
+Primero verifica que `pnpm dev` esté corriendo en localhost:3000 (si no, levántalo).
 
-Escribe un test e2e del alta en la waitlist con Playwright: abre la home,
-ingresa un email, envía y verifica el mensaje de confirmación. Después
-loguéate con el usuario de Supabase que ya creé y verifica que ese mismo
-email aparece en /panel. Córrelo hasta que pase.
+Escribe un test e2e con Playwright: abre la home, ingresa un email, envía y
+verifica el mensaje de confirmación. Después loguéate con mi usuario de Supabase
+y verifica que ese email aparece en /panel. Córrelo hasta que pase.
 
-importante: la tabla `signups` tiene el email único y apunta a mi Supabase
-real, así que genera un email distinto en cada corrida (p. ej.
-`test+${Date.now()}@demo.com`); si reusas un email fijo, la segunda corrida
-choca con el duplicado, no sale el mensaje de confirmación y el test falla.
+El email de signups es único, así que usa un email distinto en cada corrida
+(ej. test+${Date.now()}@demo.com). Si reusas uno fijo, la segunda corrida falla.
 ```
 
-> Pásale al agente el email y la contraseña del usuario que creaste en el Paso 3 para que pueda loguearse en el test.
+> Pásale el email y la contraseña de tu usuario para que pueda loguearse en el test.
 
-Se auto-verifica: si no coincide con lo esperado, itera solo.
+Si algo no coincide, el agente itera solo hasta que pasa.
 
 ---
 
-## Paso 7 · el loop: tu propia code-review, disparada por un hook
+## Paso 7 · tu code-review automática
 
-Nunca aceptes el primer output. Dos piezas del harness lo automatizan: un **agente** que critica con ojos frescos, y un **hook** que lo dispara solo cuando el principal termina.
+Nunca aceptes el primer resultado. La idea: un **segundo agente**, con ojos frescos, revisa el código que escribió el primero. Como no lo escribió, no lo defiende.
 
 ```
-   agente principal termina
+   el agente principal termina
             │
-            │  ⚡ Stop hook  ── "cuando termina → corre el critico"
+            │  ⚡ (opcional) un hook lo dispara solo
             ▼
-   ┌──────────────────────┐
-   │   agente critico      │  contexto fresco · read-only (Read/Grep/Glob)
-   │  tu code-review con    │  no escribió el código → no arrastra el sesgo
-   │  unos constraints      │
-   └──────────────────────┘
+   ┌────────────────────────┐
+   │   agente "critico"      │  ojos frescos · solo lee, no arregla
+   └────────────────────────┘
             │
             ▼
-   crítica del diff ──▶ el principal corrige ──▶ recién ahí revisas tú
+   marca los problemas ──▶ el principal corrige ──▶ recién ahí revisas tú
 ```
 
-Las dos piezas, una línea cada una:
+Tienes tres niveles, de menos a más:
 
-- **Agente (subagente):** un revisor aparte, con **contexto fresco** y **read-only** (`Read/Grep/Glob`, no edita nada). Es **tu propia versión de `/code-review`**, pero con los constraints que le pongas. Como no escribió el código, no defiende sus decisiones.
-- **Hook:** un **disparador**. El evento "el agente terminó" corre el critico. No lo pides: se dispara solo.
-
-**1 · El atajo nativo (cero setup).** El mismo loop con un comando, sin crear nada:
+**1 · Lo nativo (cero setup).** El mismo loop con un comando:
 
 ```
 /code-review
 ```
 
-**2 · Tu agente critico.** Un archivo: el agente con sus constraints adentro. Pídele al agente que lo cree:
+**2 · Tu propio agente `critico`.** Un archivo con tus reglas adentro. Pégale:
 
 ```
 Crea un subagente en .claude/agents/critico.md con este contenido:
 
 ---
 name: critico
-description: Critica el diff de la waitlist. Read-only, no arregla.
+description: Critica el diff de la waitlist. Solo lee, no arregla.
 tools: Read, Grep, Glob
 ---
 
-Eres un revisor con contexto fresco. No escribiste este código; no le debes el
-beneficio de la duda. Read-only: encuentras, NO arreglas. El principal arregla.
+Eres un revisor con ojos frescos. No escribiste este código; no le debes el
+beneficio de la duda. Solo lees: encuentras, NO arreglas. El principal arregla.
 
-Toma el diff (git diff contra main) y revísalo SOLO contra estos constraints:
+Toma el diff (git diff contra main) y revísalo SOLO contra esto:
 - el email se valida antes de insertar en `signups`, y el alta maneja el duplicado
 - el guard de /panel corre en el server (proxy.ts), nunca confía en el cliente
-- secretos solo desde process.env, nunca hardcodeados
+- secretos solo desde process.env, nunca escritos a mano en el código
 - nada de `any` ni `as` en el path de datos
-- reusa el schema de Drizzle (`signups`), no redefinas la forma
+- reusa el schema de Drizzle (`signups`), no lo redefinas
 
-Cada hallazgo: `archivo:línea` + qué viola + el fix en una línea. Si dudas, lo
-descartas: el silencio gana al ruido. Si no hay nada, dilo y listo.
+Cada hallazgo: `archivo:línea` + qué viola + el fix en una línea. Si dudas, descártalo.
+Si no hay nada, dilo y listo.
 ```
 
-Con eso ya lo corres **on-demand**, que es el default recomendado: le pides `usa el subagente critico para revisar el diff` cuando el cambio lo amerita. Tú eliges el momento: control total, sin costo por turno.
+Con eso lo corres cuando quieras: `usa el subagente critico para revisar el diff`. Control total, corre cuando tú decides. **Empieza así.**
 
-**3 · El hook que lo dispara solo (opcional).** Si prefieres que no dependa de que te acuerdes, un `Stop` hook lo lanza cuando el agente termina. Tiene un **trade-off**: se dispara en *cada* fin de turno (no solo en un PR), así que suma una review de LLM —latencia y tokens— aun cuando el cambio es trivial y no la necesita. Vale la pena solo si el costo de *olvidarte* de revisar pesa más que ese impuesto por turno. Si lo quieres, pídeselo al agente:
+**3 · El hook que lo dispara solo (opcional).** Si prefieres no depender de acordarte, un `Stop` hook lanza el critico cada vez que el agente termina. El costo: corre en **cada** turno, aun cuando el cambio es trivial. Súmalo solo si te descubres saltándote la revisión. Pégale:
 
 ```
-Agrega un Stop hook a .claude/settings.json (crea el archivo si no existe, y si ya
-existe conserva lo que tenga, solo suma la clave "Stop"). Contenido exacto del hook:
+Agrega un Stop hook a .claude/settings.json (crea el archivo si no existe; si ya
+existe, conserva lo que tenga y solo suma la clave "Stop"). Contenido exacto:
 
 {
   "hooks": {
@@ -323,67 +300,59 @@ existe conserva lo que tenga, solo suma la clave "Stop"). Contenido exacto del h
 }
 ```
 
-> El `grep ... stop_hook_active` es el **freno anti-loop**: cuando el critico ya corrió y el agente vuelve a terminar, el hook lo deja parar en vez de re-dispararse para siempre. Si algo se traba, Ctrl-C y borra el bloque `Stop`.
-
-> Este hook lean **no tiene gate**: corre en cada turno, sin filtrar. Si te molesta el costo pero igual quieres automatizarlo, el paso siguiente es un gate (como en Spexs: saltar diffs chicos y no-riesgosos) para que solo dispare cuando de verdad aporta.
-
-**On-demand vs automático, en una línea:** on-demand (Paso 2) = control total, corre cuando tú decides; hook (Paso 3) = nunca te olvidas, pero pagas una review por turno. Empieza on-demand; suma el hook solo si te descubres saltando la revisión.
-
-En Spexs esto es un sistema más grande (reviewer externo, rúbrica aparte, varias lentes por blast-radius). Para este proyecto **déjalo lean**: un agente + un hook alcanza. El salto a varios agentes es el próximo bloque (orquestación).
+> El `grep ... stop_hook_active` es el freno: cuando el critico ya corrió, el hook deja que el agente pare en vez de repetirse para siempre. Si algo se traba, Ctrl-C y borra el bloque `Stop`.
 
 ---
 
-## Paso 8 · deploy a Vercel — el agente lo hace por CLI
+## Paso 8 · deploy a Vercel
 
-La app anda local, pero en GitHub tu `main` todavía tiene solo el Next.js vacío del Paso 1: el código de la waitlist vive en tu máquina. Primero lo subimos a `main` (con el skill del Paso 5) y después el agente deploya con el **CLI de Vercel**, que ya dejaste logueado en el SETUP.
+La app anda en tu máquina, pero en GitHub tu `main` todavía tiene solo el Next.js vacío del Paso 1. Primero subes la waitlist a `main`, y después el agente la deploya por CLI (ya lo dejaste logueado en el setup).
 
-1. **Sube la waitlist a `main`** con el skill que armaste. En el agente:
-
-   ```
-   /crear-pr
-   ```
-
-   Arma la rama, el commit y abre el PR. Mergéalo a `main` con el botón **Merge** en la página del PR en GitHub, o pídeselo al agente:
-
-   ```
-   Mergeá el PR a main (gh pr merge --merge --delete-branch) y borrá la rama.
-   ```
-
-   Ahora `main` tiene la waitlist de verdad, que es lo que Vercel va a deployar.
-2. **Deploya por CLI.** Tú no tocas la terminal; pégale al agente:
-
-   ```
-   Deployá a Vercel por CLI, corriendo tú los comandos (yo no toco la terminal).
-   Ya estoy logueado (hice vercel login en el setup). Parado en ~/waitlist:
-
-   1. pnpm dlx vercel link --yes   (crea/linkea el proyecto, autodetecta Next.js)
-   2. Cargá las 3 env vars a production, leyendo los valores de mi .env.local:
-      pnpm dlx vercel env add DATABASE_URL production
-      pnpm dlx vercel env add NEXT_PUBLIC_SUPABASE_URL production
-      pnpm dlx vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
-      IMPORTANTE: cargálas ANTES de deployar. Si deployás sin ellas, el build
-      revienta con "supabaseUrl is required" (la home usa Supabase al pre-renderizar).
-   3. pnpm dlx vercel git connect   (conecta el repo de GitHub → CI/CD: cada push a main re-deploya)
-   4. pnpm dlx vercel deploy --prod   (build + deploy; me da la URL pública)
-
-   Al terminar, decime la URL.
-   ```
-
-   > **Por qué el orden importa:** el CLI deploya sin pasar por el dashboard, así que si no cargas las env vars *antes* (`vercel env add`), el primer build falla con `supabaseUrl is required`. Con las variables ya puestas, el CLI es el camino limpio y de paso `vercel git connect` te deja el CI/CD activo sin tocar el dashboard.
-3. Con la URL en mano, agrégala en Supabase → **Authentication → URL Configuration** (**Site URL** + **Redirect URLs**), o pídeselo al agente por CLI/Management API. Con login email+contraseña casi no hace falta, pero lo dejas listo por si luego usas magic links.
-4. Abre tu URL, da de alta un email y entra al `/panel` con **el mismo usuario de Supabase** del Paso 3. Está en producción.
-
-> Como usas el mismo Supabase para local y para producción, la tabla `signups` y tu usuario del panel ya existen (los creaste en los pasos 3 y 4): producción solo necesita las mismas variables.
-
-> **Fallback dashboard (si el CLI se traba en vivo).** Importa el repo en [vercel.com/new](https://vercel.com/new), y en **Configure Project → Environment Variables** (antes de **Deploy**) agrega las tres de tu `.env.local` (`DATABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`). Cárgalas ahí, en el import, no en *Settings*.
-
-**A partir de ahora, cada `push` a `main` re-deploya solo** (eso lo activó `vercel git connect`). Eso es CI/CD, y lo vemos a fondo en el curso. Sincroniza tu `main` local con lo que acabas de mergear pidiéndoselo al agente:
+**1. Sube la waitlist a `main`** con tu skill. En el agente:
 
 ```
-Sincronizá mi main local con GitHub: git checkout main && git pull.
+/crear-pr
 ```
 
-De aquí en más, cualquier cambio futuro: **/crear-pr → merge → Vercel re-deploya solo.**
+Mergéalo a `main` con el botón **Merge** en la página del PR en GitHub, o pídeselo al agente:
+
+```
+Haz merge del PR a main y borra la rama (gh pr merge --merge --delete-branch).
+```
+
+**2. Deploya.** Pégale:
+
+```
+Deploya a Vercel por CLI (yo no toco la terminal). Ya hice vercel login en el setup.
+Parado en ~/waitlist:
+
+1. pnpm dlx vercel link --yes
+2. Carga las 3 env vars a production, leyéndolas de mi .env.local
+   (hazlo ANTES de deployar, como dice mi global):
+   pnpm dlx vercel env add DATABASE_URL production
+   pnpm dlx vercel env add NEXT_PUBLIC_SUPABASE_URL production
+   pnpm dlx vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY production
+3. pnpm dlx vercel git connect   (conecta el repo: cada push a main re-deploya)
+4. pnpm dlx vercel deploy --prod
+
+Al terminar, dime la URL.
+```
+
+> **Si el CLI se traba en vivo:** importa el repo en [vercel.com/new](https://vercel.com/new) y, en **Environment Variables** (antes de **Deploy**), agrega las tres de tu `.env.local`.
+
+**3. Con la URL en mano**, agrégala en Supabase → **Authentication → URL Configuration** (Site URL + Redirect URLs), o pídeselo al agente.
+
+**4. Abre tu URL**, da de alta un email y entra al `/panel` con el mismo usuario del Paso 3. **Está en producción.**
+
+> Usas el mismo Supabase para local y producción, así que la tabla y tu usuario ya existen. Producción solo necesita las mismas variables.
+
+De aquí en más, cada `push` a `main` re-deploya solo. Sincroniza tu `main` local pidiéndoselo al agente:
+
+```
+Sincroniza mi main local con GitHub: git checkout main && git pull.
+```
+
+Cualquier cambio futuro: **/crear-pr → merge → Vercel re-deploya solo.**
 
 ---
 
@@ -391,11 +360,11 @@ De aquí en más, cualquier cambio futuro: **/crear-pr → merge → Vercel re-d
 
 | capa | qué | dónde quedó |
 |------|-----|-------------|
-| 0 · global  | `CLAUDE.md` global desde el ejemplo | `~/.claude/CLAUDE.md` |
-| 1 · config  | `CLAUDE.md` del proyecto | raíz del repo |
-| 2 · tooling | skill `crear-pr` | `.claude/skills/crear-pr/SKILL.md` |
+| 0 · global  | tu stack por defecto | `~/.claude/CLAUDE.md` |
+| 1 · config  | qué es la app | `CLAUDE.md` del repo |
+| 2 · tooling | skill `crear-pr` | `.claude/skills/crear-pr/` |
 | e2e         | Playwright MCP | `claude mcp add playwright` |
-| loop        | crítica del diff (agente + hook) | `.claude/agents/critico.md` + `/code-review` |
-| producción  | app deployada + CI/CD | Vercel + Supabase |
+| loop        | tu code-review | `.claude/agents/critico.md` + `/code-review` |
+| producción  | app online + re-deploy en cada push | Vercel + Supabase |
 
-De la idea al producto en vivo: una waitlist real, con harness, deployada y con deploy automático en cada push.
+De la idea al producto en vivo: una waitlist real, deployada, que se actualiza sola en cada push.

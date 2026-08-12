@@ -57,6 +57,10 @@ anotarse, y una página privada donde yo veo la lista de anotados.
 Cómo la quiero:
 - La página principal: un formulario con un campo de email. Al enviar, guarda
   el email y muestra un mensaje de gracias. No acepta emails repetidos.
+- Al anotarse, además del gracias, muéstrame mi posición en la lista
+  ("eres el #142") y una pequeña animación de celebración.
+- Referidos: al anotarme, dame un enlace propio para invitar. Cada persona
+  que se anote con mi enlace me sube de posición en la lista.
 - Una página privada en /panel: pide login. Adentro, la lista de anotados
   ordenada por fecha, con el total arriba.
 

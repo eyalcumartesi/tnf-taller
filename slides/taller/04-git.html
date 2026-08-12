@@ -41,6 +41,20 @@
   .garrow { display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--muted); font-size:1.5em; padding:0 0.25em; }
   .garrow .albl { font-family:"JetBrains Mono",monospace; font-size:0.34em; color:var(--amber); margin-bottom:0.15em; white-space:nowrap; letter-spacing:0.04em; }
 
+  /* fila git → Vercel: los 4 cubos SIEMPRE en una línea; encogen para caber */
+  .flow.vercel { flex-wrap:nowrap; gap:0; width:100%; }
+  .flow.vercel .gnode { min-width:0; flex:1 1 0; padding:0.65em 0.45em 0.55em; }
+  .flow.vercel .gnode .ico { font-size:2em; }
+  .flow.vercel .gnode .cap { font-size:0.4em; white-space:nowrap; }
+  .flow.vercel .garrow { flex:0 0 auto; font-size:1.15em; padding:0 0.12em; }
+  .flow.vercel .garrow .albl { font-size:0.3em; }
+  /* portrait / celular: apila la fila y gira las flechas */
+  @media (max-aspect-ratio: 3/4) {
+    .flow.vercel { flex-direction:column; }
+    .flow.vercel .gnode { width:min(11em,80%); flex:0 0 auto; }
+    .flow.vercel .garrow { transform:rotate(90deg); padding:0.15em 0; }
+  }
+
   /* dos paneles (para qué sirve) */
   .duopanel { display:flex; gap:1em; justify-content:center; margin-top:0.3em; }
   .panel { flex:1; max-width:440px; background:var(--panel); border:1px solid var(--rule); border-top:3px solid var(--bc);
@@ -226,7 +240,7 @@
   <!-- ══ 7 · GIT → VERCEL ══ -->
   <section>
     <div class="gstep"><span class="gn">7</span> git conectado a Vercel</div>
-    <div class="flow">
+    <div class="flow vercel">
       <div class="gnode c-cyan"><span class="ico">📁</span><span class="cap">tu repo</span></div>
       <div class="garrow"><span class="albl">push a main</span>▶</div>
       <div class="gnode c-amber"><span class="ico">🐙</span><span class="cap">GitHub</span></div>
@@ -241,31 +255,45 @@
   <!-- ══ 8 · WORKTREES — agentes en paralelo ══ -->
   <section>
     <div class="gstep"><span class="gn">8</span> worktrees = varios agentes en paralelo</div>
-    <svg viewBox="0 0 900 380" style="width:100%; max-width:70%; height:auto; margin:0 auto; display:block;" font-family="JetBrains Mono, monospace">
-      <!-- repo -->
-      <rect x="360" y="10" width="180" height="56" rx="12" fill="var(--panel)" stroke="var(--amber)" stroke-width="1.8"/>
-      <text x="450" y="45" fill="var(--ink)" font-size="22" text-anchor="middle">📁 repo</text>
-      <!-- fan out -->
-      <path d="M450 66 C 220 110, 150 120, 150 150" fill="none" stroke="var(--rule)" stroke-width="1.6"/>
-      <path d="M450 66 L 450 150" fill="none" stroke="var(--rule)" stroke-width="1.6"/>
-      <path d="M450 66 C 680 110, 750 120, 750 150" fill="none" stroke="var(--rule)" stroke-width="1.6"/>
-      <!-- 3 worktrees con agente -->
-      <rect x="70" y="150" width="160" height="70" rx="12" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.8"/>
-      <text x="150" y="184" font-size="26" text-anchor="middle">🤖</text>
-      <text x="150" y="208" fill="var(--cyan)" font-size="15" text-anchor="middle">worktree A</text>
-      <rect x="370" y="150" width="160" height="70" rx="12" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.8"/>
-      <text x="450" y="184" font-size="26" text-anchor="middle">🤖</text>
-      <text x="450" y="208" fill="var(--cyan)" font-size="15" text-anchor="middle">worktree B</text>
-      <rect x="670" y="150" width="160" height="70" rx="12" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.8"/>
-      <text x="750" y="184" font-size="26" text-anchor="middle">🤖</text>
-      <text x="750" y="208" fill="var(--cyan)" font-size="15" text-anchor="middle">worktree C</text>
-      <!-- merge back -->
-      <path d="M150 220 C 150 290, 380 300, 450 305" fill="none" stroke="var(--green)" stroke-width="1.8"/>
-      <path d="M450 220 L 450 305" fill="none" stroke="var(--green)" stroke-width="1.8"/>
-      <path d="M750 220 C 750 290, 520 300, 450 305" fill="none" stroke="var(--green)" stroke-width="1.8"/>
-      <rect x="360" y="305" width="180" height="56" rx="12" fill="var(--panel)" stroke="var(--green)" stroke-width="1.8"/>
-      <text x="450" y="340" fill="var(--green)" font-size="22" text-anchor="middle">merge</text>
+    <svg viewBox="0 0 900 412" style="width:100%; max-width:74%; height:auto; margin:0 auto; display:block;" font-family="JetBrains Mono, monospace">
+      <!-- repo original -->
+      <rect x="350" y="8" width="200" height="54" rx="12" fill="var(--panel)" stroke="var(--amber)" stroke-width="1.8"/>
+      <text x="450" y="42" fill="var(--ink)" font-size="21" text-anchor="middle">📁 mi-app</text>
+      <text x="566" y="40" fill="var(--muted)" font-size="14" text-anchor="start">← el repo original</text>
+      <!-- fan out: git worktree add -->
+      <path d="M450 62 C 300 104, 140 104, 140 150" fill="none" stroke="var(--rule)" stroke-width="1.6"/>
+      <path d="M450 62 L 450 150" fill="none" stroke="var(--rule)" stroke-width="1.6"/>
+      <path d="M450 62 C 600 104, 760 104, 760 150" fill="none" stroke="var(--rule)" stroke-width="1.6"/>
+      <text x="450" y="112" fill="var(--amber)" font-size="14" text-anchor="middle">git worktree add ✕3</text>
+
+      <!-- 3 worktrees: cada uno una CARPETA copia del repo con un agente dentro -->
+      <!-- A -->
+      <rect x="40" y="150" width="200" height="112" rx="13" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.8"/>
+      <text x="140" y="177" fill="var(--cyan)" font-size="14" text-anchor="middle">worktree A</text>
+      <line x1="58" y1="188" x2="222" y2="188" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="140" y="222" fill="var(--ink)" font-size="22" text-anchor="middle">📁 mi-app</text>
+      <text x="140" y="248" fill="var(--muted)" font-size="15" text-anchor="middle">🤖 un agente aquí</text>
+      <!-- B -->
+      <rect x="350" y="150" width="200" height="112" rx="13" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.8"/>
+      <text x="450" y="177" fill="var(--cyan)" font-size="14" text-anchor="middle">worktree B</text>
+      <line x1="368" y1="188" x2="532" y2="188" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="450" y="222" fill="var(--ink)" font-size="22" text-anchor="middle">📁 mi-app</text>
+      <text x="450" y="248" fill="var(--muted)" font-size="15" text-anchor="middle">🤖 un agente aquí</text>
+      <!-- C -->
+      <rect x="660" y="150" width="200" height="112" rx="13" fill="var(--panel)" stroke="var(--cyan)" stroke-width="1.8"/>
+      <text x="760" y="177" fill="var(--cyan)" font-size="14" text-anchor="middle">worktree C</text>
+      <line x1="678" y1="188" x2="842" y2="188" stroke="var(--rule)" stroke-width="1.2"/>
+      <text x="760" y="222" fill="var(--ink)" font-size="22" text-anchor="middle">📁 mi-app</text>
+      <text x="760" y="248" fill="var(--muted)" font-size="15" text-anchor="middle">🤖 un agente aquí</text>
+
+      <!-- merge back a main -->
+      <path d="M140 262 C 140 318, 350 330, 450 348" fill="none" stroke="var(--green)" stroke-width="1.8"/>
+      <path d="M450 262 L 450 348" fill="none" stroke="var(--green)" stroke-width="1.8"/>
+      <path d="M760 262 C 760 318, 550 330, 450 348" fill="none" stroke="var(--green)" stroke-width="1.8"/>
+      <rect x="350" y="348" width="200" height="54" rx="12" fill="var(--panel)" stroke="var(--green)" stroke-width="1.8"/>
+      <text x="450" y="382" fill="var(--green)" font-size="21" text-anchor="middle">✓ merge a main</text>
     </svg>
+    <div class="caplist"><span>cada worktree = <b>copia aislada</b> del repo</span><span>los agentes trabajan a la vez <b>sin pisarse</b></span></div>
   </section>
 
 </div>

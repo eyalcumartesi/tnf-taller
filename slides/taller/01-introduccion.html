@@ -29,21 +29,28 @@
   .career.is-now .t b, .career li.is-now .t b { color:var(--green); }
   .career .d { color:var(--muted); font-size:0.6em; line-height:1.3; margin-top:0.12em; }
 
-  /* ── slide "quién soy": identidad a la izquierda, timeline a la derecha ── */
-  .who { display:grid; grid-template-columns:1fr 1fr; gap:2.4em; align-items:center; text-align:left; }
-  .who .lede { min-width:0; }
-  .who .tag { font-family:"JetBrains Mono",monospace; font-size:0.5em; color:var(--muted);
-              letter-spacing:0.14em; display:block; margin-bottom:0.5em; }
-  .who .tag b { color:var(--green); }
-  .who h2 { margin:0 0 0.18em; line-height:1; }
-  .who .role { color:var(--muted); font-size:0.66em; margin:0 0 1em; line-height:1.4; }
-  .who .role b { color:var(--green); font-weight:600; }
-  .who .kick { border-left:3px solid var(--amber); background:var(--panel);
-               padding:0.55em 0.9em; border-radius:0 8px 8px 0; margin:0;
-               font-family:"Space Grotesk",sans-serif; font-size:0.62em; line-height:1.4; color:var(--ink); }
-  .who .kick b { color:var(--amber); font-weight:600; }
-  .who .career { margin:0; }
-  @media (max-aspect-ratio: 3/4) { .who { grid-template-columns:1fr; gap:1.2em; } }
+  /* ── slide "quién soy": nombre + una sola línea horizontal de etapas ── */
+  .me { text-align:center; }
+  .me h2 { margin:0 0 2.4em; line-height:1; }
+  .path { list-style:none; display:flex; justify-content:space-between; align-items:flex-start;
+          max-width:82%; margin:0 auto; padding:0; position:relative; }
+  .path::before { content:""; position:absolute; left:0.4em; right:0.4em; top:0.39em; height:2px;
+          background:linear-gradient(90deg, var(--red), var(--amber) 55%, var(--green)); }
+  .path li { position:relative; flex:1; padding:1.5em 0.4em 0; }
+  .path .dot { position:absolute; top:0; left:50%; transform:translateX(-50%);
+          width:0.8em; height:0.8em; border-radius:50%; background:var(--bg);
+          border:2px solid var(--amber); box-sizing:border-box; }
+  .path li.is-now .dot { background:var(--green); border-color:var(--green);
+          box-shadow:0 0 0 4px rgba(159,232,112,0.15); }
+  .path .lbl { display:block; font-family:"Space Grotesk",sans-serif; font-weight:600;
+          font-size:0.62em; line-height:1.25; color:var(--ink); }
+  .path li.is-now .lbl { color:var(--green); }
+  @media (max-aspect-ratio: 3/4) {
+    .path { flex-direction:column; align-items:flex-start; max-width:16em; }
+    .path::before { left:0.39em; right:auto; top:0.4em; bottom:0.4em; width:2px; height:auto; }
+    .path li { padding:0 0 0.9em 1.5em; }
+    .path .dot { left:0; top:0.1em; transform:none; }
+  }
 
   /* ── muro de errores: los 10 anti-patrones en una sola rejilla densa 5×2 ── */
   .err-slide h2 { font-size: clamp(1.05em, 1.24em, 1.36em); margin-bottom: 0.5em; }
@@ -87,30 +94,13 @@
   </section>
 
   <!-- SLIDE QUIÉN SOY -->
-  <section class="who">
-    <div class="lede">
-      <span class="tag">~ <b>quién</b> soy</span>
-      <h2>eyal cumartesi</h2>
-      <p class="role">CTO de <b>Spexs</b> · construyo con AI en producción, todos los días</p>
-      <p class="kick">no vengo a enseñar teoría. vengo a mostrarles mi <b>flujo de trabajo real</b>.</p>
-    </div>
-    <ul class="career">
-      <li>
-        <div class="t"><b>economía</b> enfocada a data science</div>
-        <div class="d">mi formación: negocio y datos, no solo código</div>
-      </li>
-      <li>
-        <div class="t"><b>autodidacta</b></div>
-        <div class="d">aprendí solo — por eso puedo enseñarlo de forma intuitiva</div>
-      </li>
-      <li>
-        <div class="t"><b>Credicorp Bank</b></div>
-        <div class="d">equipo de decisiones e implementaciones de proyectos técnicos</div>
-      </li>
-      <li class="is-now">
-        <div class="t"><b>CTO de Spexs</b></div>
-        <div class="d">con usuarios productivos — en producción, de verdad</div>
-      </li>
+  <section class="me">
+    <h2>eyal cumartesi</h2>
+    <ul class="path">
+      <li><span class="dot"></span><span class="lbl">economía · data science</span></li>
+      <li><span class="dot"></span><span class="lbl">autodidacta</span></li>
+      <li><span class="dot"></span><span class="lbl">Credicorp Bank</span></li>
+      <li class="is-now"><span class="dot"></span><span class="lbl">CTO · Spexs</span></li>
     </ul>
   </section>
 

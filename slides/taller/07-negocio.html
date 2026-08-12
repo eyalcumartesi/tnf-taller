@@ -26,11 +26,42 @@
   .term pre code { font-size: 0.62em; line-height: 1.6; }
   .cmd-note { text-align: center; margin: 0.9em auto 0; max-width: 760px; }
 
-  /* ladder de cierre: 01 arriba → 05 abajo (orden de lectura natural) */
-  .reveal .closing-ladder { max-width: 760px; margin-left: auto; margin-right: auto; flex-direction: column; }
-  .reveal .closing-ladder .rung .step-num {
-    background: rgba(159,232,112,0.14); color: var(--green);
+  /* ── slide "lo que te llevas": síntesis del taller, un principio por escalón ── */
+  .takeaways h2 { margin-bottom: 0.08em; }
+  .takeaways .ta-sub {
+    color: var(--muted); font-size: 0.5em; margin: 0 0 0.5em;
+    font-family: "JetBrains Mono", monospace; letter-spacing: 0.02em;
   }
+  .takeaways .ta-sub b { color: var(--ink); font-weight: 600; }
+
+  /* ladder de cierre: 01 arriba → 05 abajo (orden de lectura natural) */
+  .reveal .closing-ladder { max-width: 860px; margin-left: auto; margin-right: auto; flex-direction: column; gap: 0.24em; }
+  .reveal .closing-ladder .rung {
+    border-left: 3px solid var(--ac, var(--green));
+    align-items: center; padding: 0.34em 0.9em;
+  }
+  .reveal .closing-ladder .rung:hover { border-color: var(--ac, var(--green)); }
+  .reveal .closing-ladder .rung .step-num {
+    background: color-mix(in srgb, var(--ac, var(--green)) 15%, transparent);
+    color: var(--ac, var(--green)); align-self: center;
+  }
+  .reveal .closing-ladder .rung .body b { font-size: 0.76em; line-height: 1.12; }
+  .reveal .closing-ladder .rung .body span { font-size: 0.55em; margin-top: 0.05em; }
+  /* callback al bloque de donde salió cada idea */
+  .reveal .closing-ladder .rung .from {
+    margin-left: auto; flex: 0 0 auto; align-self: center;
+    font-family: "JetBrains Mono", monospace; font-size: 0.46em; color: var(--muted);
+    border: 1px solid var(--rule); border-radius: 100px; padding: 0.25em 0.7em; white-space: nowrap;
+  }
+  .reveal .closing-ladder .rung .from b { color: var(--ac, var(--green)); font-weight: 600; }
+  .reveal .closing-ladder .rung.r1 { --ac: var(--amber); }
+  .reveal .closing-ladder .rung.r2 { --ac: var(--cyan); }
+  .reveal .closing-ladder .rung.r3 { --ac: var(--green); }
+  .reveal .closing-ladder .rung.r4 { --ac: var(--red); }
+  .reveal .closing-ladder .rung.r5 { --ac: var(--violet, #B69CFF); }
+  .takeaways .ta-punch { font-size: 0.58em; margin: 0.6em auto 0; max-width: 46ch; line-height: 1.35; }
+  .takeaways .ta-punch b { color: var(--green); font-weight: 600; }
+  .takeaways .ta-punch em { font-style: normal; color: var(--amber); font-weight: 600; }
 
   /* ── slide final: hero de cierre, la última imagen que se llevan ── */
   .reveal section.closing { padding-top: 0.2em; }
@@ -101,22 +132,37 @@
     <p class="dim biz-dim">en el curso profundizamos esta fase de negocio: <b>tracción, a/b testing y más</b> — cada quien valida su idea antes de escribir una línea.</p>
   </section>
 
-  <section>
+  <section class="takeaways">
     <h2>lo que te llevas</h2>
+    <p class="ta-sub">no para memorizar — para que ya <b>no te suene raro</b></p>
     <div class="ladder closing-ladder">
-      <div class="rung">
+      <div class="rung r1">
         <span class="step-num">01</span>
-        <div class="body"><b>harness</b><span>el AI es probabilístico → por eso existe</span></div>
+        <div class="body"><b>cómo funciona git y el código</b><span>el folder, commits y worktrees · le perdiste el miedo</span></div>
+        <span class="from">bloque <b>04</b></span>
       </div>
-      <div class="rung">
+      <div class="rung r2">
         <span class="step-num">02</span>
-        <div class="body"><b>critique pattern</b><span>nunca aceptes el primer output</span></div>
+        <div class="body"><b>cómo setear tu harness</b><span>config, tooling y el loop · de afuera hacia adentro</span></div>
+        <span class="from">bloque <b>05</b></span>
       </div>
-      <div class="rung">
+      <div class="rung r3">
         <span class="step-num">03</span>
-        <div class="body"><b>cuándo y cómo</b><span>más agentes ≠ mejor</span></div>
+        <div class="body"><b>buenas prácticas de coding con AI</b><span>specs, verificar e2e, critique pattern, lean</span></div>
+        <span class="from">bloque <b>01·05</b></span>
+      </div>
+      <div class="rung r4">
+        <span class="step-num">04</span>
+        <div class="body"><b>un buen config base para vibe-code</b><span>un CLAUDE.md global que carga el stack por ti</span></div>
+        <span class="from">bloque <b>05</b></span>
+      </div>
+      <div class="rung r5">
+        <span class="step-num">05</span>
+        <div class="body"><b>más preguntas que al empezar</b><span>te expusiste a conceptos nuevos · ese es el punto</span></div>
+        <span class="from">todo el taller</span>
       </div>
     </div>
+    <p class="ta-punch dim">no tienes que dominarlo hoy: ahora <b>sabes que existe</b> y <em>dónde buscar</em>.</p>
   </section>
 
   <section class="curio">

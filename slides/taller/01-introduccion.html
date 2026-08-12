@@ -29,6 +29,22 @@
   .career.is-now .t b, .career li.is-now .t b { color:var(--green); }
   .career .d { color:var(--muted); font-size:0.6em; line-height:1.3; margin-top:0.12em; }
 
+  /* ── slide "quién soy": identidad a la izquierda, timeline a la derecha ── */
+  .who { display:grid; grid-template-columns:1fr 1fr; gap:2.4em; align-items:center; text-align:left; }
+  .who .lede { min-width:0; }
+  .who .tag { font-family:"JetBrains Mono",monospace; font-size:0.5em; color:var(--muted);
+              letter-spacing:0.14em; display:block; margin-bottom:0.5em; }
+  .who .tag b { color:var(--green); }
+  .who h2 { margin:0 0 0.18em; line-height:1; }
+  .who .role { color:var(--muted); font-size:0.66em; margin:0 0 1em; line-height:1.4; }
+  .who .role b { color:var(--green); font-weight:600; }
+  .who .kick { border-left:3px solid var(--amber); background:var(--panel);
+               padding:0.55em 0.9em; border-radius:0 8px 8px 0; margin:0;
+               font-family:"Space Grotesk",sans-serif; font-size:0.62em; line-height:1.4; color:var(--ink); }
+  .who .kick b { color:var(--amber); font-weight:600; }
+  .who .career { margin:0; }
+  @media (max-aspect-ratio: 3/4) { .who { grid-template-columns:1fr; gap:1.2em; } }
+
   /* ── muro de errores: los 10 anti-patrones en una sola rejilla densa 5×2 ── */
   .err-slide h2 { font-size: clamp(1.05em, 1.24em, 1.36em); margin-bottom: 0.5em; }
   .err-slide h2 .dim { font-size: 0.6em; }
@@ -57,7 +73,27 @@
 <div class="slides">
 
   <section>
-    <h2 style="margin-bottom:0.35em;">eyal cumartesi</h2>
+    <h2>hoy y después</h2>
+    <div class="versus">
+      <div class="good" style="border-top-color:var(--amber)">
+        <h4 style="color:var(--amber)">este taller</h4>
+        <p>el mapa completo: qué existe, qué es hype, y el flujo real de construir con AI en 2026.</p>
+      </div>
+      <div class="bad" style="border-top-color:var(--cyan)">
+        <h4 style="color:var(--cyan)">el curso</h4>
+        <p>16 sesiones: de tu idea a tu app publicada, funcionando, con usuarios de verdad.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE QUIÉN SOY -->
+  <section class="who">
+    <div class="lede">
+      <span class="tag">~ <b>quién</b> soy</span>
+      <h2>eyal cumartesi</h2>
+      <p class="role">CTO de <b>Spexs</b> · construyo con AI en producción, todos los días</p>
+      <p class="kick">no vengo a enseñar teoría. vengo a mostrarles mi <b>flujo de trabajo real</b>.</p>
+    </div>
     <ul class="career">
       <li>
         <div class="t"><b>economía</b> enfocada a data science</div>
@@ -76,21 +112,6 @@
         <div class="d">con usuarios productivos — en producción, de verdad</div>
       </li>
     </ul>
-    <p class="dim" style="margin-top:0.7em;">no vengo a enseñar teoría. vengo a mostrarles mi flujo de trabajo real.</p>
-  </section>
-
-  <section>
-    <h2>hoy y después</h2>
-    <div class="versus">
-      <div class="good" style="border-top-color:var(--amber)">
-        <h4 style="color:var(--amber)">este taller</h4>
-        <p>el mapa completo: qué existe, qué es hype, y el flujo real de construir con AI en 2026.</p>
-      </div>
-      <div class="bad" style="border-top-color:var(--cyan)">
-        <h4 style="color:var(--cyan)">el curso</h4>
-        <p>16 sesiones: de tu idea a tu app publicada, funcionando, con usuarios de verdad.</p>
-      </div>
-    </div>
   </section>
 
   <!-- SLIDE MONTAÑA RUSA -->
@@ -128,11 +149,11 @@
   <section class="err-slide">
     <h2>los errores más comunes construyendo con AI <span class="dim" style="font-family:'JetBrains Mono',monospace">· los que más veo</span></h2>
     <div class="err-grid">
-      <div class="err"><span class="ghost">01</span><span class="num">01</span><div class="t">aceptar el output sin leerlo</div><div class="d">sin crítica — si no lo entiendes, no es tuyo</div></div>
+      <div class="err"><span class="ghost">01</span><span class="num">01</span><div class="t">aceptar output sin verificar</div><div class="d">ni lo lees ni lo pruebas e2e — "listo" sin comprobar</div></div>
       <div class="err"><span class="ghost">02</span><span class="num">02</span><div class="t">cero spec</div><div class="d">"hazme una app de X" y a rezar</div></div>
       <div class="err"><span class="ghost">03</span><span class="num">03</span><div class="t">contexto sobrecargado</div><div class="d">conversaciones eternas, pierde el hilo</div></div>
       <div class="err"><span class="ghost">04</span><span class="num">04</span><div class="t">sobrecargar el harness</div><div class="d">40 skills y multi-agente por moda; uno bastaba</div></div>
-      <div class="err"><span class="ghost">05</span><span class="num">05</span><div class="t">no verificar de verdad</div><div class="d">sin e2e, loops overnight, "listo" sin comprobar</div></div>
+      <div class="err"><span class="ghost">05</span><span class="num">05</span><div class="t">reinventar en vez de reutilizar</div><div class="d">el agente duplica lo que ya existe en tu código</div></div>
       <div class="err"><span class="ghost">06</span><span class="num">06</span><div class="t">seguridad y costo al final</div><div class="d">API keys en el repo, la factura sorpresa</div></div>
     </div>
   </section>
